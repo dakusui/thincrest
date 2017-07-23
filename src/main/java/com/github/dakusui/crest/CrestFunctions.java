@@ -12,4 +12,11 @@ public enum CrestFunctions {
         es -> es.get(i)
     );
   }
+
+  public static <E> Function<List<E>, Integer> size() {
+    return Formattable.function(
+        "size",
+        List::size
+    );
+  }
 }

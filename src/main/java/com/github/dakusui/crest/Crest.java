@@ -16,6 +16,10 @@ public class Crest<I, O> {
   private final Function<I, O>     function;
   private final List<Predicate<O>> predicates;
 
+  public static <I, O> Crest<I, O> builder(Function<I, O> function) {
+    return new Crest<>(function);
+  }
+
   public Crest(Function<I, O> function) {
     this.function = Objects.requireNonNull(function);
     this.predicates = new LinkedList<>();
