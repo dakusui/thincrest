@@ -35,12 +35,94 @@ public enum CrestMatchers {
 
   static abstract class IndentManagedDiagnosingMatcher<T> extends DiagnosingMatcher<T> {
     private static ThreadLocal<Integer> indent = new ThreadLocal<>();
-    final boolean              showTarget;
+    final boolean              topLevel;
     final Matcher<? super T>[] matchers;
 
-    IndentManagedDiagnosingMatcher(boolean showTarget, Matcher<? super T>[] matchers) {
-      this.showTarget = showTarget;
+    IndentManagedDiagnosingMatcher(boolean topLevel, Matcher<? super T>[] matchers) {
+      this.topLevel = topLevel;
       this.matchers = matchers;
+    }
+
+    @Override
+    protected final boolean matches(Object o, Description mismatch) {
+      enter();
+      try {
+        if (topLevel) {
+          mismatch.appendText("when x=");
+          mismatch.appendValue(o);
+          mismatch.appendText("; then ");
+        }
+
+        List<Exception> exceptions = new LinkedList<>();
+        boolean ret = matches(o, mismatch, exceptions);
+        if (!ret) {
+          mismatch.appendText("\n" + indent());
+        }
+        for (Exception e : exceptions) {
+          mismatch.appendText("\n" + indent() + e.getMessage());
+          for (StackTraceElement s : e.getStackTrace()) {
+            mismatch.appendText("\n" + indent() + "  " + s.toString());
+          }
+        }
+        return ret;
+      } finally {
+        leave();
+      }
+    }
+
+    @Override
+    final public void describeTo(Description description) {
+      enter();
+      try {
+        description.appendList(
+            String.format("%s:\n  ", name()) + indent(),
+            "\n  " + indent(),
+            "\n",
+            Arrays.stream(matchers).collect(toList()));
+      } finally {
+        leave();
+      }
+    }
+
+    private String name() {
+      return this.getClass().getSimpleName().toLowerCase();
+    }
+
+    boolean matches(Object o, Description mismatch, List<Exception> exceptions) {
+      boolean ret = !until();
+      for (Matcher<? super T> matcher : this.matchers) {
+        ret = tryToMatch(matcher, o, mismatch, exceptions);
+        //        if (ret == until())
+        //          break;
+      }
+      for (Exception e : exceptions) {
+        mismatch.appendText("\n" + indent() + e.getMessage());
+        for (StackTraceElement s : e.getStackTrace()) {
+          mismatch.appendText("\n" + indent() + "  " + s.toString());
+        }
+      }
+      return ret;
+    }
+
+    protected abstract boolean until();
+
+    boolean tryToMatch(Matcher<? super T> matcher, Object o, Description mismatch, List<Exception> exceptions) {
+      boolean ret;
+      try {
+        if (!(ret = matcher.matches(o))) {
+          mismatch.appendText("\n  " + indent());
+          matcher.describeMismatch(o, mismatch);
+        }
+      } catch (Exception e) {
+        ret = false;
+        mismatch.appendText("\n  " + indent());
+        mismatch
+            .appendDescriptionOf(matcher)
+            .appendText(" ")
+            .appendText(String.format("failed with %s(%s)", e.getClass().getCanonicalName(), e.getMessage()));
+        exceptions.add(e);
+      }
+      return ret;
     }
 
     static void enter() {
@@ -78,64 +160,8 @@ public enum CrestMatchers {
     }
 
     @Override
-    protected boolean matches(Object o, Description mismatch) {
-      enter();
-      try {
-        List<Exception> exceptions = new LinkedList<>();
-        boolean ret = true;
-        if (showTarget) {
-          mismatch.appendText("when x=");
-          mismatch.appendValue(o);
-          mismatch.appendText("; then ");
-        }
-        for (Matcher<? super T> matcher : this.matchers) {
-          try {
-            if (!matcher.matches(o)) {
-              if (ret)
-                mismatch.appendText("and(");
-              mismatch.appendText("\n  " + indent());
-              matcher.describeMismatch(o, mismatch);
-              ret = false;
-            }
-          } catch (Exception e) {
-            exceptions.add(e);
-            if (ret)
-              mismatch.appendText("and(");
-            mismatch.appendText("\n  " + indent());
-            mismatch
-                .appendDescriptionOf(matcher)
-                .appendText(" ")
-                .appendText(String.format("failed with %s(%s)", e.getClass().getCanonicalName(), e.getMessage()));
-            ret = false;
-          }
-        }
-        if (!ret) {
-          mismatch.appendText("\n" + indent() + ")");
-        }
-        for (Exception e : exceptions) {
-          mismatch.appendText("\n" + indent() + e.getMessage());
-          for (StackTraceElement s : e.getStackTrace()) {
-            mismatch.appendText("\n" + indent() + "  " + s.toString());
-          }
-        }
-        return ret;
-      } finally {
-        leave();
-      }
-    }
-
-    @Override
-    public void describeTo(Description description) {
-      enter();
-      try {
-        description.appendList(
-            "and(\n  " + indent(),
-            "\n  " + indent(),
-            "\n" + indent() + ")",
-            Arrays.stream(matchers).collect(toList()));
-      } finally {
-        leave();
-      }
+    protected boolean until() {
+      return false;
     }
   }
 
@@ -145,72 +171,9 @@ public enum CrestMatchers {
     }
 
     @Override
-    protected boolean matches(Object o, Description mismatch) {
-      enter();
-      try {
-        List<Exception> exceptions = new LinkedList<>();
-        boolean ret = false;
-        if (showTarget) {
-          mismatch.appendText("when x=");
-          mismatch.appendValue(o);
-          mismatch.appendText("; then ");
-        }
-        boolean firstTime = true;
-        for (Matcher<? super T> matcher : this.matchers) {
-          if (firstTime)
-            mismatch.appendText("or(");
-          firstTime = false;
-          ret = tryToMatch(matcher, o, mismatch, exceptions);
-          if (ret)
-            break;
-        }
-        if (!firstTime) {
-          mismatch.appendText("\n" + indent() + ")");
-        }
-        for (Exception e : exceptions) {
-          mismatch.appendText("\n" + indent() + e.getMessage());
-          for (StackTraceElement s : e.getStackTrace()) {
-            mismatch.appendText("\n" + indent() + "  " + s.toString());
-          }
-        }
-        return ret;
-      } finally {
-        leave();
-      }
-    }
-
-    private boolean tryToMatch(Matcher<? super T> matcher, Object o, Description mismatch, List<Exception> exceptions) {
-      boolean ret;
-      try {
-        ret = matcher.matches(o);
-        if (!ret) {
-          mismatch.appendText("\n  " + indent());
-          matcher.describeMismatch(o, mismatch);
-        }
-      } catch (Exception e) {
-        ret = false;
-        mismatch.appendText("\n  " + indent());
-        mismatch
-            .appendDescriptionOf(matcher)
-            .appendText(" ")
-            .appendText(String.format("failed with %s(%s)", e.getClass().getCanonicalName(), e.getMessage()));
-        exceptions.add(e);
-      }
-      return ret;
-    }
-
-    @Override
-    public void describeTo(Description description) {
-      enter();
-      try {
-        description.appendList(
-            "or(\n  " + indent(),
-            "\n  " + indent(),
-            "\n" + indent() + ")",
-            Arrays.stream(matchers).collect(toList()));
-      } finally {
-        leave();
-      }
+    protected boolean until() {
+      return true;
     }
   }
 }
+
