@@ -1,5 +1,9 @@
-package com.github.dakusui.crest;
+package com.github.dakusui.crest.ut;
 
+import com.github.dakusui.crest.CrestUnit;
+import com.github.dakusui.crest.Formattable;
+import com.github.dakusui.crest.matcherbuilders.AsObject;
+import com.github.dakusui.crest.matcherbuilders.Crest;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -50,8 +54,16 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(3)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("Hello")).matcher()
+              Crest.asObject(
+                  size()
+              ).check(
+                  equalTo(3)
+              ).all(),
+              Crest.asObject(
+                  elementAt(0)
+              ).check(equalTo(
+                  "Hello"
+              )).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -72,8 +84,13 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(3)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("hello")).matcher()
+              Crest.<List<String>, Integer, AsObject<List<String>, Integer>>asObject(size())
+                  .check(equalTo(3))
+                  .all(),
+              Crest
+                  .<List<String>, Object, AsObject<List<String>, Object>>asObject(elementAt(0))
+                  .check(equalTo("hello"))
+                  .all()
           ));
 
       System.out.println(description.orElse(null));
@@ -103,8 +120,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              Crest.<List<String>, Integer>create(size()).and(FAILING_CHECK).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("Hello")).matcher()
+              Crest.<List<String>, Integer, AsObject<List<String>, Integer>>asObject(size()).check(FAILING_CHECK).all(),
+              Crest.<List<String>, Object, AsObject<List<String>, Object>>asObject(elementAt(0)).check(equalTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -136,8 +153,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(2)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("hello")).matcher()
+              Crest.asObject(size()).check(equalTo(2)).all(),
+              Crest.asObject(elementAt(0)).check(equalTo("hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -180,8 +197,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(3)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("Hello")).matcher()
+              Crest.asObject(size()).check(equalTo(3)).all(),
+              Crest.asObject(elementAt(0)).check(equalTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -202,8 +219,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(3)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("hello")).matcher()
+              Crest.asObject(size()).check(equalTo(3)).all(),
+              Crest.asObject(elementAt(0)).check(equalTo("hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -224,8 +241,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.<List<String>, Integer>create(size()).and(FAILING_CHECK).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("Hello")).matcher()
+              Crest.asObject(size()).check(FAILING_CHECK).all(),
+              Crest.asObject(elementAt(0)).check(equalTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -257,8 +274,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(2)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("hello")).matcher()
+              Crest.asObject(size()).check(equalTo(2)).matcher(),
+              Crest.asObject(elementAt(0)).check(equalTo("hello")).matcher()
           ));
 
       System.out.println(description.orElse(null));
@@ -291,8 +308,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(2)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("hello"), equalTo("HELLO")).matcher()
+              Crest.asObject(size()).check(equalTo(2)).all(),
+              Crest.asObject(elementAt(0)).check(equalTo("hello")).check(equalTo("HELLO")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -329,8 +346,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(2)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).or(equalTo("hello"), equalTo("HELLO")).matcher()
+              Crest.asObject(size()).check(equalTo(2)).all(),
+              Crest.asObject(elementAt(0)).check(equalTo("hello")).check(equalTo("HELLO")).any()
           ));
 
       System.out.println(description.orElse(null));

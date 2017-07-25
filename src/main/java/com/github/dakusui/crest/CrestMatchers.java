@@ -168,8 +168,8 @@ public enum CrestMatchers {
     }
   }
 
-  static class AllOf<T> extends IndentManagedDiagnosingMatcher<T> {
-    AllOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
+  public static class AllOf<T> extends IndentManagedDiagnosingMatcher<T> {
+    public AllOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
       super(showTarget, matchers);
     }
 
@@ -189,8 +189,8 @@ public enum CrestMatchers {
     }
   }
 
-  static class AnyOf<T> extends IndentManagedDiagnosingMatcher<T> {
-    AnyOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
+  public static class AnyOf<T> extends IndentManagedDiagnosingMatcher<T> {
+    public AnyOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
       super(showTarget, matchers);
     }
 

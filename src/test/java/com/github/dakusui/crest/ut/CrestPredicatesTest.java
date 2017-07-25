@@ -1,5 +1,8 @@
-package com.github.dakusui.crest;
+package com.github.dakusui.crest.ut;
 
+import com.github.dakusui.crest.CrestPredicates;
+import com.github.dakusui.crest.CrestUnit;
+import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -15,7 +18,7 @@ public class CrestPredicatesTest {
   public static class EqTest extends CrestUnit {
     @Test
     public void whenMet$thenTrue() {
-      assertTrue(CrestPredicates.eq(100).test(100));
+      TestCase.assertTrue(CrestPredicates.eq(100).test(100));
     }
 
     @Test
@@ -150,6 +153,40 @@ public class CrestPredicatesTest {
     @Test
     public void whenToString$thenLooksGood() {
       assertEquals("anyMatch[<=[123]]", CrestPredicates.anyMatch(CrestPredicates.le(123)).toString());
+    }
+  }
+
+  public static class MatchesRegexTest extends CrestUnit {
+    @Test
+    public void whenMet$thenTrue() {
+      assertTrue(CrestPredicates.matchesRegex("hello.").test("hello!"));
+    }
+
+    @Test
+    public void whenNotMet$thenFalse() {
+      assertFalse(CrestPredicates.matchesRegex(".ello.").test("hello"));
+    }
+
+    @Test
+    public void whenToString$thenLooksGood() {
+      assertEquals("matchesRegex[hello.]", CrestPredicates.matchesRegex("hello.").toString());
+    }
+  }
+
+  public static class ContainsStringTest extends CrestUnit {
+    @Test
+    public void whenMet$thenTrue() {
+      assertTrue(CrestPredicates.containsString("hello").test("hello!"));
+    }
+
+    @Test
+    public void whenNotMet$thenFalse() {
+      assertFalse(CrestPredicates.containsString(".ello.").test("hello!"));
+    }
+
+    @Test
+    public void whenToString$thenLooksGood() {
+      assertEquals("containsString[hello]", CrestPredicates.containsString("hello").toString());
     }
   }
 }

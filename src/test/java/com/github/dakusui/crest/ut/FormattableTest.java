@@ -1,5 +1,7 @@
-package com.github.dakusui.crest;
+package com.github.dakusui.crest.ut;
 
+import com.github.dakusui.crest.CrestUnit;
+import com.github.dakusui.crest.Formattable;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -59,7 +61,7 @@ public class FormattableTest {
 
     @Test
     public void givenPredicateReturnedByAnd$whenToString$thenLooksGood() {
-      assertEquals("is[A]&&is[B]", isA.and(isB).toString());
+      assertEquals("(is[A]&&is[B])", isA.and(isB).toString());
     }
 
     @Test
