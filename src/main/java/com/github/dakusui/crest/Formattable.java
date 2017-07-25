@@ -26,7 +26,7 @@ public enum Formattable {
 
           @Override
           public String toString() {
-            return String.format("%s->%s", before, function);
+            return String.format("%s->%s", before, s);
           }
         };
       }
@@ -41,7 +41,7 @@ public enum Formattable {
 
           @Override
           public String toString() {
-            return String.format("%s->%s", function, after);
+            return String.format("%s->%s", s, after);
           }
         };
       }
@@ -71,7 +71,7 @@ public enum Formattable {
 
           @Override
           public String toString() {
-            return String.format("%s&&%s", predicate, other);
+            return String.format("(%s&&%s)", s, other);
           }
         };
       }
@@ -86,7 +86,7 @@ public enum Formattable {
 
           @Override
           public String toString() {
-            return String.format("!%s", predicate);
+            return String.format("!%s", s);
           }
         };
       }
@@ -102,7 +102,7 @@ public enum Formattable {
 
           @Override
           public String toString() {
-            return String.format("(%s||%s)", predicate, other);
+            return String.format("(%s||%s)", s, other);
           }
         };
       }

@@ -87,14 +87,15 @@ public enum CrestMatchers {
     }
 
     boolean matches(Object o, Description mismatch, List<Exception> exceptions) {
+      List<Exception> exceptions_ = new LinkedList<>();
       boolean ret = !until();
       List<Description> mismatches = new LinkedList<>();
       for (Matcher<? super T> each : this.matchers) {
         Description mismatchForEach = new StringDescription();
-        boolean current = tryToMatch(each, o, mismatchForEach, exceptions);
+        boolean current = tryToMatch(each, o, mismatchForEach, exceptions_);
         if (!current)
           mismatches.add(mismatchForEach);
-        ret = next(ret, current);
+        ret = next(ret, current) && exceptions_.isEmpty();
       }
       String indent = indent();
       mismatch.appendText(mismatches.stream(
@@ -108,12 +109,7 @@ public enum CrestMatchers {
           String.format("%n%s]->%s", indent, ret)
           ))
       );
-      for (Exception e : exceptions) {
-        mismatch.appendText("\n" + indent + e.getMessage());
-        for (StackTraceElement s : e.getStackTrace()) {
-          mismatch.appendText("\n" + indent + "  " + s.toString());
-        }
-      }
+      exceptions.addAll(exceptions_);
       return ret;
     }
 
@@ -131,6 +127,7 @@ public enum CrestMatchers {
         if (exception == null) {
           matcher.describeMismatch(o, mismatch);
         } else {
+          exceptions.add(exception);
           mismatch.appendDescriptionOf(matcher)
               .appendText(" ")
               .appendText(String.format("failed with %s(%s)", exception.getClass().getCanonicalName(), exception.getMessage()));
