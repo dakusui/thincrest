@@ -42,7 +42,7 @@ public enum CrestPredicates {
     );
   }
 
-  public static <T extends Comparable<T>> Predicate<? super T> eq(T value) {
+  public static <T extends Comparable<? super T>> Predicate<? super T> eq(T value) {
     return Formattable.predicate(
         String.format("==%s", value),
         v -> v.compareTo(value) == 0

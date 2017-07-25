@@ -20,28 +20,30 @@ public class Crest<I, O> {
   enum Op {
     AND {
       @Override
-      <I> Matcher<? super I> create(Matcher<? super I>[] matchers) {
+      <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers) {
         return new CrestMatchers.AllOf<>(false, matchers);
       }
     },
     OR {
       @Override
-      <I> Matcher<? super I> create(Matcher<? super I>[] matchers) {
+      <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers) {
         return new CrestMatchers.AnyOf<>(false, matchers);
       }
     };
 
     @SuppressWarnings("unchecked")
     <I, O> Matcher<? super I> create(List<Predicate<? super O>> predicates, Function<? super I, ? extends O> function) {
-      return create(predicates.stream().map(
-          predicate -> (BaseMatcher<Object>) toMatcher(predicate, function)
+      return create(
+          predicates.stream(
+          ).map(
+              predicate -> (BaseMatcher<Object>) toMatcher(predicate, function)
           ).collect(
-          toList()
-          ).toArray(new BaseMatcher[predicates.size()])
+              toList()
+          )
       );
     }
 
-    abstract <I> Matcher<? super I> create(Matcher<? super I>[] matchers);
+    abstract <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers);
   }
 
   private final Function<? super I, ? extends O> function;
