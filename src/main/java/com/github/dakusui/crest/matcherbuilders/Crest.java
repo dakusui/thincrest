@@ -56,20 +56,16 @@ public interface Crest<I, O> {
     return new AsStream<>(CrestFunctions.stream());
   }
 
-  @SuppressWarnings("unchecked")
   static <I, O, C extends Crest<I, O>> C asObject(String methodName, Object... args) {
     return (C) new AsObject<I, O>(CrestFunctions.invoke(methodName, args));
   }
 
-  @SuppressWarnings("unchecked")
   static <I, O, C extends Crest<I, O>> C asObject(Function<? super I, ? extends O> function) {
     return (C) new AsObject<I, O>((Function<? super I, ? extends O>) function);
   }
 
-  @SuppressWarnings("unchecked")
   <C extends Crest<? super I, ? extends O>> C check(Predicate<? super O> predicate);
 
-  @SuppressWarnings("unchecked")
   default <C extends Crest<? super I, ? extends O>> C equalTo(O value) {
     return (C) this.check(CrestPredicates.equalTo(value));
   }

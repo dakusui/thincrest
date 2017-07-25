@@ -22,9 +22,10 @@ public enum CrestMatchers {
    * For example:
    * <pre>assertThat("myValue", allOf(startsWith("my"), containsString("Val")))</pre>
    */
+  @SuppressWarnings("Convert2Diamond")
   @SafeVarargs
   public static <T> Matcher<T> allOf(Matcher<? super T>... matchers) {
-    return new AllOf<>(true, asList(matchers));
+    return new AllOf<T>(true, asList(matchers));
   }
 
   /**
@@ -32,9 +33,10 @@ public enum CrestMatchers {
    * For example:
    * <pre>assertThat("myValue", anyOf(startsWith("my"), containsString("Val")))</pre>
    */
+  @SuppressWarnings("Convert2Diamond")
   @SafeVarargs
   public static <T> Matcher<T> anyOf(Matcher<? super T>... matchers) {
-    return new AnyOf<>(true, asList(matchers));
+    return new AnyOf<T>(true, asList(matchers));
   }
 
   static abstract class IndentManagedDiagnosingMatcher<T> extends DiagnosingMatcher<T> {

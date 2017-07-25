@@ -51,15 +51,15 @@ public class CrestMatchersTest {
     public void whenPassingAndThenPassing$thenPasses() {
       List<String> aList = composeTestData();
 
-      Optional<Description> description = describeFailure(
+      Optional<Description> description = CrestMatchersTest.describeFailure(
           aList,
           allOf(
-              Crest.asObject(
+              Crest.<List<String>, Integer, Crest>asObject(
                   size()
               ).check(
                   equalTo(3)
               ).all(),
-              Crest.asObject(
+              Crest.<List<String>, Object, Crest>asObject(
                   elementAt(0)
               ).check(equalTo(
                   "Hello"
@@ -84,11 +84,11 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              Crest.<List<String>, Integer, AsObject<List<String>, Integer>>asObject(size())
+              Crest.<List<String>, Integer, AsObject>asObject(size())
                   .check(equalTo(3))
                   .all(),
               Crest
-                  .<List<String>, Object, AsObject<List<String>, Object>>asObject(elementAt(0))
+                  .<List<String>, Object, AsObject>asObject(elementAt(0))
                   .check(equalTo("hello"))
                   .all()
           ));
@@ -120,8 +120,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              Crest.<List<String>, Integer, AsObject<List<String>, Integer>>asObject(size()).check(FAILING_CHECK).all(),
-              Crest.<List<String>, Object, AsObject<List<String>, Object>>asObject(elementAt(0)).check(equalTo("Hello")).all()
+              Crest.<List<String>, Integer, AsObject>asObject(size()).check(FAILING_CHECK).all(),
+              Crest.<List<String>, Object, AsObject>asObject(elementAt(0)).check(equalTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -153,8 +153,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              Crest.asObject(size()).check(equalTo(2)).all(),
-              Crest.asObject(elementAt(0)).check(equalTo("hello")).all()
+              Crest.<List<String>, Object, Crest>asObject(size()).check(equalTo(2)).all(),
+              Crest.<List<String>, Object, Crest>asObject(elementAt(0)).check(equalTo("hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -197,8 +197,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.asObject(size()).check(equalTo(3)).all(),
-              Crest.asObject(elementAt(0)).check(equalTo("Hello")).all()
+              Crest.<List<String>, Integer, Crest>asObject(size()).check(equalTo(3)).all(),
+              Crest.<List<String>, Object, Crest>asObject(elementAt(0)).check(equalTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -219,8 +219,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.asObject(size()).check(equalTo(3)).all(),
-              Crest.asObject(elementAt(0)).check(equalTo("hello")).all()
+              Crest.<List<String>, Integer, Crest>asObject(size()).check(equalTo(3)).all(),
+              Crest.<List<String>, Object, Crest>asObject(elementAt(0)).check(equalTo("hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -241,8 +241,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.asObject(size()).check(FAILING_CHECK).all(),
-              Crest.asObject(elementAt(0)).check(equalTo("Hello")).all()
+              Crest.<List<String>, Integer, Crest>asObject(size()).check(FAILING_CHECK).all(),
+              Crest.<List<String>, Object, Crest>asObject(elementAt(0)).check(equalTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -274,8 +274,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.asObject(size()).check(equalTo(2)).matcher(),
-              Crest.asObject(elementAt(0)).check(equalTo("hello")).matcher()
+              Crest.<List<String>, Integer, Crest>asObject(size()).check(equalTo(2)).matcher(),
+              Crest.<List<String>, Object, Crest>asObject(elementAt(0)).check(equalTo("hello")).matcher()
           ));
 
       System.out.println(description.orElse(null));
@@ -308,8 +308,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.asObject(size()).check(equalTo(2)).all(),
-              Crest.asObject(elementAt(0)).check(equalTo("hello")).check(equalTo("HELLO")).all()
+              Crest.<List<String>, Integer, Crest>asObject(size()).check(equalTo(2)).all(),
+              Crest.<List<String>, Object, Crest>asObject(elementAt(0)).check(equalTo("hello")).check(equalTo("HELLO")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -346,8 +346,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              Crest.asObject(size()).check(equalTo(2)).all(),
-              Crest.asObject(elementAt(0)).check(equalTo("hello")).check(equalTo("HELLO")).any()
+              Crest.<List<String>, Integer, Crest>asObject(size()).check(equalTo(2)).all(),
+              Crest.<List<String>, Object, Crest>asObject(elementAt(0)).check(equalTo("hello")).check(equalTo("HELLO")).any()
           ));
 
       System.out.println(description.orElse(null));
