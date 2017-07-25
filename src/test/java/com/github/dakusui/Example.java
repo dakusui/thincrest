@@ -18,12 +18,46 @@ import static org.junit.Assert.assertThat;
 
 public class Example {
 
-  public static final Predicate<Integer> FAILING_CHECK = Formattable.predicate("failingCheck", v -> {
+  private static final Predicate<Integer> FAILING_CHECK = Formattable.predicate("failingCheck", v -> {
     throw new RuntimeException("FAILED");
   });
 
   @Test
-  public void test1() {
+  public void whenSimpleFailingConj$thenFailsAndMessageAppropriate() {
+    List<String> aList = new LinkedList<String>() {{
+      add("Hello");
+      add("world");
+      add("!");
+    }};
+
+    assertThat(
+        aList,
+        allOf(
+            Crest.<List<String>, Integer>create(size()).and(equalTo(2)).matcher(),
+            Crest.<List<String>, Integer>create(size()).and(eq(10), eq(100)).matcher(),
+            Crest.<List<String>, String>create(elementAt(0)).and(equalTo("hello")).matcher()
+        ));
+  }
+
+  @Test
+  public void whenSimplePassingConj$thenPasses() {
+    List<String> aList = new LinkedList<String>() {{
+      add("Hello");
+      add("world");
+      add("!");
+    }};
+
+    assertThat(
+        aList,
+        allOf(
+            Crest.<List<String>, Integer>create(size()).and(equalTo(3)).matcher(),
+            Crest.<List<String>, String>create(elementAt(0)).and(equalTo("Hello")).matcher()
+        ));
+  }
+
+
+  @Test
+  public void whenNestedFailingConj$thenFailsAndMessageAppropriate() {
     List<String> aList = new LinkedList<String>() {{
       add("Hello");
       add("world");

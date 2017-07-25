@@ -3,11 +3,15 @@ package com.github.dakusui.crest;
 import org.hamcrest.Description;
 import org.hamcrest.DiagnosingMatcher;
 import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 public enum CrestMatchers {
@@ -20,7 +24,7 @@ public enum CrestMatchers {
    */
   @SafeVarargs
   public static <T> Matcher<T> allOf(Matcher<? super T>... matchers) {
-    return new AllOf<>(true, matchers);
+    return new AllOf<>(true, asList(matchers));
   }
 
   /**
@@ -30,17 +34,17 @@ public enum CrestMatchers {
    */
   @SafeVarargs
   public static <T> Matcher<T> anyOf(Matcher<? super T>... matchers) {
-    return new AnyOf<>(true, matchers);
+    return new AnyOf<>(true, asList(matchers));
   }
 
   static abstract class IndentManagedDiagnosingMatcher<T> extends DiagnosingMatcher<T> {
     private static ThreadLocal<Integer> indent = new ThreadLocal<>();
-    final boolean              topLevel;
-    final Matcher<? super T>[] matchers;
+    final boolean                                  topLevel;
+    final Collection<? extends Matcher<? super T>> matchers;
 
-    IndentManagedDiagnosingMatcher(boolean topLevel, Matcher<? super T>[] matchers) {
+    IndentManagedDiagnosingMatcher(boolean topLevel, Collection<? extends Matcher<? super T>> matchers) {
       this.topLevel = topLevel;
-      this.matchers = matchers;
+      this.matchers = Objects.requireNonNull(matchers);
     }
 
     @Override
@@ -55,9 +59,6 @@ public enum CrestMatchers {
 
         List<Exception> exceptions = new LinkedList<>();
         boolean ret = matches(o, mismatch, exceptions);
-        if (!ret) {
-          mismatch.appendText("\n" + indent());
-        }
         for (Exception e : exceptions) {
           mismatch.appendText("\n" + indent() + e.getMessage());
           for (StackTraceElement s : e.getStackTrace()) {
@@ -75,30 +76,42 @@ public enum CrestMatchers {
       enter();
       try {
         description.appendList(
-            String.format("%s:\n  ", name()) + indent(),
-            "\n  " + indent(),
-            "\n",
-            Arrays.stream(matchers).collect(toList()));
+            String.format("%s:[%n  ", name()) + indent(),
+            String.format("%n%s  ", indent()),
+            String.format("%n%s]%s", indent(), this.topLevel ? "->true" : ""),
+            matchers
+        );
       } finally {
         leave();
       }
     }
 
-    private String name() {
-      return this.getClass().getSimpleName().toLowerCase();
-    }
-
     boolean matches(Object o, Description mismatch, List<Exception> exceptions) {
       boolean ret = !until();
-      for (Matcher<? super T> matcher : this.matchers) {
-        ret = tryToMatch(matcher, o, mismatch, exceptions);
-        //        if (ret == until())
-        //          break;
+      List<Description> mismatches = new LinkedList<>();
+      for (Matcher<? super T> each : this.matchers) {
+        Description mismatchForEach = new StringDescription();
+        boolean current = tryToMatch(each, o, mismatchForEach, exceptions);
+        if (!current)
+          mismatches.add(mismatchForEach);
+        ret = next(ret, current);
       }
+      String indent = indent();
+      mismatch.appendText(mismatches.stream(
+          ).map(Object::toString
+          ).collect(
+          toList()
+          ).stream(
+          ).collect(Collectors.joining(
+          String.format("%n"),
+          String.format("%s%s:[%n", indent.length() >= 2 ? indent.substring(2) : "", name()),
+          String.format("%n%s]->%s", indent, ret)
+          ))
+      );
       for (Exception e : exceptions) {
-        mismatch.appendText("\n" + indent() + e.getMessage());
+        mismatch.appendText("\n" + indent + e.getMessage());
         for (StackTraceElement s : e.getStackTrace()) {
-          mismatch.appendText("\n" + indent() + "  " + s.toString());
+          mismatch.appendText("\n" + indent + "  " + s.toString());
         }
       }
       return ret;
@@ -107,23 +120,27 @@ public enum CrestMatchers {
     protected abstract boolean until();
 
     boolean tryToMatch(Matcher<? super T> matcher, Object o, Description mismatch, List<Exception> exceptions) {
-      boolean ret;
+      Exception exception = null;
       try {
-        if (!(ret = matcher.matches(o))) {
-          mismatch.appendText("\n  " + indent());
-          matcher.describeMismatch(o, mismatch);
-        }
+        return matcher.matches(o);
       } catch (Exception e) {
-        ret = false;
-        mismatch.appendText("\n  " + indent());
-        mismatch
-            .appendDescriptionOf(matcher)
-            .appendText(" ")
-            .appendText(String.format("failed with %s(%s)", e.getClass().getCanonicalName(), e.getMessage()));
-        exceptions.add(e);
+        exception = e;
+        return false;
+      } finally {
+        mismatch.appendText("  " + indent());
+        if (exception == null) {
+          matcher.describeMismatch(o, mismatch);
+        } else {
+          mismatch.appendDescriptionOf(matcher)
+              .appendText(" ")
+              .appendText(String.format("failed with %s(%s)", exception.getClass().getCanonicalName(), exception.getMessage()));
+        }
       }
-      return ret;
     }
+
+    abstract boolean next(boolean previous, boolean current);
+
+    abstract String name();
 
     static void enter() {
       indent.set(
@@ -155,8 +172,18 @@ public enum CrestMatchers {
   }
 
   static class AllOf<T> extends IndentManagedDiagnosingMatcher<T> {
-    AllOf(boolean showTarget, Matcher<? super T>[] matchers) {
+    AllOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
       super(showTarget, matchers);
+    }
+
+    @Override
+    boolean next(boolean previous, boolean current) {
+      return previous && current;
+    }
+
+    @Override
+    String name() {
+      return "and";
     }
 
     @Override
@@ -166,8 +193,18 @@ public enum CrestMatchers {
   }
 
   static class AnyOf<T> extends IndentManagedDiagnosingMatcher<T> {
-    AnyOf(boolean showTarget, Matcher<? super T>[] matchers) {
+    AnyOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
       super(showTarget, matchers);
+    }
+
+    @Override
+    boolean next(boolean previous, boolean current) {
+      return previous || current;
+    }
+
+    @Override
+    String name() {
+      return "or";
     }
 
     @Override

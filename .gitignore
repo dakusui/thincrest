@@ -9,7 +9,9 @@ buildNumber.properties
 .mvn/timing.properties
 
 .idea
-recrest.iml
+*.iml
+
+*~
 
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
