@@ -59,7 +59,7 @@ public class FormattableTest {
 
     @Test
     public void givenPredicateReturnedByAnd$whenToString$thenLooksGood() {
-      assertEquals("is[A]&&is[B]", isA.and(isB).toString());
+      assertEquals("(is[A]&&is[B])", isA.and(isB).toString());
     }
 
     @Test
