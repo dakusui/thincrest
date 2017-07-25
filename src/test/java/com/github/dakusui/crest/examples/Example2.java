@@ -1,5 +1,6 @@
 package com.github.dakusui.crest.examples;
 
+import com.github.dakusui.crest.core.Formattable;
 import com.github.dakusui.crest.matcherbuilders.MatcherBuilders;
 import com.github.dakusui.crest.predicates.CrestPredicates;
 import org.junit.Test;
@@ -35,7 +36,8 @@ public class Example2 {
     assertThat(
         Arrays.asList("Hello", "world"),
         MatcherBuilders.allOf(
-            MatcherBuilders.asStream().noneMatch("bye"::equals).matcher()
+            MatcherBuilders.asStream().anyMatch(Formattable.predicate("==bye", "bye"::equals)).matcher(),
+            MatcherBuilders.asString().containsString("bye").matcher()
         )
     );
   }
