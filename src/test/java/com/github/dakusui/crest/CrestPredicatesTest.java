@@ -1,0 +1,155 @@
+package com.github.dakusui.crest;
+
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
+import java.util.stream.Stream;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
+@RunWith(Enclosed.class)
+public class CrestPredicatesTest {
+  public static class EqTest extends CrestUnit {
+    @Test
+    public void whenMet$thenTrue() {
+      assertTrue(CrestPredicates.eq(100).test(100));
+    }
+
+    @Test
+    public void whenNotMet$thenFalse() {
+      assertFalse(CrestPredicates.eq(100).test(99));
+      assertFalse(CrestPredicates.eq(100).test(101));
+    }
+
+    @Test
+    public void whenToString$thenLooksGood() {
+      assertEquals("==[123]", CrestPredicates.eq(123).toString());
+    }
+  }
+
+  public static class GtTest extends CrestUnit {
+    @Test
+    public void whenMet$thenTrue() {
+      assertTrue(CrestPredicates.gt(100).test(101));
+    }
+
+    @Test
+    public void whenNotMet$thenFalse() {
+      assertFalse(CrestPredicates.gt(100).test(100));
+      assertFalse(CrestPredicates.gt(100).test(99));
+    }
+
+    @Test
+    public void whenToString$thenLooksGood() {
+      assertEquals(">[123]", CrestPredicates.gt(123).toString());
+    }
+  }
+
+  public static class GeTest extends CrestUnit {
+    @Test
+    public void whenMet$thenTrue() {
+      assertTrue(CrestPredicates.ge(100).test(101));
+      assertTrue(CrestPredicates.ge(100).test(100));
+    }
+
+    @Test
+    public void whenNotMet$thenFalse() {
+      assertFalse(CrestPredicates.ge(100).test(99));
+    }
+
+    @Test
+    public void whenToString$thenLooksGood() {
+      assertEquals(">=[123]", CrestPredicates.ge(123).toString());
+    }
+  }
+
+  public static class LtTest extends CrestUnit {
+    @Test
+    public void whenMet$thenTrue() {
+      assertTrue(CrestPredicates.lt(100).test(99));
+    }
+
+    @Test
+    public void whenNotMet$thenFalse() {
+      assertFalse(CrestPredicates.lt(100).test(100));
+      assertFalse(CrestPredicates.lt(100).test(101));
+    }
+
+    @Test
+    public void whenToString$thenLooksGood() {
+      assertEquals("<[123]", CrestPredicates.lt(123).toString());
+    }
+  }
+
+  public static class LeTest extends CrestUnit {
+    @Test
+    public void whenMet$thenTrue() {
+      assertTrue(CrestPredicates.le(100).test(99));
+      assertTrue(CrestPredicates.le(100).test(100));
+    }
+
+    @Test
+    public void whenNotMet$thenFalse() {
+      assertFalse(CrestPredicates.le(100).test(101));
+    }
+
+    @Test
+    public void whenToString$thenLooksGood() {
+      assertEquals("<=[123]", CrestPredicates.le(123).toString());
+    }
+  }
+
+  public static class AllMatchTest extends CrestUnit {
+    @Test
+    public void whenMet$thenTrue() {
+      assertTrue(CrestPredicates.allMatch(CrestPredicates.ge(100)).test(Stream.of(100, 200, 300)));
+    }
+
+    @Test
+    public void whenNot$thenFalse() {
+      assertFalse(CrestPredicates.allMatch(CrestPredicates.gt(100)).test(Stream.of(100, 200, 300)));
+    }
+
+    @Test
+    public void whenToString$thenLooksGood() {
+      assertEquals("allMatch[<=[123]]", CrestPredicates.allMatch(CrestPredicates.le(123)).toString());
+    }
+  }
+
+  public static class NoneMatchTest extends CrestUnit {
+    @Test
+    public void whenMet$thenTrue() {
+      assertTrue(CrestPredicates.noneMatch(CrestPredicates.lt(100)).test(Stream.of(100, 200, 300)));
+    }
+
+    @Test
+    public void whenNot$thenFalse() {
+      assertFalse(CrestPredicates.noneMatch(CrestPredicates.gt(100)).test(Stream.of(100, 200, 300)));
+    }
+
+    @Test
+    public void whenToString$thenLooksGood() {
+      assertEquals("noneMatch[<=[123]]", CrestPredicates.noneMatch(CrestPredicates.le(123)).toString());
+    }
+  }
+
+  public static class AnyMatchTest extends CrestUnit {
+    @Test
+    public void whenMet$thenTrue() {
+      assertTrue(CrestPredicates.anyMatch(CrestPredicates.le(100)).test(Stream.of(100, 200, 300)));
+    }
+
+    @Test
+    public void whenNot$thenFalse() {
+      assertFalse(CrestPredicates.anyMatch(CrestPredicates.lt(100)).test(Stream.of(100, 200, 300)));
+    }
+
+    @Test
+    public void whenToString$thenLooksGood() {
+      assertEquals("anyMatch[<=[123]]", CrestPredicates.anyMatch(CrestPredicates.le(123)).toString());
+    }
+  }
+}
