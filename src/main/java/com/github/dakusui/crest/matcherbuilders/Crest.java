@@ -1,9 +1,7 @@
 package com.github.dakusui.crest.matcherbuilders;
 
-import com.github.dakusui.crest.functions.CrestFunctions;
-import com.github.dakusui.crest.CrestMatchers;
-import com.github.dakusui.crest.predicates.CrestPredicates;
 import com.github.dakusui.crest.core.InternalUtils;
+import com.github.dakusui.crest.predicates.CrestPredicates;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Matcher;
 
@@ -18,13 +16,13 @@ public interface Crest<I, O> {
     AND {
       @Override
       <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers) {
-        return new CrestMatchers.AllOf<>(false, matchers);
+        return new MatcherBuilders.AllOf<>(false, matchers);
       }
     },
     OR {
       @Override
       <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers) {
-        return new CrestMatchers.AnyOf<>(false, matchers);
+        return new MatcherBuilders.AnyOf<>(false, matchers);
       }
     };
 
@@ -43,29 +41,9 @@ public interface Crest<I, O> {
     abstract <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers);
   }
 
-  @SuppressWarnings("unchecked")
-  static <I, C extends Crest<I, I>> C asObject() {
-    return (C) asObject(CrestFunctions.identity());
-  }
-
-  static <I> AsString<I> asString() {
-    return new AsString<>(CrestFunctions.stringify());
-  }
-
-  static <E> AsStream<E> asStream() {
-    return new AsStream<>(CrestFunctions.stream());
-  }
-
-  static <I, O, C extends Crest<I, O>> C asObject(String methodName, Object... args) {
-    return (C) new AsObject<I, O>(CrestFunctions.invoke(methodName, args));
-  }
-
-  static <I, O, C extends Crest<I, O>> C asObject(Function<? super I, ? extends O> function) {
-    return (C) new AsObject<I, O>((Function<? super I, ? extends O>) function);
-  }
-
   <C extends Crest<? super I, ? extends O>> C check(Predicate<? super O> predicate);
 
+  @SuppressWarnings("unchecked")
   default <C extends Crest<? super I, ? extends O>> C equalTo(O value) {
     return (C) this.check(CrestPredicates.equalTo(value));
   }

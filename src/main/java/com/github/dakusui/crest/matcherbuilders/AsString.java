@@ -3,19 +3,21 @@ package com.github.dakusui.crest.matcherbuilders;
 import com.github.dakusui.crest.predicates.CrestPredicates;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 
-public class AsString<I> extends AsObject<I, String> {
+public class AsString<I> extends AsObject<I> {
   public AsString(Function<? super I, ? extends String> function) {
     super(function);
   }
 
+  @SuppressWarnings("unchecked")
   public AsString<I> matchesRegex(String regex) {
-    this.check(CrestPredicates.matchesRegex(regex));
-    return this;
+    return this.check((Predicate<Object>) CrestPredicates.matchesRegex(regex));
   }
 
+  @SuppressWarnings("unchecked")
   public AsString<I> containsString(String string) {
-    this.check(CrestPredicates.containsString(string));
-    return this;
+    return this.check((Predicate<Object>) CrestPredicates.containsString(string));
+
   }
 }

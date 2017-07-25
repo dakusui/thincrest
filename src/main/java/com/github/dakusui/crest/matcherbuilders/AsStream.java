@@ -2,25 +2,27 @@ package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.predicates.CrestPredicates;
 
-import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class AsStream<E> extends AsObject<Collection<E>, Stream<? extends E>> {
-  public AsStream(Function<? super Collection<? extends E>, Stream<? extends E>> function) {
+public class AsStream<I, E> extends AsObject<I> {
+  public AsStream(Function<I, Stream<? extends E>> function) {
     super(function);
   }
 
-  public AsStream<E> allMatch(Predicate<E> predicate) {
-    return this.check(CrestPredicates.allMatch(predicate));
+  @SuppressWarnings("unchecked")
+  public AsStream<? super I, ? extends E> allMatch(Predicate<E> predicate) {
+    return this.check((Predicate<? super Object>) CrestPredicates.allMatch(predicate));
   }
 
-  public AsStream<E> noneMatch(Predicate<? super E> predicate) {
-    return this.check(CrestPredicates.noneMatch(predicate));
+  @SuppressWarnings("unchecked")
+  public AsStream<? super I, ? extends E> noneMatch(Predicate<? super E> predicate) {
+    return this.check((Predicate<? super Object>) CrestPredicates.noneMatch(predicate));
   }
 
-  public AsStream<E> anyMatch(Predicate<E> predicate) {
-    return this.check(CrestPredicates.anyMatch(predicate));
+  @SuppressWarnings("unchecked")
+  public AsStream<? super I, ? extends E> anyMatch(Predicate<E> predicate) {
+    return this.check((Predicate<? super Object>) CrestPredicates.anyMatch(predicate));
   }
 }

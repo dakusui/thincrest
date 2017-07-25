@@ -1,5 +1,6 @@
-package com.github.dakusui.crest;
+package com.github.dakusui.crest.matcherbuilders;
 
+import com.github.dakusui.crest.functions.CrestFunctions;
 import org.hamcrest.Description;
 import org.hamcrest.DiagnosingMatcher;
 import org.hamcrest.Matcher;
@@ -9,12 +10,13 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
-public enum CrestMatchers {
+public enum MatcherBuilders {
   ;
 
   /**
@@ -37,6 +39,27 @@ public enum CrestMatchers {
   @SafeVarargs
   public static <T> Matcher<T> anyOf(Matcher<? super T>... matchers) {
     return new AnyOf<T>(true, asList(matchers));
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <I, C extends Crest<? super I, I>> C asObject() {
+    return (C) asObject(CrestFunctions.identity());
+  }
+
+  public static <I> AsString<I> asString() {
+    return new AsString<>(CrestFunctions.stringify());
+  }
+
+  public static <I, E, C extends AsStream<I, E>> AsStream<I, E> asStream() {
+    return (C)new AsStream<>(CrestFunctions.stream());
+  }
+
+  public static <I, O, C extends Crest<? super I, O>> C asObject(String methodName, Object... args) {
+    return (C) new AsObject<I>(CrestFunctions.invoke(methodName, args));
+  }
+
+  public static <I, O, C extends Crest<? super I, O>> C asObject(Function<? super I, ? extends O> function) {
+    return (C) new AsObject<I>((Function<? super I, ? extends O>) function);
   }
 
   static abstract class IndentManagedDiagnosingMatcher<T> extends DiagnosingMatcher<T> {

@@ -1,14 +1,13 @@
 package com.github.dakusui.crest.examples;
 
-import com.github.dakusui.crest.CrestMatchers;
+import com.github.dakusui.crest.matcherbuilders.MatcherBuilders;
 import com.github.dakusui.crest.predicates.CrestPredicates;
-import com.github.dakusui.crest.matcherbuilders.Crest;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.crest.CrestMatchers.allOf;
+import static com.github.dakusui.crest.matcherbuilders.MatcherBuilders.allOf;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertThat;
 
@@ -25,8 +24,8 @@ public class Example2 {
     assertThat(
         asList("Hello", "world").toString(),
         allOf(
-            Crest.asString().containsString("Hello").matcher(),
-            Crest.asString().matchesRegex("HELLO").containsString("WORLD").any()
+            MatcherBuilders.asString().containsString("Hello").matcher(),
+            MatcherBuilders.asString().matchesRegex("HELLO").containsString("WORLD").any()
         )
     );
   }
@@ -35,8 +34,8 @@ public class Example2 {
   public void test4() {
     assertThat(
         Arrays.asList("Hello", "world"),
-        CrestMatchers.allOf(
-            Crest.asStream().noneMatch("bye"::equals).matcher()
+        MatcherBuilders.allOf(
+            MatcherBuilders.asStream().noneMatch("bye"::equals).matcher()
         )
     );
   }

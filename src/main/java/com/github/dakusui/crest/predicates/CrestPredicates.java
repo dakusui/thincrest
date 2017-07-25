@@ -51,7 +51,7 @@ public enum CrestPredicates {
     );
   }
 
-  public static <E> Predicate<Stream<? extends E>> allMatch(Predicate<E> predicate) {
+  public static <E> Predicate<? super Stream<? extends E>> allMatch(Predicate<E> predicate) {
     Objects.requireNonNull(predicate);
     return Formattable.predicate(
         String.format("allMatch[%s]", predicate),
@@ -59,7 +59,7 @@ public enum CrestPredicates {
     );
   }
 
-  public static <E> Predicate<Stream<? extends E>> noneMatch(Predicate<E> predicate) {
+  public static <E> Predicate<? super Stream<? extends E>> noneMatch(Predicate<E> predicate) {
     Objects.requireNonNull(predicate);
     return Formattable.predicate(
         String.format("noneMatch[%s]", predicate),
@@ -67,7 +67,7 @@ public enum CrestPredicates {
     );
   }
 
-  public static <E> Predicate<Stream<? extends E>> anyMatch(Predicate<E> predicate) {
+  public static <E> Predicate<? super Stream<? extends E>> anyMatch(Predicate<E> predicate) {
     Objects.requireNonNull(predicate);
     return Formattable.predicate(
         String.format("anyMatch[%s]", predicate),
@@ -75,7 +75,7 @@ public enum CrestPredicates {
     );
   }
 
-  public static Predicate<String> matchesRegex(String regex) {
+  public static Predicate<? super String> matchesRegex(String regex) {
     Objects.requireNonNull(regex);
     return Formattable.predicate(
         String.format("matchesRegex[%s]", regex),
@@ -83,7 +83,7 @@ public enum CrestPredicates {
     );
   }
 
-  public static Predicate<String> containsString(String string) {
+  public static Predicate<? super String> containsString(String string) {
     Objects.requireNonNull(string);
     return Formattable.predicate(
         String.format("containsString[%s]", string),
