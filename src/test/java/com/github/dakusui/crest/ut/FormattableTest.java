@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.ut;
 
-import com.github.dakusui.crest.CrestUnit;
-import com.github.dakusui.crest.Formattable;
+import com.github.dakusui.crest.junit.CrestUnit;
+import com.github.dakusui.crest.core.Formattable;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;

@@ -1,9 +1,9 @@
 package com.github.dakusui.crest.matcherbuilders;
 
-import com.github.dakusui.crest.CrestFunctions;
+import com.github.dakusui.crest.functions.CrestFunctions;
 import com.github.dakusui.crest.CrestMatchers;
-import com.github.dakusui.crest.CrestPredicates;
-import com.github.dakusui.crest.InternalUtils;
+import com.github.dakusui.crest.predicates.CrestPredicates;
+import com.github.dakusui.crest.core.InternalUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Matcher;
 

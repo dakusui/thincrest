@@ -1,4 +1,6 @@
-package com.github.dakusui.crest;
+package com.github.dakusui.crest.functions;
+
+import com.github.dakusui.crest.core.Formattable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

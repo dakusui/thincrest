@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.matcherbuilders;
 
-import com.github.dakusui.crest.CrestPredicates;
+import com.github.dakusui.crest.predicates.CrestPredicates;
 
 import java.util.function.Function;
 

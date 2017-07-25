@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.ut;
 
-import com.github.dakusui.crest.CrestPredicates;
-import com.github.dakusui.crest.CrestUnit;
+import com.github.dakusui.crest.predicates.CrestPredicates;
+import com.github.dakusui.crest.junit.CrestUnit;
 import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;

@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.examples;
 
 import com.github.dakusui.crest.CrestMatchers;
-import com.github.dakusui.crest.CrestPredicates;
+import com.github.dakusui.crest.predicates.CrestPredicates;
 import com.github.dakusui.crest.matcherbuilders.Crest;
 import org.junit.Test;
 

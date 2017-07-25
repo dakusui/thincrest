@@ -1,4 +1,4 @@
-package com.github.dakusui.crest;
+package com.github.dakusui.crest.core;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;

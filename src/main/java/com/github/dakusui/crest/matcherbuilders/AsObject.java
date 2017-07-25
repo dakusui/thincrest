@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.matcherbuilders;
 
-import com.github.dakusui.crest.InternalUtils;
+import com.github.dakusui.crest.core.InternalUtils;
 import org.hamcrest.Matcher;
 
 import java.util.LinkedList;

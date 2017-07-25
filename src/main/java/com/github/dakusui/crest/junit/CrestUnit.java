@@ -1,5 +1,6 @@
-package com.github.dakusui.crest;
+package com.github.dakusui.crest.junit;
 
+import com.github.dakusui.crest.core.CrestUtils;
 import org.junit.After;
 import org.junit.Before;
 

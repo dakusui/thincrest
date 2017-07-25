@@ -1,4 +1,4 @@
-package com.github.dakusui.crest;
+package com.github.dakusui.crest.core;
 
 import java.io.IOException;
 import java.io.OutputStream;

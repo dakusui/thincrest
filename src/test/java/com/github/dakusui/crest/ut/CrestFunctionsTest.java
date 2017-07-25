@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.ut;
 
-import com.github.dakusui.crest.CrestFunctions;
-import com.github.dakusui.crest.CrestUnit;
+import com.github.dakusui.crest.functions.CrestFunctions;
+import com.github.dakusui.crest.junit.CrestUnit;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;

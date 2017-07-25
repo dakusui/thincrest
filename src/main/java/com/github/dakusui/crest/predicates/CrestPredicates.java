@@ -1,4 +1,6 @@
-package com.github.dakusui.crest;
+package com.github.dakusui.crest.predicates;
+
+import com.github.dakusui.crest.core.Formattable;
 
 import java.util.Objects;
 import java.util.function.Predicate;

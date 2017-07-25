@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.ut;
 
-import com.github.dakusui.crest.CrestUnit;
-import com.github.dakusui.crest.Formattable;
+import com.github.dakusui.crest.junit.CrestUnit;
+import com.github.dakusui.crest.core.Formattable;
 import com.github.dakusui.crest.matcherbuilders.AsObject;
 import com.github.dakusui.crest.matcherbuilders.Crest;
 import org.hamcrest.CoreMatchers;
@@ -17,11 +17,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.crest.CrestFunctions.elementAt;
-import static com.github.dakusui.crest.CrestFunctions.size;
+import static com.github.dakusui.crest.functions.CrestFunctions.elementAt;
+import static com.github.dakusui.crest.functions.CrestFunctions.size;
 import static com.github.dakusui.crest.CrestMatchers.allOf;
 import static com.github.dakusui.crest.CrestMatchers.anyOf;
-import static com.github.dakusui.crest.CrestPredicates.equalTo;
+import static com.github.dakusui.crest.predicates.CrestPredicates.equalTo;
 import static org.junit.Assert.*;
 
 @RunWith(Enclosed.class)
