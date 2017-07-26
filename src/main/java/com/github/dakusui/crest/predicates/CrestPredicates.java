@@ -1,10 +1,13 @@
 package com.github.dakusui.crest.predicates;
 
 import com.github.dakusui.crest.core.Formattable;
+import com.github.dakusui.crest.core.InternalUtils;
 
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import static java.util.Arrays.asList;
 
 public enum CrestPredicates {
   ;
@@ -13,6 +16,13 @@ public enum CrestPredicates {
     return Formattable.predicate(
         String.format("equalTo[%s]", value),
         v -> Objects.equals(v, value)
+    );
+  }
+
+  public static <T> Predicate<? super T> invoke(String methodName, Object[] args) {
+    return Formattable.predicate(
+        String.format("invoke[%s,%s]", methodName, asList(args)),
+        (Object target) -> (boolean) InternalUtils.invokeMethod(target, methodName, args)
     );
   }
 

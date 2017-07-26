@@ -43,6 +43,10 @@ public interface Crest<I, O> {
 
   <C extends Crest<? super I, ? extends O>> C check(Predicate<? super O> predicate);
 
+  default <C extends Crest<? super I, ? extends O>> C check(String methodName, Object... args) {
+    return check(CrestPredicates.invoke(methodName, args));
+  }
+
   @SuppressWarnings("unchecked")
   default <C extends Crest<? super I, ? extends O>> C equalTo(O value) {
     return (C) this.check(CrestPredicates.equalTo(value));

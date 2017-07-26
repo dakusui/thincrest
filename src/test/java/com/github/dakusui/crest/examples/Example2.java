@@ -36,9 +36,22 @@ public class Example2 {
     assertThat(
         Arrays.asList("Hello", "world"),
         MatcherBuilders.allOf(
+            MatcherBuilders.asStream().allMatch(Formattable.predicate("==bye", "bye"::equals)).matcher(),
+            MatcherBuilders.asStream().noneMatch(Formattable.predicate("==bye", "bye"::equals)).matcher(),
             MatcherBuilders.asStream().anyMatch(Formattable.predicate("==bye", "bye"::equals)).matcher(),
             MatcherBuilders.asString().containsString("bye").matcher()
         )
     );
   }
+
+  @Test
+  public void test5() {
+    assertThat(
+        "Gallia est omnis divisa quarun unum incolunt Belgae",
+        MatcherBuilders.allOf(
+            MatcherBuilders.asString().check("contains", "est").matcher()
+        )
+    );
+  }
+
 }
