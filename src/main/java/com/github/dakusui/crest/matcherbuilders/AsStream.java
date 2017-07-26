@@ -6,7 +6,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class AsStream<I, E> extends AsObject<I> {
+public class AsStream<I, E> extends AsObject<I, AsStream<I,E>> {
   public AsStream(Function<? super I, Stream<? extends E>> function) {
     super(function);
   }

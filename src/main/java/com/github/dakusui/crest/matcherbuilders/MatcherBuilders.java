@@ -42,12 +42,12 @@ public enum MatcherBuilders {
   }
 
   @SuppressWarnings("unchecked")
-  public static <I, O, C extends Crest<? super I, O>> C create(Function<? super I, ? extends O> function) {
-    return (C) new AsObject<I>(function);
+  public static <I, O, C extends AsObject<? super I, C>> C create(Function<? super I, ? extends O> function) {
+    return (C) new AsObject<>(function);
   }
 
   @SuppressWarnings("unchecked")
-  public static <I, C extends AsObject<? super I>> C asObject() {
+  public static <I, C extends AsObject<? super I, C>> C asObject() {
     return (C) create(CrestFunctions.identity());
   }
 
@@ -59,8 +59,8 @@ public enum MatcherBuilders {
     return new AsStream<>(CrestFunctions.stream());
   }
 
-  public static <I, O, C extends Crest<? super I, O>> C asObject(String methodName, Object... args) {
-    return (C) new AsObject<I>(CrestFunctions.invoke(methodName, args));
+  public static <I, S extends AsObject<I, S>> AsObject<? super I, S> asObject(String methodName, Object... args) {
+    return (S) new AsObject<I, S>(CrestFunctions.invoke(methodName, args));
   }
 
   static abstract class IndentManagedDiagnosingMatcher<T> extends DiagnosingMatcher<T> {

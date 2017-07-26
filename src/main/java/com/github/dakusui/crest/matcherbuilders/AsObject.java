@@ -1,6 +1,7 @@
 package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.core.InternalUtils;
+import com.sun.javafx.binding.SelectBinding;
 import org.hamcrest.Matcher;
 
 import java.util.LinkedList;
@@ -9,7 +10,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class AsObject<I> implements Crest<I, Object> {
+public class AsObject<I, S extends AsObject<I, S>> implements Crest<I, Object, S> {
   private final Function<? super I, ?>          function;
   private final List<Predicate<? super Object>> predicates;
 
@@ -21,9 +22,9 @@ public class AsObject<I> implements Crest<I, Object> {
 
   @Override
   @SuppressWarnings("unchecked")
-  public <C extends Crest<? super I, ?>> C check(Predicate<? super Object> predicate) {
+  public S check(Predicate<? super Object> predicate) {
     this.predicates.add(predicate);
-    return (C) this;
+    return (S) this;
   }
 
   @Override

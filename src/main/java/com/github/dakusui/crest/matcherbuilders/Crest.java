@@ -11,7 +11,10 @@ import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
 
-public interface Crest<I, O> {
+/*
+ * 'S' for 'self'
+ */
+public interface Crest<I, O, S extends Crest<I, O, S>> {
   enum Op {
     AND {
       @Override
@@ -41,15 +44,15 @@ public interface Crest<I, O> {
     abstract <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers);
   }
 
-  <C extends Crest<? super I, ? extends O>> C check(Predicate<? super O> predicate);
+  S check(Predicate<? super O> predicate);
 
-  default <C extends Crest<? super I, ? extends O>> C check(String methodName, Object... args) {
+  default S check(String methodName, Object... args) {
     return check(CrestPredicates.invoke(methodName, args));
   }
 
   @SuppressWarnings("unchecked")
-  default <C extends Crest<? super I, ? extends O>> C equalTo(O value) {
-    return (C) this.check(CrestPredicates.equalTo(value));
+  default S equalTo(O value) {
+    return (S) this.check(CrestPredicates.equalTo(value));
   }
 
   Matcher<? super I> all();

@@ -5,7 +5,7 @@ import com.github.dakusui.crest.predicates.CrestPredicates;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class AsString<I> extends AsObject<I> {
+public class AsString<I> extends AsObject<I, AsString<I>> {
   public AsString(Function<? super I, ? extends String> function) {
     super(function);
   }
