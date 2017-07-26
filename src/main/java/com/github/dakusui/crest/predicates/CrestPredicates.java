@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public enum CrestPredicates {
   ;
@@ -21,40 +22,40 @@ public enum CrestPredicates {
 
   public static <T> Predicate<? super T> invoke(String methodName, Object[] args) {
     return Formattable.predicate(
-        String.format("invoke[%s,%s]", methodName, asList(args)),
+        String.format("@%s%s", methodName, asList(args)),
         (Object target) -> (boolean) InternalUtils.invokeMethod(target, methodName, args)
     );
   }
 
-  public static <T extends Comparable<? super T>> Predicate<T> gt(T value) {
+  public static <T extends Comparable<? super T>> Predicate<? super T> gt(T value) {
     return Formattable.predicate(
         String.format(">[%s]", value),
         v -> v.compareTo(value) > 0
     );
   }
 
-  public static <T extends Comparable<? super T>> Predicate<T> ge(T value) {
+  public static <T extends Comparable<? super T>> Predicate<? super T> ge(T value) {
     return Formattable.predicate(
         String.format(">=[%s]", value),
         v -> v.compareTo(value) >= 0
     );
   }
 
-  public static <T extends Comparable<? super T>> Predicate<T> lt(T value) {
+  public static <T extends Comparable<? super T>> Predicate<? super T> lt(T value) {
     return Formattable.predicate(
         String.format("<[%s]", value),
         v -> v.compareTo(value) < 0
     );
   }
 
-  public static <T extends Comparable<? super T>> Predicate<T> le(T value) {
+  public static <T extends Comparable<? super T>> Predicate<? super T> le(T value) {
     return Formattable.predicate(
         String.format("<=[%s]", value),
         v -> v.compareTo(value) <= 0
     );
   }
 
-  public static <T extends Comparable<? super T>> Predicate<T> eq(T value) {
+  public static <T extends Comparable<? super T>> Predicate<? super T> eq(T value) {
     return Formattable.predicate(
         String.format("==[%s]", value),
         v -> v.compareTo(value) == 0

@@ -1,7 +1,6 @@
 package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.core.InternalUtils;
-import com.sun.javafx.binding.SelectBinding;
 import org.hamcrest.Matcher;
 
 import java.util.LinkedList;

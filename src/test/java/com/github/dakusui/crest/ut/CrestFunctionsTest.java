@@ -91,7 +91,7 @@ public class CrestFunctionsTest {
     @Test
     public void whenToString$thenLooksGood() {
       assertEquals(
-          "invoke[equals,[Hello, world]]",
+          "@equals[Hello, world]",
           CrestFunctions.invoke("equals", "Hello, world").toString()
       );
 

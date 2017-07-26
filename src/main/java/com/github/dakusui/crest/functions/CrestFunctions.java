@@ -3,7 +3,8 @@ package com.github.dakusui.crest.functions;
 import com.github.dakusui.crest.core.Formattable;
 import com.github.dakusui.crest.core.InternalUtils;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -29,8 +30,15 @@ public enum CrestFunctions {
   @SuppressWarnings("unchecked")
   public static <E> Function<? super Object, ? extends E> invoke(String methodName, Object... args) {
     return Formattable.function(
-        String.format("invoke[%s,%s]", methodName, asList(args)),
+        String.format("@%s%s", methodName, asList(args)),
         (Object target) -> (E) InternalUtils.invokeMethod(target, methodName, args)
+    );
+  }
+
+  public static <E> Function<? super String, Integer> length() {
+    return Formattable.function(
+        "length",
+        String::length
     );
   }
 

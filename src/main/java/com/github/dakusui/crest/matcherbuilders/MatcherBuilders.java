@@ -5,6 +5,7 @@ import org.hamcrest.Description;
 import org.hamcrest.DiagnosingMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
+import org.junit.ComparisonFailure;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -51,16 +52,56 @@ public enum MatcherBuilders {
     return (C) create(CrestFunctions.identity());
   }
 
+  public static <I, S extends AsObject<I, S>> AsObject<? super I, S> asObject(String methodName, Object... args) {
+    return new AsObject<>(CrestFunctions.invoke(methodName, args));
+  }
+
+  public static <I, T extends Comparable<T>> AsComparable<I, T> asComparable(Function<? super I, ? extends T> function) {
+    return new AsComparable<>(function);
+  }
+
+  public static <T extends Comparable<T>> AsComparable<T, T> asComparable() {
+    return asComparable(Function.identity());
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <I, T extends Comparable<T>> AsComparable<I, T> asComparable(String methodName, Object... args) {
+    return (AsComparable<I, T>) new AsComparable<>((Function<? super I, ? extends String>) CrestFunctions.invoke(methodName, args));
+  }
+
   public static <I> AsString<I> asString() {
-    return new AsString<>(CrestFunctions.stringify());
+    return asString(CrestFunctions.stringify());
+  }
+
+  public static <I> AsString<I> asString(Function<? super I, ? extends String> function) {
+    return new AsString<>(Objects.requireNonNull(function));
+  }
+
+  @SuppressWarnings({ "RedundantCast", "unchecked" })
+  public static <I> AsString<I> asString(String methodName, Object... args) {
+    return asString((Function<? super I, ? extends String>) CrestFunctions.invoke(methodName, args));
   }
 
   public static <I extends Collection<? extends E>, E> AsStream<I, E> asStream() {
     return new AsStream<>(CrestFunctions.stream());
   }
 
-  public static <I, S extends AsObject<I, S>> AsObject<? super I, S> asObject(String methodName, Object... args) {
-    return (S) new AsObject<I, S>(CrestFunctions.invoke(methodName, args));
+  public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
+    assertThat("", actual, matcher);
+  }
+
+  public static <T> void assertThat(String message, T actual, Matcher<? super T> matcher) {
+    if (!matcher.matches(actual)) {
+      Description description = new StringDescription();
+      description.appendText(message).appendText("\nExpected: ").appendDescriptionOf(matcher).appendText("\n     but: ");
+      matcher.describeMismatch(actual, description);
+      Description actualDescription = new StringDescription();
+      matcher.describeMismatch(actual, actualDescription);
+      throw new ComparisonFailure(
+          description.toString(),
+          new StringDescription().appendDescriptionOf(matcher).toString(),
+          actualDescription.toString());
+    }
   }
 
   static abstract class IndentManagedDiagnosingMatcher<T> extends DiagnosingMatcher<T> {
