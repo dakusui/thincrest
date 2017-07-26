@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.functions.CrestFunctions;
-import com.github.dakusui.crest.junit.CrestUnit;
+import com.github.dakusui.crest.utils.TestBase;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(Enclosed.class)
 public class CrestFunctionsTest {
-  public static class ElementAtTest extends CrestUnit {
+  public static class ElementAtTest extends TestBase {
     @Test
     public void whenApplied$thenLooksGood() {
       Assert.assertEquals(
@@ -33,7 +33,7 @@ public class CrestFunctionsTest {
     }
   }
 
-  public static class SizeTest extends CrestUnit {
+  public static class SizeTest extends TestBase {
     @Test
     public void whenApplied$thenLooksGood() {
       assertEquals(
@@ -51,7 +51,7 @@ public class CrestFunctionsTest {
     }
   }
 
-  public static class StreamTest extends CrestUnit {
+  public static class StreamTest extends TestBase {
     @Test
     public void whenApplied$thenLooksGood() {
       assertEquals(
@@ -69,7 +69,7 @@ public class CrestFunctionsTest {
     }
   }
 
-  public static class InvokeTest extends CrestUnit {
+  public static class InvokeTest extends TestBase {
     @Test
     public void whenApplied$thenLooksGood() {
       assertEquals(
@@ -98,7 +98,7 @@ public class CrestFunctionsTest {
     }
   }
 
-  public static class StringifyTest extends CrestUnit {
+  public static class StringifyTest extends TestBase {
     @Test
     public void whenApplied$thenLooksGood() {
       assertEquals(

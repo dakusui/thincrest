@@ -1,6 +1,7 @@
 package com.github.dakusui.crest.examples;
 
 import com.github.dakusui.crest.core.Formattable;
+import com.github.dakusui.crest.matcherbuilders.AsString;
 import com.github.dakusui.crest.matcherbuilders.MatcherBuilders;
 import com.github.dakusui.crest.predicates.CrestPredicates;
 import org.junit.Test;
@@ -49,9 +50,8 @@ public class Example2 {
     assertThat(
         "Gallia est omnis divisa quarun unum incolunt Belgae",
         MatcherBuilders.allOf(
-            MatcherBuilders.asString().check("contains", "est").matcher()
+            MatcherBuilders.asString().<AsString>check("contains", "est").containsString("Caesar").matcher()
         )
     );
   }
-
 }

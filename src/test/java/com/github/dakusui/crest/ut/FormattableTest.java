@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.ut;
 
-import com.github.dakusui.crest.junit.CrestUnit;
+import com.github.dakusui.crest.utils.TestBase;
 import com.github.dakusui.crest.core.Formattable;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertFalse;
 
 @RunWith(Enclosed.class)
 public class FormattableTest {
-  public static class FunctionTest extends CrestUnit {
+  public static class FunctionTest extends TestBase {
     Function<String, String> appendA = Formattable.function("append[A]", s -> s + "A");
     Function<String, String> appendB = Formattable.function("append[B]", s -> s + "B");
 
@@ -48,7 +48,7 @@ public class FormattableTest {
     }
   }
 
-  public static class PredicateTest extends CrestUnit {
+  public static class PredicateTest extends TestBase {
     Predicate<String> isA = Formattable.predicate("is[A]", "A"::equals);
     Predicate<String> isB = Formattable.predicate("is[B]", "B"::equals);
 

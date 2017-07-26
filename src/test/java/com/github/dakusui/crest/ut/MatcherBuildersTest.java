@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.ut;
 
-import com.github.dakusui.crest.junit.CrestUnit;
+import com.github.dakusui.crest.utils.TestBase;
 import com.github.dakusui.crest.core.Formattable;
 import com.github.dakusui.crest.matcherbuilders.AsObject;
 import com.github.dakusui.crest.matcherbuilders.Crest;
@@ -41,7 +41,7 @@ public class MatcherBuildersTest {
    *   (4): F -> F      : fail
    * </pre>
    */
-  public static class ConjTest extends CrestUnit {
+  public static class ConjTest extends TestBase {
     /**
      * <pre>
      *   Conj
@@ -183,7 +183,7 @@ public class MatcherBuildersTest {
    *   (4): F -> F      : fail
    * </pre>
    */
-  public static class DisjTest extends CrestUnit {
+  public static class DisjTest extends TestBase {
 
     /**
      * <pre>
@@ -295,7 +295,7 @@ public class MatcherBuildersTest {
     }
   }
 
-  public static class NestedTest extends CrestUnit {
+  public static class NestedTest extends TestBase {
     /**
      * <pre>
      *   Disj
