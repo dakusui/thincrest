@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.ut;
 
-import com.github.dakusui.crest.predicates.CrestPredicates;
+import com.github.dakusui.crest.functions.CrestPredicates;
 import com.github.dakusui.crest.utils.TestBase;
 import junit.framework.TestCase;
 import org.junit.Test;

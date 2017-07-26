@@ -1,14 +1,14 @@
-package com.github.dakusui.crest.predicates;
+package com.github.dakusui.crest.functions;
 
 import com.github.dakusui.crest.core.Formattable;
 import com.github.dakusui.crest.core.InternalUtils;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public enum CrestPredicates {
   ;
@@ -62,6 +62,46 @@ public enum CrestPredicates {
     );
   }
 
+  public static Predicate<? super String> matchesRegex(String regex) {
+    Objects.requireNonNull(regex);
+    return Formattable.predicate(
+        String.format("matchesRegex[%s]", regex),
+        s -> s.matches(regex)
+    );
+  }
+
+  public static Predicate<? super String> containsString(String string) {
+    Objects.requireNonNull(string);
+    return Formattable.predicate(
+        String.format("containsString[%s]", string),
+        s -> s.contains(string)
+    );
+  }
+
+  public static <E> Predicate<? super Collection<? super E>> containsAll(Collection<? extends E> collection) {
+    Objects.requireNonNull(collection);
+    return Formattable.predicate(
+        String.format("containsAll%s", collection),
+        c -> c.containsAll(collection)
+    );
+  }
+
+  public static <E> Predicate<? super Collection<? super E>> contains(E entry) {
+    Objects.requireNonNull(entry);
+    return Formattable.predicate(
+        String.format("contains[%s]", entry),
+        c -> c.contains(entry)
+    );
+  }
+
+  public static <E> Predicate<? super Collection<? super E>> isEmpty() {
+    return Formattable.predicate(
+        "isEmpty",
+        Collection::isEmpty
+    );
+  }
+
+
   public static <E> Predicate<? super Stream<? extends E>> allMatch(Predicate<E> predicate) {
     Objects.requireNonNull(predicate);
     return Formattable.predicate(
@@ -83,22 +123,6 @@ public enum CrestPredicates {
     return Formattable.predicate(
         String.format("anyMatch[%s]", predicate),
         stream -> stream.anyMatch(predicate)
-    );
-  }
-
-  public static Predicate<? super String> matchesRegex(String regex) {
-    Objects.requireNonNull(regex);
-    return Formattable.predicate(
-        String.format("matchesRegex[%s]", regex),
-        s -> s.matches(regex)
-    );
-  }
-
-  public static Predicate<? super String> containsString(String string) {
-    Objects.requireNonNull(string);
-    return Formattable.predicate(
-        String.format("containsString[%s]", string),
-        s -> s.contains(string)
     );
   }
 }

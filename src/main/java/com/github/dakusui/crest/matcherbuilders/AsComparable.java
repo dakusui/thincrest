@@ -1,37 +1,31 @@
 package com.github.dakusui.crest.matcherbuilders;
 
-import com.github.dakusui.crest.predicates.CrestPredicates;
+import com.github.dakusui.crest.functions.CrestPredicates;
 
 import java.util.function.Function;
-import java.util.function.Predicate;
 
-public class AsComparable<I, T extends Comparable<T>> extends AsObject<I, AsComparable<I, T>> {
+public class AsComparable<I, T extends Comparable<? super T>> extends AsObject<I, T, AsComparable<I, T>> {
   public AsComparable(Function<? super I, ? extends T> function) {
     super(function);
   }
 
-  @SuppressWarnings("unchecked")
-  public AsComparable<I, T> gt(T value) {
-    return this.check((Predicate<? super Object>) CrestPredicates.gt(value));
+  public AsComparable<? super I, T> gt(T value) {
+    return this.check(CrestPredicates.gt(value));
   }
 
-  @SuppressWarnings("unchecked")
-  public AsComparable<I, T> ge(T value) {
-    return this.check((Predicate<? super Object>) CrestPredicates.ge(value));
+  public AsComparable<? super I, T> ge(T value) {
+    return this.check(CrestPredicates.ge(value));
   }
 
-  @SuppressWarnings("unchecked")
-  public AsComparable<I, T> lt(T value) {
-    return this.check((Predicate<? super Object>) CrestPredicates.lt(value));
+  public AsComparable<? super I, T> lt(T value) {
+    return this.check(CrestPredicates.lt(value));
   }
 
-  @SuppressWarnings("unchecked")
-  public AsComparable<I, T> le(T value) {
-    return this.check((Predicate<? super Object>) CrestPredicates.le(value));
+  public AsComparable<? super I, T> le(T value) {
+    return this.check(CrestPredicates.le(value));
   }
 
-  @SuppressWarnings("unchecked")
-  public AsComparable<I, T> eq(T value) {
-    return this.check((Predicate<? super Object>) CrestPredicates.eq(value));
+  public AsComparable<? super I, T> eq(T value) {
+    return this.check(CrestPredicates.eq(value));
   }
 }

@@ -7,14 +7,10 @@ import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.ComparisonFailure;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 public enum Crest {
@@ -28,7 +24,7 @@ public enum Crest {
   @SuppressWarnings("Convert2Diamond")
   @SafeVarargs
   public static <T> Matcher<T> allOf(Matcher<? super T>... matchers) {
-    return new AllOf<T>(true, asList(matchers));
+    return new AllOf<T>(true, Arrays.asList(matchers));
   }
 
   /**
@@ -39,34 +35,34 @@ public enum Crest {
   @SuppressWarnings("Convert2Diamond")
   @SafeVarargs
   public static <T> Matcher<T> anyOf(Matcher<? super T>... matchers) {
-    return new AnyOf<T>(true, asList(matchers));
+    return new AnyOf<T>(true, Arrays.asList(matchers));
   }
 
   @SuppressWarnings("unchecked")
-  public static <I, O, C extends AsObject<? super I, C>> C create(Function<? super I, ? extends O> function) {
+  public static <I, O, C extends AsObject<? super I, O, C>> C create(Function<? super I, ? extends O> function) {
     return (C) new AsObject<>(function);
   }
 
   @SuppressWarnings("unchecked")
-  public static <I, C extends AsObject<? super I, C>> C asObject() {
-    return (C) create(CrestFunctions.identity());
+  public static <I, C extends AsObject<? super I, I, C>> C asObjectOf(Class<? extends I> type) {
+    return (C) new AsObject<>(CrestFunctions.identity());
   }
 
-  public static <I, S extends AsObject<I, S>> AsObject<? super I, S> asObject(String methodName, Object... args) {
-    return new AsObject<>(CrestFunctions.invoke(methodName, args));
+  public static <I, O, S extends AsObject<I, O, S>> AsObject<I, O, S> asObject(String methodName, Object... args) {
+    return new AsObject<>(CrestFunctions.<I, O>invoke(methodName, args));
   }
 
-  public static <I, T extends Comparable<T>> AsComparable<I, T> asComparable(Function<? super I, ? extends T> function) {
+  public static <I extends Comparable<? super I>> AsComparable<? super I, I> asComparableOf(Class<I> type) {
+    return asComparable(CrestFunctions.identity());
+  }
+
+  public static <I, T extends Comparable<? super T>> AsComparable<? super I, T> asComparable(Function<? super I, ? extends T> function) {
     return new AsComparable<>(function);
   }
 
-  public static <T extends Comparable<T>> AsComparable<T, T> asComparable() {
-    return asComparable(Function.identity());
-  }
-
-  @SuppressWarnings("unchecked")
-  public static <I, T extends Comparable<T>> AsComparable<I, T> asComparable(String methodName, Object... args) {
-    return (AsComparable<I, T>) new AsComparable<>((Function<? super I, ? extends String>) CrestFunctions.invoke(methodName, args));
+  @SuppressWarnings({ "RedundantCast", "unchecked" })
+  public static <I, T extends Comparable<? super T>> AsComparable<? super I, T> asComparableOf(Class<T> type, String methodName, Object... args) {
+    return asComparable((Function<? super I, ? extends T>) CrestFunctions.invoke(methodName, (Object[]) args));
   }
 
   public static <I> AsString<I> asString() {
@@ -84,6 +80,10 @@ public enum Crest {
 
   public static <I extends Collection<? extends E>, E> AsStream<I, E> asStream() {
     return new AsStream<>(CrestFunctions.stream());
+  }
+
+  public static <E> AsList<List<E>, E> asList() {
+    return new AsList<>(CrestFunctions.identity());
   }
 
   public static <T> void assertThat(T actual, Matcher<? super T> matcher) {

@@ -38,7 +38,7 @@ public enum InternalUtils {
             .appendDescriptionOf(this).appendText(" ")
             .appendText("was false because " + function.toString() + "(x)=")
             .appendValue(function.apply((I) item))
-            .appendText(" did not satisfy it")
+            .appendText(" does not satisfy it")
         ;
       }
 

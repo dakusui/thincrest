@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.core.InternalUtils;
-import com.github.dakusui.crest.predicates.CrestPredicates;
+import com.github.dakusui.crest.functions.CrestPredicates;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Matcher;
 
@@ -50,9 +50,8 @@ public interface MatcherBuilder<I, O, S extends MatcherBuilder<I, O, S>> {
     return check(CrestPredicates.invoke(methodName, args));
   }
 
-  @SuppressWarnings("unchecked")
   default S equalTo(O value) {
-    return (S) this.check(CrestPredicates.equalTo(value));
+    return this.check(CrestPredicates.equalTo(value));
   }
 
   Matcher<? super I> all();

@@ -9,19 +9,18 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class AsObject<I, S extends AsObject<I, S>> implements MatcherBuilder<I, Object, S> {
-  private final Function<? super I, ?>          function;
-  private final List<Predicate<? super Object>> predicates;
+public class AsObject<I, O, S extends AsObject<I, O, S>> implements MatcherBuilder<I, O, S> {
+  private final Function<? super I, ? extends O> function;
+  private final List<Predicate<? super O>>       predicates;
 
-  @SuppressWarnings("WeakerAccess")
-  public AsObject(Function<? super I, ?> function) {
-    this.function = Objects.requireNonNull(function);
+  public AsObject(Function<? super I, ? extends O> function) {
+    this.function = function;
     this.predicates = new LinkedList<>();
   }
 
-  @Override
   @SuppressWarnings("unchecked")
-  public S check(Predicate<? super Object> predicate) {
+  @Override
+  public S check(Predicate<? super O> predicate) {
     this.predicates.add(predicate);
     return (S) this;
   }
@@ -36,11 +35,11 @@ public class AsObject<I, S extends AsObject<I, S>> implements MatcherBuilder<I, 
     return matcher(Op.OR);
   }
 
-  @SuppressWarnings("unchecked")
   private Matcher<? super I> matcher(Op op) {
     InternalUtils.requireState(!predicates.isEmpty());
     return (predicates.size() == 1) ?
         InternalUtils.toMatcher(predicates.get(0), this.function) :
         Objects.requireNonNull(op).create(predicates, this.function);
   }
+
 }

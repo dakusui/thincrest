@@ -1,8 +1,8 @@
 package com.github.dakusui.crest.ut;
 
+import com.github.dakusui.crest.matcherbuilders.AsObject;
 import com.github.dakusui.crest.utils.TestBase;
 import com.github.dakusui.crest.core.Formattable;
-import com.github.dakusui.crest.matcherbuilders.AsObject;
 import com.github.dakusui.crest.matcherbuilders.Crest;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
@@ -21,7 +21,7 @@ import static com.github.dakusui.crest.functions.CrestFunctions.elementAt;
 import static com.github.dakusui.crest.functions.CrestFunctions.size;
 import static com.github.dakusui.crest.matcherbuilders.Crest.allOf;
 import static com.github.dakusui.crest.matcherbuilders.Crest.anyOf;
-import static com.github.dakusui.crest.predicates.CrestPredicates.equalTo;
+import static com.github.dakusui.crest.functions.CrestPredicates.equalTo;
 import static org.junit.Assert.*;
 
 @RunWith(Enclosed.class)
@@ -101,7 +101,7 @@ public class CrestTest {
               + "  equalTo[hello](elementAt[0](x))\n"
               + "]->true\n"
               + "     but: when x=<[Hello, world, !]>; then and:[\n"
-              + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" did not satisfy it\n"
+              + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
       );
@@ -165,8 +165,8 @@ public class CrestTest {
               + "  equalTo[hello](elementAt[0](x))\n"
               + "]->true\n"
               + "     but: when x=<[Hello, world, !]>; then and:[\n"
-              + "  equalTo[2](size(x)) was false because size(x)=<3> did not satisfy it\n"
-              + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" did not satisfy it\n"
+              + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
+              + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
       );
@@ -286,8 +286,8 @@ public class CrestTest {
               + "  equalTo[hello](elementAt[0](x))\n"
               + "]->true\n"
               + "     but: when x=<[Hello, world, !]>; then or:[\n"
-              + "  equalTo[2](size(x)) was false because size(x)=<3> did not satisfy it\n"
-              + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" did not satisfy it\n"
+              + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
+              + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
       );
@@ -323,10 +323,10 @@ public class CrestTest {
               + "  ]\n"
               + "]->true\n"
               + "     but: when x=<[Hello, world, !]>; then or:[\n"
-              + "  equalTo[2](size(x)) was false because size(x)=<3> did not satisfy it\n"
+              + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
               + "  and:[\n"
-              + "    equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" did not satisfy it\n"
-              + "    equalTo[HELLO](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" did not satisfy it\n"
+              + "    equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
+              + "    equalTo[HELLO](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
               + "  ]->false\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
@@ -361,10 +361,10 @@ public class CrestTest {
               + "  ]\n"
               + "]->true\n"
               + "     but: when x=<[Hello, world, !]>; then and:[\n"
-              + "  equalTo[2](size(x)) was false because size(x)=<3> did not satisfy it\n"
+              + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
               + "  or:[\n"
-              + "    equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" did not satisfy it\n"
-              + "    equalTo[HELLO](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" did not satisfy it\n"
+              + "    equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
+              + "    equalTo[HELLO](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
               + "  ]->false\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()

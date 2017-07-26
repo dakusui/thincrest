@@ -1,2 +1,8 @@
-# recrest
-A small wrapper library for hamcrest/junit
+# thincrest
+```thincrest```(pronounced 'think rest') is a small wrapper library for hamcrest.
+
+# References
+* Hamcrest
+* JUnit
+* AssertJ
+* 
