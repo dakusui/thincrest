@@ -2,12 +2,12 @@ package com.github.dakusui.crest.examples;
 
 import com.github.dakusui.crest.core.Formattable;
 import com.github.dakusui.crest.functions.CrestFunctions;
-import com.github.dakusui.crest.matcherbuilders.MatcherBuilders;
+import com.github.dakusui.crest.matcherbuilders.Crest;
 import org.junit.Test;
 
 import java.util.Arrays;
 
-import static com.github.dakusui.crest.matcherbuilders.MatcherBuilders.*;
+import static com.github.dakusui.crest.matcherbuilders.Crest.*;
 import static java.util.Arrays.asList;
 
 public class Example2 {
@@ -44,7 +44,7 @@ public class Example2 {
             + "alium Aquitani, tertium linua ipsorum Celtae, nostra Galli appelantur",
         allOf(
             asString().check("contains", "est").containsString("Caesar").matcher(),
-            MatcherBuilders.asObject("length").check(Formattable.predicate(">1024", o -> ((Integer) o) > 1024)).matcher()
+            Crest.asObject("length").check(Formattable.predicate(">1024", o -> ((Integer) o) > 1024)).matcher()
         )
     );
   }
@@ -64,10 +64,10 @@ public class Example2 {
   public void test7() {
     assertThat(
         "Hello, Crest's world",
-        "--expected--",
+        "--actual string--",
         allOf(
-            asComparable(CrestFunctions.length()).gt(5).matcher(),
-            MatcherBuilders.<String, Integer>asComparable("length").gt(50).matcher()
+            asComparable(CrestFunctions.length()).ge(5).lt(50).matcher(),
+            Crest.<String, Integer>asComparable("length").gt(50).matcher()
         )
     );
   }

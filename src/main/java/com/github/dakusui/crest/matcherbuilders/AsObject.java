@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class AsObject<I, S extends AsObject<I, S>> implements Crest<I, Object, S> {
+public class AsObject<I, S extends AsObject<I, S>> implements MatcherBuilder<I, Object, S> {
   private final Function<? super I, ?>          function;
   private final List<Predicate<? super Object>> predicates;
 

@@ -4,7 +4,6 @@ import com.github.dakusui.crest.utils.TestBase;
 import com.github.dakusui.crest.core.Formattable;
 import com.github.dakusui.crest.matcherbuilders.AsObject;
 import com.github.dakusui.crest.matcherbuilders.Crest;
-import com.github.dakusui.crest.matcherbuilders.MatcherBuilders;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -20,13 +19,13 @@ import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.functions.CrestFunctions.elementAt;
 import static com.github.dakusui.crest.functions.CrestFunctions.size;
-import static com.github.dakusui.crest.matcherbuilders.MatcherBuilders.allOf;
-import static com.github.dakusui.crest.matcherbuilders.MatcherBuilders.anyOf;
+import static com.github.dakusui.crest.matcherbuilders.Crest.allOf;
+import static com.github.dakusui.crest.matcherbuilders.Crest.anyOf;
 import static com.github.dakusui.crest.predicates.CrestPredicates.equalTo;
 import static org.junit.Assert.*;
 
 @RunWith(Enclosed.class)
-public class MatcherBuildersTest {
+public class CrestTest {
 
   private static final Predicate<Integer> FAILING_CHECK = Formattable.predicate("failingCheck", v -> {
     throw new RuntimeException("FAILED");
@@ -52,15 +51,15 @@ public class MatcherBuildersTest {
     public void whenPassingAndThenPassing$thenPasses() {
       List<String> aList = composeTestData();
 
-      Optional<Description> description = MatcherBuildersTest.describeFailure(
+      Optional<Description> description = CrestTest.describeFailure(
           aList,
           allOf(
-              MatcherBuilders.<List<String>, Integer, AsObject>create(
+              Crest.<List<String>, Integer, AsObject>create(
                   size()
               ).check(
                   equalTo(3)
               ).all(),
-              MatcherBuilders.<List<String>, Object, AsObject>create(
+              Crest.<List<String>, Object, AsObject>create(
                   elementAt(0)
               ).check(equalTo(
                   "Hello"
@@ -85,10 +84,10 @@ public class MatcherBuildersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              MatcherBuilders.<List<String>, Integer, AsObject>create(size())
+              Crest.<List<String>, Integer, AsObject>create(size())
                   .check(equalTo(3))
                   .all(),
-              MatcherBuilders
+              Crest
                   .<List<String>, Object, AsObject>create(elementAt(0))
                   .check(equalTo("hello"))
                   .all()
@@ -121,8 +120,8 @@ public class MatcherBuildersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              MatcherBuilders.<List<String>, Integer, AsObject>create(size()).check(FAILING_CHECK).all(),
-              MatcherBuilders.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("Hello")).all()
+              Crest.<List<String>, Integer, AsObject>create(size()).check(FAILING_CHECK).all(),
+              Crest.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -154,8 +153,8 @@ public class MatcherBuildersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              MatcherBuilders.<List<String>, Object, AsObject>create(size()).check(equalTo(2)).all(),
-              MatcherBuilders.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("hello")).all()
+              Crest.<List<String>, Object, AsObject>create(size()).check(equalTo(2)).all(),
+              Crest.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -198,8 +197,8 @@ public class MatcherBuildersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              MatcherBuilders.<List<String>, Integer, AsObject>create(size()).check(equalTo(3)).all(),
-              MatcherBuilders.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("Hello")).all()
+              Crest.<List<String>, Integer, AsObject>create(size()).check(equalTo(3)).all(),
+              Crest.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -220,8 +219,8 @@ public class MatcherBuildersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              MatcherBuilders.<List<String>, Integer, AsObject>create(size()).check(equalTo(3)).all(),
-              MatcherBuilders.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("hello")).all()
+              Crest.<List<String>, Integer, AsObject>create(size()).check(equalTo(3)).all(),
+              Crest.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -242,8 +241,8 @@ public class MatcherBuildersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              MatcherBuilders.<List<String>, Integer, AsObject>create(size()).check(FAILING_CHECK).all(),
-              MatcherBuilders.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("Hello")).all()
+              Crest.<List<String>, Integer, AsObject>create(size()).check(FAILING_CHECK).all(),
+              Crest.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -275,8 +274,8 @@ public class MatcherBuildersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              MatcherBuilders.<List<String>, Integer, AsObject>create(size()).check(equalTo(2)).matcher(),
-              MatcherBuilders.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("hello")).matcher()
+              Crest.<List<String>, Integer, AsObject>create(size()).check(equalTo(2)).matcher(),
+              Crest.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("hello")).matcher()
           ));
 
       System.out.println(description.orElse(null));
@@ -309,8 +308,8 @@ public class MatcherBuildersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              MatcherBuilders.<List<String>, Integer, AsObject>create(size()).check(equalTo(2)).all(),
-              MatcherBuilders.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("hello")).check(equalTo("HELLO")).all()
+              Crest.<List<String>, Integer, AsObject>create(size()).check(equalTo(2)).all(),
+              Crest.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("hello")).check(equalTo("HELLO")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -347,8 +346,8 @@ public class MatcherBuildersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              MatcherBuilders.<List<String>, Integer, AsObject>create(size()).check(equalTo(2)).all(),
-              MatcherBuilders.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("hello")).check(equalTo("HELLO")).any()
+              Crest.<List<String>, Integer, AsObject>create(size()).check(equalTo(2)).all(),
+              Crest.<List<String>, Object, AsObject>create(elementAt(0)).check(equalTo("hello")).check(equalTo("HELLO")).any()
           ));
 
       System.out.println(description.orElse(null));
