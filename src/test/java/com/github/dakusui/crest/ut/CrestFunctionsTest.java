@@ -23,7 +23,7 @@ public class CrestFunctionsTest {
     @Test
     public void whenAsObject$thenCompilableWithPredefinedFunctions() {
       List<String> aList = asList("A", "B", "C");
-      
+
       assertThat(
           aList,
           allOf(

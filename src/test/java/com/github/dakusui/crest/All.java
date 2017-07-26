@@ -1,6 +1,6 @@
 package com.github.dakusui.crest;
 
-import com.github.dakusui.crest.examples.Example2;
+import com.github.dakusui.crest.examples.ExamplesTest;
 import com.github.dakusui.crest.ut.CrestFunctionsTest;
 import com.github.dakusui.crest.ut.CrestPredicatesTest;
 import com.github.dakusui.crest.ut.CrestTest;
@@ -14,7 +14,7 @@ import org.junit.runners.Suite;
     CrestTest.class,
     CrestPredicatesTest.class,
     FormattableTest.class,
-    Example2.class
+    ExamplesTest.class
 })
 public class All {
 }

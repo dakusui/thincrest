@@ -10,7 +10,7 @@ import java.util.Collections;
 
 import static com.github.dakusui.crest.matcherbuilders.Crest.*;
 
-public class Example2 {
+public class SimpleExamples {
   @Test
   public void givenListOf_Hello_World_$whenAsStringAndCheckIfMatchesRegex_HELLO_$thenFail() {
     assertThat(
@@ -23,7 +23,7 @@ public class Example2 {
   public void givenListOf_Hello_World_$whenAsStringAndCheckIfMatchesRegexWithMathingOne$thenPass() {
     assertThat(
         Arrays.asList("Hello", "world").toString(),
-        asString().matchesRegex("Hello").all()
+        asString().matchesRegex(".*Hello.*").all()
     );
   }
 
@@ -118,38 +118,38 @@ public class Example2 {
         Arrays.asList("Hello", "world"),
         anyOf(
             asStream().allMatch(Formattable.predicate("==bye", "bye"::equals)).matcher(),
-            asStream().noneMatch(Formattable.predicate("==bye", "bye"::equals)).matcher(),
+            asStream().noneMatch(Formattable.predicate("==bye", "bye"::equals).negate()).matcher(),
             asStream().anyMatch(Formattable.predicate("==bye", "bye"::equals)).matcher()
         )
     );
   }
 
   @Test
-  public void test8_b() {
+  public void test8_b$thenPass() {
     assertThat(
         "aStringToBeExamined",
-        //        anyOf(
-        asObject().<String>equalTo("aStringToBeExamined!").matcher()
-        //            asObjectOf(String.class).equalTo("aStringToBeExamined").matcher(),
-        //            asComparableOf(Integer.class, "length").eq(0).matcher()
-        //        )
+        anyOf(
+            asObject().equalTo("aStringToBeExamined!").matcher(),
+            asObject("toString").equalTo("aStringToBeExamined").matcher(),
+            asComparableOf(Integer.class, "length").eq(0).matcher()
+        )
     );
   }
 
   @Test
-  public void test8() {
+  public void test8$thenPass() {
     assertThat(
         "aStringToBeExamined",
-        //        anyOf(
-        asObject().equalTo("aStringToBeExamined!").matcher()
-        //            asObjectOf(String.class).equalTo("aStringToBeExamined").matcher(),
-        //            asComparableOf(Integer.class, "length").eq(0).matcher()
-        //        )
+        anyOf(
+            asObject().equalTo("aStringToBeExamined!").matcher(),
+            asObject().equalTo("aStringToBeExamined").matcher(),
+            asComparableOf(Integer.class, "length").eq(0).matcher()
+        )
     );
   }
 
   @Test
-  public void test8a() {
+  public void test8a$thenFail() {
     assertThat(
         "aStringToBeExamined",
         asObject().equalTo("aStringToBeExamined2").all()
@@ -188,7 +188,7 @@ public class Example2 {
   }
 
   @Test
-  public void givenStringOf20Letters$whenAsComparableByLengthMethodCallAndFailingCheck$thenFailing() {
+  public void givenStringOf20Letters$whenAsComparableByLengthMethodCallAndFailingCheck$thenFail() {
     assertThat(
         "Hello, world",
         "12345678901234567890",
@@ -223,7 +223,7 @@ public class Example2 {
   }
 
   @Test
-  public void given_50_$whenAsComparableAndDoFailingCheck$thenFailing() {
+  public void given_50_$whenAsComparableAndDoFailingCheck$thenFail() {
     assertThat(
         50,
         Crest.asComparableOf(Integer.class).ge(5).lt(50).all()
