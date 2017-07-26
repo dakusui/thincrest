@@ -38,18 +38,18 @@ public enum Crest {
     return new AnyOf<T>(true, Arrays.asList(matchers));
   }
 
-  @SuppressWarnings("unchecked")
-  public static <I, O, C extends AsObject<? super I, O, C>> C create(Function<? super I, ? extends O> function) {
-    return (C) new AsObject<>(function);
-  }
-
-  @SuppressWarnings("unchecked")
-  public static <I, C extends AsObject<? super I, I, C>> C asObjectOf(Class<? extends I> type) {
-    return (C) new AsObject<>(CrestFunctions.identity());
+  public static <I, S extends AsObject<I, I, S>> AsObject<I, I, S> asObject() {
+    return new AsObject<>(CrestFunctions.identity());
   }
 
   public static <I, O, S extends AsObject<I, O, S>> AsObject<I, O, S> asObject(String methodName, Object... args) {
     return new AsObject<>(CrestFunctions.<I, O>invoke(methodName, args));
+  }
+
+  //  @SuppressWarnings("unchecked")
+  //  public static <I, O, C extends AsObject<? super I, O, C>> C create(Function<? super I, ? extends O> function) {
+  public static <I, O, S extends AsObject<I, O, S>> AsObject<I, O, S> asObject(Function<? super I, ? extends O> function) {
+    return new AsObject<>(function);
   }
 
   public static <I extends Comparable<? super I>> AsComparable<? super I, I> asComparableOf(Class<I> type) {

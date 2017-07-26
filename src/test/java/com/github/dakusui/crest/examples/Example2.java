@@ -125,11 +125,23 @@ public class Example2 {
   }
 
   @Test
+  public void test8_b() {
+    assertThat(
+        "aStringToBeExamined",
+        //        anyOf(
+        asObject().<String>equalTo("aStringToBeExamined!").matcher()
+        //            asObjectOf(String.class).equalTo("aStringToBeExamined").matcher(),
+        //            asComparableOf(Integer.class, "length").eq(0).matcher()
+        //        )
+    );
+  }
+
+  @Test
   public void test8() {
     assertThat(
         "aStringToBeExamined",
         //        anyOf(
-        asObjectOf(String.class).equalTo("aStringToBeExamined!").matcher()
+        asObject().equalTo("aStringToBeExamined!").matcher()
         //            asObjectOf(String.class).equalTo("aStringToBeExamined").matcher(),
         //            asComparableOf(Integer.class, "length").eq(0).matcher()
         //        )
@@ -140,12 +152,12 @@ public class Example2 {
   public void test8a() {
     assertThat(
         "aStringToBeExamined",
-        asObjectOf(String.class).equalTo("aStringToBeExamined2").all()
+        asObject().equalTo("aStringToBeExamined2").all()
     );
 
     assertThat(
         "aStringToBeExamined",
-        asObjectOf(String.class).all()
+        asObject().all()
     );
 
     assertThat(

@@ -8,13 +8,36 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import java.util.Collections;
+import java.util.List;
 
+import static com.github.dakusui.crest.functions.CrestFunctions.*;
+import static com.github.dakusui.crest.functions.CrestPredicates.alwaysTrue;
+import static com.github.dakusui.crest.matcherbuilders.Crest.*;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Enclosed.class)
 public class CrestFunctionsTest {
+  public static class Compilability extends TestBase {
+    @Test
+    public void whenAsObject$thenCompilableWithPredefinedFunctions() {
+      List<String> aList = asList("A", "B", "C");
+      
+      assertThat(
+          aList,
+          allOf(
+              asObject(stringify()).check(alwaysTrue()).matcher(),
+              asObject(invoke("toString")).check(alwaysTrue()).matcher(),
+              asObject(elementAt(0)).check(alwaysTrue()).matcher(),
+              asObject(size()).check(alwaysTrue()).matcher(),
+              asObject(stream()).check(alwaysTrue()).matcher(),
+              asObject("toString").check(alwaysTrue()).matcher()
+          )
+      );
+    }
+  }
+
   public static class ElementAtTest extends TestBase {
     @Test
     public void whenApplied$thenLooksGood() {
@@ -56,7 +79,7 @@ public class CrestFunctionsTest {
     public void whenApplied$thenLooksGood() {
       assertEquals(
           asList(100, 200, 300),
-          CrestFunctions.stream().apply(asList(100, 200, 300)).collect(toList())
+          stream().apply(asList(100, 200, 300)).collect(toList())
       );
     }
 
@@ -64,7 +87,7 @@ public class CrestFunctionsTest {
     public void whenToString$thenLooksGood() {
       assertEquals(
           "stream",
-          CrestFunctions.stream().toString()
+          stream().toString()
       );
     }
   }
@@ -74,17 +97,17 @@ public class CrestFunctionsTest {
     public void whenApplied$thenLooksGood() {
       assertEquals(
           12,
-          CrestFunctions.invoke("length").apply("Hello, world")
+          invoke("length").apply("Hello, world")
       );
 
       assertEquals(
           true,
-          CrestFunctions.invoke("equals", "Hello, world").apply("Hello, world")
+          invoke("equals", "Hello, world").apply("Hello, world")
       );
 
       assertEquals(
           false,
-          CrestFunctions.invoke("equals", "Hello, world").apply("Hello, world!")
+          invoke("equals", "Hello, world").apply("Hello, world!")
       );
     }
 
@@ -92,7 +115,7 @@ public class CrestFunctionsTest {
     public void whenToString$thenLooksGood() {
       assertEquals(
           "@equals[Hello, world]",
-          CrestFunctions.invoke("equals", "Hello, world").toString()
+          invoke("equals", "Hello, world").toString()
       );
 
     }
@@ -103,7 +126,7 @@ public class CrestFunctionsTest {
     public void whenApplied$thenLooksGood() {
       assertEquals(
           "[]",
-          CrestFunctions.stringify().apply(Collections.emptyList())
+          stringify().apply(Collections.emptyList())
       );
     }
 
@@ -111,7 +134,7 @@ public class CrestFunctionsTest {
     public void whenToString$thenLooksGood() {
       assertEquals(
           "toString",
-          CrestFunctions.stringify().toString()
+          stringify().toString()
       );
 
     }

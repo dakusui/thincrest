@@ -13,6 +13,13 @@ import static java.util.Arrays.asList;
 public enum CrestPredicates {
   ;
 
+  public static <T> Predicate<? super T> alwaysTrue() {
+    return Formattable.predicate(
+        "alwaysTrue",
+        t -> true
+    );
+  }
+
   public static <T> Predicate<? super T> equalTo(T value) {
     return Formattable.predicate(
         String.format("equalTo[%s]", value),

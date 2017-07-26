@@ -42,21 +42,21 @@ public enum CrestFunctions {
     );
   }
 
-  public static <E> Function<? super List<? extends E>, E> elementAt(int i) {
+  public static <E> Function<List<? extends E>, ? extends E> elementAt(int i) {
     return Formattable.function(
         String.format("elementAt[%s]", i),
-        es -> es.get(i)
+        es -> (E) es.get(i)
     );
   }
 
-  public static <E> Function<? super Collection<? extends E>, Integer> size() {
+  public static Function<? super Collection, Integer> size() {
     return Formattable.function(
         "size",
         Collection::size
     );
   }
 
-  public static <E> Function<? super Collection<? extends E>, Stream<? extends E>> stream() {
+  public static <E> Function<Collection<? extends E>, Stream<? extends E>> stream() {
     return Formattable.function(
         "stream",
         Collection::stream
