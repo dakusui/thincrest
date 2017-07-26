@@ -1,10 +1,10 @@
-package com.github.dakusui.crest;
+package com.github.dakusui.crest.utils;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-public enum CrestUtils {
+public enum TestUtils {
   ;
 
   static final        PrintStream STDOUT = System.out;
@@ -19,7 +19,7 @@ public enum CrestUtils {
    * Typically called from a method annotated with {@literal @}{@code Before} method.
    */
   public static void suppressStdOutErrIfRunUnderSurefire() {
-    if (CrestUtils.isRunUnderSurefire()) {
+    if (TestUtils.isRunUnderSurefire()) {
       System.setOut(NOP);
       System.setErr(NOP);
     }
