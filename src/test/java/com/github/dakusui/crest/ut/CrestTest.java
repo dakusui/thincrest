@@ -1,5 +1,9 @@
-package com.github.dakusui.crest;
+package com.github.dakusui.crest.ut;
 
+import com.github.dakusui.crest.core.Formattable;
+import com.github.dakusui.crest.functions.CrestFunctions;
+import com.github.dakusui.crest.matcherbuilders.Crest;
+import com.github.dakusui.crest.utils.TestBase;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -13,15 +17,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.crest.CrestFunctions.elementAt;
-import static com.github.dakusui.crest.CrestFunctions.size;
-import static com.github.dakusui.crest.CrestMatchers.allOf;
-import static com.github.dakusui.crest.CrestMatchers.anyOf;
-import static com.github.dakusui.crest.CrestPredicates.equalTo;
+import static com.github.dakusui.crest.functions.CrestFunctions.elementAt;
+import static com.github.dakusui.crest.functions.CrestFunctions.size;
+import static com.github.dakusui.crest.functions.CrestPredicates.equalTo;
+import static com.github.dakusui.crest.matcherbuilders.Crest.allOf;
+import static com.github.dakusui.crest.matcherbuilders.Crest.anyOf;
 import static org.junit.Assert.*;
 
 @RunWith(Enclosed.class)
-public class CrestMatchersTest {
+public class CrestTest {
 
   private static final Predicate<Integer> FAILING_CHECK = Formattable.predicate("failingCheck", v -> {
     throw new RuntimeException("FAILED");
@@ -35,8 +39,11 @@ public class CrestMatchersTest {
    *   (3): E -> P      : fail
    *   (4): F -> F      : fail
    * </pre>
+   * <pre>
+   *   TestData: ["Hello", "world", "!"]
+   * </pre>
    */
-  public static class ConjTest extends CrestUnit {
+  public static class ConjTest extends TestBase {
     /**
      * <pre>
      *   Conj
@@ -47,11 +54,19 @@ public class CrestMatchersTest {
     public void whenPassingAndThenPassing$thenPasses() {
       List<String> aList = composeTestData();
 
-      Optional<Description> description = describeFailure(
+      Optional<Description> description = CrestTest.describeFailure(
           aList,
           allOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(3)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("Hello")).matcher()
+              Crest.asObject(
+                  CrestFunctions.elementAt(0)
+              ).check(
+                  equalTo("Hello")).all()
+              ,
+              Crest.asObject(
+                  size()
+              ).check(
+                  equalTo(3)
+              ).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -72,8 +87,12 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(3)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("hello")).matcher()
+              Crest.asObject(size())
+                  .check(equalTo(3))
+                  .all(),
+              Crest.asObject(elementAt(0))
+                  .check(equalTo("hello"))
+                  .all()
           ));
 
       System.out.println(description.orElse(null));
@@ -84,7 +103,7 @@ public class CrestMatchersTest {
               + "  equalTo[hello](elementAt[0](x))\n"
               + "]->true\n"
               + "     but: when x=<[Hello, world, !]>; then and:[\n"
-              + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\"\n"
+              + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
       );
@@ -103,8 +122,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              Crest.<List<String>, Integer>create(size()).and(FAILING_CHECK).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("Hello")).matcher()
+              Crest.asObject(size()).check(FAILING_CHECK).all(),
+              Crest.asObject(elementAt(0)).check(equalTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -136,8 +155,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(2)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("hello")).matcher()
+              Crest.asObject(size()).check(equalTo(2)).all(),
+              Crest.asObject(elementAt(0)).check(equalTo("hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -148,8 +167,8 @@ public class CrestMatchersTest {
               + "  equalTo[hello](elementAt[0](x))\n"
               + "]->true\n"
               + "     but: when x=<[Hello, world, !]>; then and:[\n"
-              + "  equalTo[2](size(x)) was false because size(x)=<3>\n"
-              + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\"\n"
+              + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
+              + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
       );
@@ -165,7 +184,7 @@ public class CrestMatchersTest {
    *   (4): F -> F      : fail
    * </pre>
    */
-  public static class DisjTest extends CrestUnit {
+  public static class DisjTest extends TestBase {
 
     /**
      * <pre>
@@ -180,8 +199,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(3)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("Hello")).matcher()
+              Crest.asObject(size()).check(equalTo(3)).all(),
+              Crest.asObject(elementAt(0)).check(equalTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -202,8 +221,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(3)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("hello")).matcher()
+              Crest.asObject(size()).check(equalTo(3)).all(),
+              Crest.asObject(elementAt(0)).check(equalTo("hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -224,8 +243,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.<List<String>, Integer>create(size()).and(FAILING_CHECK).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("Hello")).matcher()
+              Crest.asObject(size()).check(FAILING_CHECK).all(),
+              Crest.asObject(elementAt(0)).check(equalTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -257,8 +276,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(2)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("hello")).matcher()
+              Crest.asObject(size()).check(equalTo(2)).matcher(),
+              Crest.asObject(elementAt(0)).check(equalTo("hello")).matcher()
           ));
 
       System.out.println(description.orElse(null));
@@ -269,15 +288,15 @@ public class CrestMatchersTest {
               + "  equalTo[hello](elementAt[0](x))\n"
               + "]->true\n"
               + "     but: when x=<[Hello, world, !]>; then or:[\n"
-              + "  equalTo[2](size(x)) was false because size(x)=<3>\n"
-              + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\"\n"
+              + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
+              + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
       );
     }
   }
 
-  public static class NestedTest extends CrestUnit {
+  public static class NestedTest extends TestBase {
     /**
      * <pre>
      *   Disj
@@ -291,8 +310,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(2)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).and(equalTo("hello"), equalTo("HELLO")).matcher()
+              Crest.asObject(size()).check(equalTo(2)).all(),
+              Crest.asObject(elementAt(0)).check(equalTo("hello")).check(equalTo("HELLO")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -306,10 +325,10 @@ public class CrestMatchersTest {
               + "  ]\n"
               + "]->true\n"
               + "     but: when x=<[Hello, world, !]>; then or:[\n"
-              + "  equalTo[2](size(x)) was false because size(x)=<3>\n"
+              + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
               + "  and:[\n"
-              + "    equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\"\n"
-              + "    equalTo[HELLO](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\"\n"
+              + "    equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
+              + "    equalTo[HELLO](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
               + "  ]->false\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
@@ -329,8 +348,8 @@ public class CrestMatchersTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              Crest.<List<String>, Integer>create(size()).and(equalTo(2)).matcher(),
-              Crest.<List<String>, String>create(elementAt(0)).or(equalTo("hello"), equalTo("HELLO")).matcher()
+              Crest.asObject(size()).check(equalTo(2)).all(),
+              Crest.asObject(elementAt(0)).check(equalTo("hello")).check(equalTo("HELLO")).any()
           ));
 
       System.out.println(description.orElse(null));
@@ -344,10 +363,10 @@ public class CrestMatchersTest {
               + "  ]\n"
               + "]->true\n"
               + "     but: when x=<[Hello, world, !]>; then and:[\n"
-              + "  equalTo[2](size(x)) was false because size(x)=<3>\n"
+              + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
               + "  or:[\n"
-              + "    equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\"\n"
-              + "    equalTo[HELLO](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\"\n"
+              + "    equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
+              + "    equalTo[HELLO](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
               + "  ]->false\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()

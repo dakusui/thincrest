@@ -1,20 +1,19 @@
-package com.github.dakusui.crest;
+package com.github.dakusui.crest.matcherbuilders;
 
+import com.github.dakusui.crest.functions.CrestFunctions;
 import org.hamcrest.Description;
 import org.hamcrest.DiagnosingMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
+import org.junit.ComparisonFailure;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
-public enum CrestMatchers {
+public enum Crest {
   ;
 
   /**
@@ -25,7 +24,7 @@ public enum CrestMatchers {
   @SuppressWarnings("Convert2Diamond")
   @SafeVarargs
   public static <T> Matcher<T> allOf(Matcher<? super T>... matchers) {
-    return new AllOf<T>(true, asList(matchers));
+    return new AllOf<T>(true, Arrays.asList(matchers));
   }
 
   /**
@@ -36,7 +35,73 @@ public enum CrestMatchers {
   @SuppressWarnings("Convert2Diamond")
   @SafeVarargs
   public static <T> Matcher<T> anyOf(Matcher<? super T>... matchers) {
-    return new AnyOf<T>(true, asList(matchers));
+    return new AnyOf<T>(true, Arrays.asList(matchers));
+  }
+
+  public static <I, S extends AsObject<I, I, S>> AsObject<I, I, S> asObject() {
+    return new AsObject<>(CrestFunctions.identity());
+  }
+
+  public static <I, O, S extends AsObject<I, O, S>> AsObject<I, O, S> asObject(String methodName, Object... args) {
+    return new AsObject<>(CrestFunctions.<I, O>invoke(methodName, args));
+  }
+
+  //  @SuppressWarnings("unchecked")
+  //  public static <I, O, C extends AsObject<? super I, O, C>> C create(Function<? super I, ? extends O> function) {
+  public static <I, O, S extends AsObject<I, O, S>> AsObject<I, O, S> asObject(Function<? super I, ? extends O> function) {
+    return new AsObject<>(function);
+  }
+
+  public static <I extends Comparable<? super I>> AsComparable<? super I, I> asComparableOf(Class<I> type) {
+    return asComparable(CrestFunctions.identity());
+  }
+
+  public static <I, T extends Comparable<? super T>> AsComparable<? super I, T> asComparable(Function<? super I, ? extends T> function) {
+    return new AsComparable<>(function);
+  }
+
+  @SuppressWarnings({ "RedundantCast", "unchecked" })
+  public static <I, T extends Comparable<? super T>> AsComparable<? super I, T> asComparableOf(Class<T> type, String methodName, Object... args) {
+    return asComparable((Function<? super I, ? extends T>) CrestFunctions.invoke(methodName, (Object[]) args));
+  }
+
+  public static <I> AsString<I> asString() {
+    return asString(CrestFunctions.stringify());
+  }
+
+  public static <I> AsString<I> asString(Function<? super I, ? extends String> function) {
+    return new AsString<>(Objects.requireNonNull(function));
+  }
+
+  @SuppressWarnings({ "RedundantCast", "unchecked" })
+  public static <I> AsString<I> asString(String methodName, Object... args) {
+    return asString((Function<? super I, ? extends String>) CrestFunctions.invoke(methodName, args));
+  }
+
+  public static <I extends Collection<? extends E>, E> AsStream<I, E> asStream() {
+    return new AsStream<>(CrestFunctions.stream());
+  }
+
+  public static <E> AsList<List<E>, E> asList() {
+    return new AsList<>(CrestFunctions.identity());
+  }
+
+  public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
+    assertThat("", actual, matcher);
+  }
+
+  public static <T> void assertThat(String message, T actual, Matcher<? super T> matcher) {
+    if (!matcher.matches(actual)) {
+      Description description = new StringDescription();
+      description.appendText(message).appendText("\nExpected: ").appendDescriptionOf(matcher).appendText("\n     but: ");
+      matcher.describeMismatch(actual, description);
+      Description actualDescription = new StringDescription();
+      matcher.describeMismatch(actual, actualDescription);
+      throw new ComparisonFailure(
+          description.toString(),
+          new StringDescription().appendDescriptionOf(matcher).toString(),
+          actualDescription.toString());
+    }
   }
 
   static abstract class IndentManagedDiagnosingMatcher<T> extends DiagnosingMatcher<T> {
@@ -170,8 +235,8 @@ public enum CrestMatchers {
     }
   }
 
-  static class AllOf<T> extends IndentManagedDiagnosingMatcher<T> {
-    AllOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
+  public static class AllOf<T> extends IndentManagedDiagnosingMatcher<T> {
+    public AllOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
       super(showTarget, matchers);
     }
 
@@ -191,8 +256,8 @@ public enum CrestMatchers {
     }
   }
 
-  static class AnyOf<T> extends IndentManagedDiagnosingMatcher<T> {
-    AnyOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
+  public static class AnyOf<T> extends IndentManagedDiagnosingMatcher<T> {
+    public AnyOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
       super(showTarget, matchers);
     }
 
