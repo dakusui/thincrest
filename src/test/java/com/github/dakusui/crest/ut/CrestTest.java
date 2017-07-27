@@ -58,7 +58,7 @@ public class CrestTest {
           aList,
           allOf(
               Crest.asObject(
-                  CrestFunctions.elementAt(0)
+                  elementAt(0)
               ).check(
                   equalTo("Hello")).all()
               ,

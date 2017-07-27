@@ -235,7 +235,7 @@ public class SimpleExamples {
   public void givenList$$whenContains101$thenFail() {
     assertThat(
         Arrays.asList(100, 200, 300, 400, 500),
-        Crest.<Integer>asList().contains(101).matcher()
+        Crest.asListOf(Integer.class).contains(101).matcher()
     );
   }
 
@@ -243,7 +243,7 @@ public class SimpleExamples {
   public void givenList$$whenContains100$thenPass() {
     assertThat(
         Arrays.asList(100, 200, 300, 400, 500),
-        Crest.<Integer>asList().contains(100).matcher()
+        Crest.asListOf(Integer.class).contains(100).matcher()
     );
   }
 
@@ -252,7 +252,7 @@ public class SimpleExamples {
   public void givenList$$whenContainsAll101$thenFail() {
     assertThat(
         Arrays.asList(100, 200, 300, 400, 500),
-        Crest.<Integer>asList().containsAll(Arrays.asList(100, 101)).matcher()
+        Crest.asListOf(Integer.class).containsAll(Arrays.asList(100, 101)).matcher()
     );
   }
 
@@ -260,7 +260,7 @@ public class SimpleExamples {
   public void givenList$$whenContainsAll100and200$thenPass() {
     assertThat(
         Arrays.asList(100, 200, 300, 400, 500),
-        Crest.<Integer>asList().containsAll(Arrays.asList(100, 200)).matcher()
+        Crest.asListOf(Integer.class).containsAll(Arrays.asList(100, 200)).matcher()
     );
   }
 
@@ -268,7 +268,7 @@ public class SimpleExamples {
   public void givenList$$whenIsEmpty$thenFail() {
     assertThat(
         Arrays.asList(100, 200, 300, 400, 500),
-        Crest.<Integer>asList().isEmpty().matcher()
+        Crest.asListOf(Integer.class).isEmpty().matcher()
     );
   }
 
@@ -276,7 +276,7 @@ public class SimpleExamples {
   public void givenEmptyList$$whenIsEmpty$thenPass() {
     assertThat(
         Collections.emptyList(),
-        Crest.asList().isEmpty().matcher()
+        Crest.asListOf(Integer.class).isEmpty().matcher()
     );
   }
 

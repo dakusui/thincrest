@@ -29,7 +29,7 @@ public class CrestPredicatesTest {
 
     @Test
     public void whenToString$thenLooksGood() {
-      assertEquals("==[123]", CrestPredicates.eq(123).toString());
+      assertEquals("=[123]", CrestPredicates.eq(123).toString());
     }
   }
 

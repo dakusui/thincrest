@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 
 public enum CrestPredicates {
   ;
@@ -20,10 +21,50 @@ public enum CrestPredicates {
     );
   }
 
+  public static Predicate<? super Boolean> isTrue() {
+    return Formattable.predicate(
+        "isTrue",
+        (Boolean v) -> v
+    );
+  }
+
+  public static Predicate<? super Boolean> isFalse() {
+    return Formattable.predicate(
+        "isFalse",
+        (Boolean v) -> !v
+    );
+  }
+
+  public static <T> Predicate<? super T> isNull() {
+    return Formattable.predicate(
+        "isNull",
+        Objects::isNull
+    );
+  }
+
   public static <T> Predicate<? super T> equalTo(T value) {
     return Formattable.predicate(
         String.format("equalTo[%s]", value),
         v -> Objects.equals(v, value)
+    );
+  }
+
+  public static <T> Predicate<? super T> isSameAs(T value) {
+    return Formattable.predicate(
+        String.format("==[%s]", value),
+        v -> v == value
+    );
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T> Predicate<? super T> isInstanceOf(Class<?> value) {
+    requireNonNull(value);
+    //noinspection SimplifiableConditionalExpression
+    return Formattable.predicate(
+        String.format("isInstanceOf[%s]", value.getCanonicalName()),
+        v -> v == null ?
+            false :
+            value.isAssignableFrom(v.getClass())
     );
   }
 
@@ -64,29 +105,64 @@ public enum CrestPredicates {
 
   public static <T extends Comparable<? super T>> Predicate<? super T> eq(T value) {
     return Formattable.predicate(
-        String.format("==[%s]", value),
+        String.format("=[%s]", value),
         v -> v.compareTo(value) == 0
     );
   }
 
   public static Predicate<? super String> matchesRegex(String regex) {
-    Objects.requireNonNull(regex);
+    requireNonNull(regex);
     return Formattable.predicate(
-        String.format("matchesRegex[%s]", regex),
+        String.format("matchesRegex[%s]", requireNonNull(regex)),
         s -> s.matches(regex)
     );
   }
 
   public static Predicate<? super String> containsString(String string) {
-    Objects.requireNonNull(string);
     return Formattable.predicate(
-        String.format("containsString[%s]", string),
+        String.format("containsString[%s]", requireNonNull(string)),
         s -> s.contains(string)
     );
   }
 
+  public static Predicate<? super String> startsWith(String string) {
+    return Formattable.predicate(
+        String.format("containsString[%s]", requireNonNull(string)),
+        s -> s.startsWith(string)
+    );
+  }
+
+  public static Predicate<? super String> endsWith(String string) {
+    return Formattable.predicate(
+        String.format("endsWith[%s]", requireNonNull(string)),
+        s -> s.endsWith(string)
+    );
+  }
+
+  public static Predicate<? super String> equalsIgnoreCase(String string) {
+    requireNonNull(string);
+    return Formattable.predicate(
+        String.format("equalsIgnoreCase[%s]", requireNonNull(string)),
+        s -> s.equalsIgnoreCase(string)
+    );
+  }
+
+  public static Predicate<? super String> isEmptyString() {
+    return Formattable.predicate(
+        "isEmpty",
+        String::isEmpty
+    );
+  }
+
+  public static Predicate<? super String> isEmptyOrNullString() {
+    return Formattable.predicate(
+        "isEmptyOrNull",
+        s -> Objects.isNull(s) || isEmptyString().test(s)
+    );
+  }
+
   public static <E> Predicate<? super Collection<? super E>> containsAll(Collection<? extends E> collection) {
-    Objects.requireNonNull(collection);
+    requireNonNull(collection);
     return Formattable.predicate(
         String.format("containsAll%s", collection),
         c -> c.containsAll(collection)
@@ -94,41 +170,38 @@ public enum CrestPredicates {
   }
 
   public static <E> Predicate<? super Collection<? super E>> contains(E entry) {
-    Objects.requireNonNull(entry);
+    requireNonNull(entry);
     return Formattable.predicate(
         String.format("contains[%s]", entry),
         c -> c.contains(entry)
     );
   }
 
-  public static <E> Predicate<? super Collection<? super E>> isEmpty() {
+  public static Predicate<? super Collection> isEmpty() {
     return Formattable.predicate(
         "isEmpty",
         Collection::isEmpty
     );
   }
 
-
   public static <E> Predicate<? super Stream<? extends E>> allMatch(Predicate<E> predicate) {
-    Objects.requireNonNull(predicate);
+
     return Formattable.predicate(
-        String.format("allMatch[%s]", predicate),
+        String.format("allMatch[%s]", requireNonNull(predicate)),
         stream -> stream.allMatch(predicate)
     );
   }
 
   public static <E> Predicate<? super Stream<? extends E>> noneMatch(Predicate<E> predicate) {
-    Objects.requireNonNull(predicate);
     return Formattable.predicate(
-        String.format("noneMatch[%s]", predicate),
+        String.format("noneMatch[%s]", requireNonNull(predicate)),
         stream -> stream.noneMatch(predicate)
     );
   }
 
   public static <E> Predicate<? super Stream<? extends E>> anyMatch(Predicate<E> predicate) {
-    Objects.requireNonNull(predicate);
     return Formattable.predicate(
-        String.format("anyMatch[%s]", predicate),
+        String.format("anyMatch[%s]", requireNonNull(predicate)),
         stream -> stream.anyMatch(predicate)
     );
   }

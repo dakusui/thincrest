@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 
 public enum CrestFunctions {
   ;
@@ -60,6 +61,13 @@ public enum CrestFunctions {
     return Formattable.function(
         "stream",
         Collection::stream
+    );
+  }
+
+  public static <E> Function<? super Object, ? extends E> cast(Class<E> type) {
+    return Formattable.function(
+        String.format("castTo[%s]", requireNonNull(type).getSimpleName()),
+        type::cast
     );
   }
 }

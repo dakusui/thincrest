@@ -1,6 +1,8 @@
 package com.github.dakusui.crest.matcherbuilders;
 
+import com.github.dakusui.crest.core.Formattable;
 import com.github.dakusui.crest.core.InternalUtils;
+import com.github.dakusui.crest.functions.CrestPredicates;
 import org.hamcrest.Matcher;
 
 import java.util.LinkedList;
@@ -22,6 +24,28 @@ public class AsObject<I, O, S extends AsObject<I, O, S>> implements MatcherBuild
   @Override
   public S check(Predicate<? super O> predicate) {
     this.predicates.add(predicate);
+    return (S) this;
+  }
+
+  @SuppressWarnings("unchecked")
+  public S isNull() {
+    this.predicates.add(Formattable.predicate("==null", Objects::isNull));
+    return (S) this;
+  }
+
+  @SuppressWarnings("unchecked")
+  public S isNotNull() {
+    this.predicates.add(Formattable.predicate("1=null", Objects::isNull));
+    return (S) this;
+  }
+
+  public S isSameAs(O value) {
+    this.predicates.add(CrestPredicates.isSameAs(value));
+    return (S) this;
+  }
+
+  public S isInstanceOf(Class<?> value) {
+    this.predicates.add(CrestPredicates.isInstanceOf(value));
     return (S) this;
   }
 

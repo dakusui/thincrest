@@ -1,5 +1,6 @@
 package com.github.dakusui.crest.matcherbuilders;
 
+import com.github.dakusui.crest.core.Formattable;
 import com.github.dakusui.crest.functions.CrestFunctions;
 import org.hamcrest.Description;
 import org.hamcrest.DiagnosingMatcher;
@@ -9,6 +10,7 @@ import org.junit.ComparisonFailure;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -39,30 +41,47 @@ public enum Crest {
   }
 
   public static <I, S extends AsObject<I, I, S>> AsObject<I, I, S> asObject() {
-    return new AsObject<>(CrestFunctions.identity());
+    return new AsObject<>((Function<I, I>) CrestFunctions.identity());
   }
 
   public static <I, O, S extends AsObject<I, O, S>> AsObject<I, O, S> asObject(String methodName, Object... args) {
     return new AsObject<>(CrestFunctions.<I, O>invoke(methodName, args));
   }
 
-  //  @SuppressWarnings("unchecked")
-  //  public static <I, O, C extends AsObject<? super I, O, C>> C create(Function<? super I, ? extends O> function) {
   public static <I, O, S extends AsObject<I, O, S>> AsObject<I, O, S> asObject(Function<? super I, ? extends O> function) {
     return new AsObject<>(function);
   }
 
+  public static <I> AsBoolean<I> asBoolean(Predicate<? super I> predicate) {
+    Objects.requireNonNull(predicate);
+    return new AsBoolean<>(Formattable.function(predicate.toString(), predicate::test));
+  }
+
+  public static <I> AsBoolean<I> asBoolean(Function<? super I, Boolean> function) {
+    return new AsBoolean<>(function);
+  }
+
+  public static <I> AsInteger<I> asInteger(Function<? super I, Integer> function) {
+    return new AsInteger<>(function);
+  }
+
+  public static <I> AsInteger<I> asInteger(String methodName, Object... args) {
+    return new AsInteger<>(CrestFunctions.invoke(methodName, (Object[]) args).andThen(CrestFunctions.cast(Integer.class)));
+  }
+
+  /*
+   * Casts a given object into the given comparable type
+   */
   public static <I extends Comparable<? super I>> AsComparable<? super I, I> asComparableOf(Class<I> type) {
-    return asComparable(CrestFunctions.identity());
+    return asComparable(CrestFunctions.cast(type));
   }
 
   public static <I, T extends Comparable<? super T>> AsComparable<? super I, T> asComparable(Function<? super I, ? extends T> function) {
     return new AsComparable<>(function);
   }
 
-  @SuppressWarnings({ "RedundantCast", "unchecked" })
   public static <I, T extends Comparable<? super T>> AsComparable<? super I, T> asComparableOf(Class<T> type, String methodName, Object... args) {
-    return asComparable((Function<? super I, ? extends T>) CrestFunctions.invoke(methodName, (Object[]) args));
+    return asComparable(CrestFunctions.invoke(methodName, (Object[]) args).<T>andThen(CrestFunctions.cast(type)));
   }
 
   public static <I> AsString<I> asString() {
@@ -82,8 +101,9 @@ public enum Crest {
     return new AsStream<>(CrestFunctions.stream());
   }
 
-  public static <E> AsList<List<E>, E> asList() {
-    return new AsList<>(CrestFunctions.identity());
+  @SuppressWarnings({ "Convert2Diamond", "unused" })
+  public static <E> AsList<? super List<E>, E> asListOf(Class<E> typeOfElement) {
+    return new AsList<List<E>, E>(CrestFunctions.identity());
   }
 
   public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
