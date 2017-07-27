@@ -4,6 +4,7 @@ import com.github.dakusui.crest.core.Formattable;
 import com.github.dakusui.crest.core.InternalUtils;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -69,5 +70,13 @@ public enum CrestFunctions {
         String.format("castTo[%s]", requireNonNull(type).getSimpleName()),
         type::cast
     );
+  }
+
+  public static <I extends Collection<? extends E>, E> Function<I, List<E>> collectionToList() {
+    return Formattable.function("collectionToList", (I c) -> new LinkedList<E>() {
+      {
+        addAll(c);
+      }
+    });
   }
 }

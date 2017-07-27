@@ -41,7 +41,7 @@ public enum Crest {
   }
 
   public static <I, S extends AsObject<I, I, S>> AsObject<I, I, S> asObject() {
-    return new AsObject<>((Function<I, I>) CrestFunctions.identity());
+    return new AsObject<>(CrestFunctions.identity());
   }
 
   public static <I, O, S extends AsObject<I, O, S>> AsObject<I, O, S> asObject(String methodName, Object... args) {
@@ -54,7 +54,7 @@ public enum Crest {
 
   public static <I> AsBoolean<I> asBoolean(Predicate<? super I> predicate) {
     Objects.requireNonNull(predicate);
-    return new AsBoolean<>(Formattable.function(predicate.toString(), predicate::test));
+    return asBoolean(Formattable.function(predicate.toString(), predicate::test));
   }
 
   public static <I> AsBoolean<I> asBoolean(Function<? super I, Boolean> function) {
@@ -66,7 +66,11 @@ public enum Crest {
   }
 
   public static <I> AsInteger<I> asInteger(String methodName, Object... args) {
-    return new AsInteger<>(CrestFunctions.invoke(methodName, (Object[]) args).andThen(CrestFunctions.cast(Integer.class)));
+    return asInteger(CrestFunctions.invoke(methodName, (Object[]) args).andThen(CrestFunctions.cast(Integer.class)));
+  }
+
+  public static AsInteger<Integer> asInteger() {
+    return asInteger(Function.identity());
   }
 
   /*
@@ -101,9 +105,12 @@ public enum Crest {
     return new AsStream<>(CrestFunctions.stream());
   }
 
-  @SuppressWarnings({ "Convert2Diamond", "unused" })
-  public static <E> AsList<? super List<E>, E> asListOf(Class<E> typeOfElement) {
-    return new AsList<List<E>, E>(CrestFunctions.identity());
+  public static <I extends Collection<? extends E>, E> AsList<I, E> asList() {
+    return new AsList<>(CrestFunctions.collectionToList());
+  }
+
+  public static <I, E> AsList<I, E> asList(Function<? super I, ? extends List<E>> function) {
+    return new AsList<I, E>(function);
   }
 
   public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
