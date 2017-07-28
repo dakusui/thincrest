@@ -1,15 +1,24 @@
 package com.github.dakusui.crest.examples;
 
 import com.github.dakusui.crest.core.Formattable;
+import com.github.dakusui.crest.functions.CrestFunctions;
+import com.github.dakusui.crest.functions.CrestPredicates;
 import com.github.dakusui.crest.matcherbuilders.Crest;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
+import org.hamcrest.core.DescribedAs;
 import org.hamcrest.core.StringContains;
+import org.junit.Assert;
 import org.junit.Test;
 
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.util.*;
 
+import static com.github.dakusui.crest.functions.CrestFunctions.arrayToList;
 import static com.github.dakusui.crest.functions.CrestFunctions.size;
+import static com.github.dakusui.crest.functions.CrestPredicates.eq;
 import static com.github.dakusui.crest.functions.CrestPredicates.isEmpty;
 import static com.github.dakusui.crest.matcherbuilders.Crest.*;
 
@@ -231,11 +240,34 @@ public class InThincrest {
   }
 
   @Test
-  public void qiita_42$thenFail() {
+  public void qiita_39$thenPass() {
     Crest.assertThat(
         anArray,
-        // To check if its empty or not, type doesn't matter. Let's say 'Object'.
-        Crest.asList(Arrays::asList).isEmpty().matcher()
+        Crest.asList(arrayToList()).containsExactly(Arrays.asList("Gallia", "est", "omnis", "divisa")).matcher()
+    );
+  }
+
+  @Test
+  public void qiita_39duplicate$thenPass() {
+    Crest.assertThat(
+        anArray,
+        Crest.asList(arrayToList()).containsExactly(Arrays.asList("Gallia", "est", "omnis", "omnis", "divisa")).matcher()
+    );
+  }
+
+  @Test
+  public void qiita_39missing$thenFail() {
+    Crest.assertThat(
+        anArray,
+        Crest.asList(arrayToList()).containsExactly(Arrays.asList("Gallia", "est", "omnis", "divisa", "in")).matcher()
+    );
+  }
+
+  @Test
+  public void qiita_39extra$thenFail() {
+    Crest.assertThat(
+        anArray,
+        Crest.asList(arrayToList()).containsExactly(Arrays.asList("est", "omnis", "divisa")).matcher()
     );
   }
 
@@ -244,11 +276,40 @@ public class InThincrest {
     Crest.assertThat(
         anArray,
         allOf(
-            // Not type safe if you don't give type
-            Crest.asList(Arrays::asList).containsAll(Arrays.asList("Hello", 1)).matcher(),
-            // A safer way. <I, E> I for input, E for type of elements in output.
-            Crest.<String[], String>asList(Arrays::asList).contains("Hello").matcher()
+            Crest.asList(CrestFunctions.<String>arrayToList()).containsAll(Arrays.asList("Hello", "world")).matcher(),
+            Crest.asList(CrestFunctions.<String>arrayToList()).contains("Hello").matcher()
         ));
+  }
+
+  @Test
+  public void qiita_41() {
+    Crest.assertThat(
+        anArray,
+        asList(CrestFunctions.arrayToList()).check(CrestFunctions.size(), CrestPredicates.eq(3)).matcher()
+    );
+
+    Crest.assertThat(
+        anArray,
+        asList(arrayToList()).check(size(), eq(3)).matcher()
+    );
+  }
+
+  @Test
+  public void qiita_42$thenFail() {
+    Crest.assertThat(
+        anArray,
+        // To check if its empty or not, type doesn't matter. Let's say 'Object'.
+        Crest.asList(arrayToList()).isEmpty().matcher()
+    );
+  }
+
+  @Test
+  public void qiita_43$thenFail() {
+    Crest.assertThat(
+        anArray,
+        // To check if its empty or not, type doesn't matter. Let's say 'Object'.
+        Crest.asList(arrayToList()).contains("hello").matcher()
+    );
   }
 
   @Test
@@ -260,7 +321,32 @@ public class InThincrest {
     Matchers.stringContainsInOrder();
 
     Matchers.empty();
+    Matchers.hasProperty("");
+
   }
 
+  @Test
+  public void property() throws IntrospectionException {
+    class Tmp {
+      public String a = "hello";
+      public String b = "world";
+      public String c = "everyone";
 
+      public String getA() {
+        return a;
+      }
+    }
+    PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(new Tmp().getClass(), Object.class).getPropertyDescriptors();
+    for (PropertyDescriptor each : propertyDescriptors) {
+      System.out.println(each);
+    }
+  }
+
+  @Test
+  public void describedAsTest() {
+    Assert.assertThat(
+        "world",
+        new DescribedAs<>("abcde  - %0 - %1 %2", Matchers.equalTo("hello"), new Object[] { 1, 2, 3 })
+    );
+  }
 }

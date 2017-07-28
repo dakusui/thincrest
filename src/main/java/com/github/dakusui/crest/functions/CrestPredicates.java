@@ -42,6 +42,13 @@ public enum CrestPredicates {
     );
   }
 
+  public static <T> Predicate<? super T> isNotNull() {
+    return Formattable.predicate(
+        "isNotNull",
+        Objects::nonNull
+    );
+  }
+
   public static <T> Predicate<? super T> equalTo(T value) {
     return Formattable.predicate(
         String.format("equalTo[%s]", value),
@@ -166,6 +173,32 @@ public enum CrestPredicates {
     return Formattable.predicate(
         String.format("containsAll%s", collection),
         c -> c.containsAll(collection)
+    );
+  }
+
+  /*
+   * in any order
+   * unlike AssertJ, this method returns true even if target collection does not over all the items in given
+   * collection as long as all the items in the target collection are found in given one.
+   */
+  public static <E> Predicate<? super Collection<? super E>> containsOnly(Collection<? extends E> collection) {
+    requireNonNull(collection);
+    return Formattable.predicate(
+        String.format("containsOnly%s", collection),
+        collection::containsAll
+    );
+  }
+
+  /*
+   * This is more similar to AssertJ's containsOnly method than our containsOnly.
+   * This method returns true if and only if all the items in the target collection
+   * and the given collection are equal.
+   */
+  public static <E> Predicate<? super Collection<? super E>> containsExactly(Collection<? extends E> collection) {
+    requireNonNull(collection);
+    return Formattable.predicate(
+        String.format("containsExactly%s", collection),
+        c -> c.containsAll(collection) && collection.containsAll(c)
     );
   }
 

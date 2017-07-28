@@ -3,6 +3,7 @@ package com.github.dakusui.crest.functions;
 import com.github.dakusui.crest.core.Formattable;
 import com.github.dakusui.crest.core.InternalUtils;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -78,5 +79,9 @@ public enum CrestFunctions {
         addAll(c);
       }
     });
+  }
+
+  public static <E> Function<E[], List<E>> arrayToList() {
+    return Formattable.function("arrayToList", Arrays::asList);
   }
 }

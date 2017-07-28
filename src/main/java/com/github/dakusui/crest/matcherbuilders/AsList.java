@@ -15,6 +15,14 @@ public class AsList<I, E> extends AsObject<I, List<E>, AsList<I, E>> {
     return this.check(CrestPredicates.containsAll(collection));
   }
 
+  public AsList<? super I, ? extends E> containsOnly(Collection<? extends E> collection) {
+    return this.check(CrestPredicates.containsOnly(collection));
+  }
+
+  public AsList<? super I, ? extends E> containsExactly(Collection<? extends E> collection) {
+    return this.check(CrestPredicates.containsExactly(collection));
+  }
+
   public AsList<? super I, ? extends E> contains(E entry) {
     return this.check(CrestPredicates.contains(entry));
   }

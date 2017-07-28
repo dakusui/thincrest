@@ -1,3 +1,6 @@
+ * http://qiita.com/disc99/items/31fa7abb724f63602dc9
+
+
 |   | # | 機能 	| Hamcrest 	| AssertJ |
 |---|---| ----- | --------- | ------- |
 | V | 1 |チェック対象を指定する | assertThat |assertThat|
@@ -22,25 +25,28 @@
 | V | 20|数値であることをチェックする 	|- 	|containsOnlyDigits|
 | V | 21|行数をチェックする 	|- 	|hasLineCount|
 |   | 22|指定した順序で文字列が現れることをチェックする 	|is + stringContainsInOrder 	|containsSequence|
-|   | 23|指定した範囲の値であることをチェックする 	|is + closeTo 	|isBetween|
+|   | 23|指定した範囲の値であることをチェックする 	|is + closeTo 	|isCloseTo|
+|   |   |指定した範囲の値であることをチェックする 	|is + closeTo 	|isBetweebn|
 | V | 24|指定した値より大きいことをチェックする 	|is + greaterThan 	|isGreaterThan|
 | V | 25|指定した値以上であることをチェックする 	|is + greaterThanOrEqualTo 	|isGreaterThanOrEqualTo|
 | V | 26|指定した値より小さいことをチェックする 	|is + lessThan 	|isLessThan|
 | V | 27|指定した値以下であることをチェックする 	|is + lessThanOrEqualTo 	|isLessThanOrEqualTo|
 | ? | 28|X全ての要素が等しいことをチェックする 	|is + contains 	|contains|
-| ? | 29|指定した要素を持つことをチェックする 	|hasItem 	|containsOnly|
-| ? | 30|指定した要素を全て含むことをチェックする 	|hasItems 	|containsOnly|
+| V | 29|指定した要素を持つことをチェックする 	|hasItem 	|containsOnly|
+| V | 30|指定した要素を全て含むことをチェックする 	|hasItems 	|        |
+| V |   |(containsExactly)                     |           |containsOnly|
 | V | 31|指定したサイズであることをチェックする 	|hasSize 	|hasSize|
 | V | 32|空であることをチェックする 	|is + empty 	|isEmpty|
 | V | 33|空の Iterator であることをチェックする 	|is + emptyIterable 	|isEmpty|
 |   | 34|指定したエントリを持つことをチェックする 	|hasEntry 	|containsEntry|
 |   | 35|指定したキーを持つことをチェックする 	|hasKey 	|containsKey|
 |   | 36|指定した値を持つことをチェックする 	|hasValue 	|containsValue|
-|   | 27|指定したプロパティを持つことをチェックする 	|hasProperty 	|filteredOn|
-|   | 38|全てのプロパティが等しいことをチェックする 	|is + samePropertyValuesAs 	|isEqualToComparingFieldByField|
+| X | 27|指定したプロパティを持つことをチェックする 	|hasProperty 	|filteredOn|
+| X | 38|全てのプロパティが等しいことをチェックする 	|is + samePropertyValuesAs 	|isEqualToComparingFieldByField|
 | ? | 39|指定した要素と配列の要素が全て等しいことをチェックする 	|is + arrayContaining 	|containsExactly|
 | V | 40|順序を無視して、指定した要素が全て配列に含まれることをチェックする 	|is + arrayContainingInAnyOrder 	|contains|
-| * | 41|配列のサイズをチェックする 	|is + arrayWithSize 	|hasSize|
+| V | 41|配列のサイズをチェックする 	|is + arrayWithSize 	|hasSize|
 | V | 42|配列が空であることをチェックする 	|is + emptyArray 	|isEmpty|
 | V | 43|配列の中に指定した値が存在することをチェックする 	|hasItemInArray 	|contains|
-|   | 44|テストに失敗したときのメッセージを上書きする 	|describedAs 	|as|
+| N | 44|テストに失敗したときのメッセージを上書きする 	|describedAs 	|as|
+|   |   |                                       |               |softAssertions

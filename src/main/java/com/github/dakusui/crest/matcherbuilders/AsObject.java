@@ -3,6 +3,7 @@ package com.github.dakusui.crest.matcherbuilders;
 import com.github.dakusui.crest.core.Formattable;
 import com.github.dakusui.crest.core.InternalUtils;
 import com.github.dakusui.crest.functions.CrestPredicates;
+import com.github.dakusui.crest.functions.TransformingPredicate;
 import org.hamcrest.Matcher;
 
 import java.util.LinkedList;
@@ -24,6 +25,13 @@ public class AsObject<I, O, S extends AsObject<I, O, S>> implements MatcherBuild
   @Override
   public S check(Predicate<? super O> predicate) {
     this.predicates.add(predicate);
+    return (S) this;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public <P> S check(Function<? super O, ? extends P> function, Predicate<? super P> predicate) {
+    this.predicates.add(new TransformingPredicate<P, O>(predicate, function));
     return (S) this;
   }
 

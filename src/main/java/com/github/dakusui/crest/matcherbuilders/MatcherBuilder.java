@@ -46,6 +46,8 @@ public interface MatcherBuilder<I, O, S extends MatcherBuilder<I, O, S>> {
 
   S check(Predicate<? super O> predicate);
 
+  <P> S check(Function<? super O, ? extends P> function, Predicate<? super P> predicate);
+
   default S check(String methodName, Object... args) {
     return check(CrestPredicates.invoke(methodName, args));
   }
