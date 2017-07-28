@@ -12,9 +12,8 @@ import java.util.function.Predicate;
 import static java.util.stream.Collectors.toList;
 
 /*
- * 'S' for 'self'
  */
-public interface MatcherBuilder<I, O, S extends MatcherBuilder<I, O, S>> {
+public interface MatcherBuilder<IN, OUT, SELF extends MatcherBuilder<IN, OUT, SELF>> {
   enum Op {
     AND {
       @Override
@@ -44,21 +43,21 @@ public interface MatcherBuilder<I, O, S extends MatcherBuilder<I, O, S>> {
     abstract <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers);
   }
 
-  S check(Predicate<? super O> predicate);
+  SELF check(Predicate<? super OUT> predicate);
 
-  <P> S check(Function<? super O, ? extends P> function, Predicate<? super P> predicate);
+  <MEDIUM> SELF check(Function<? super OUT, ? extends MEDIUM> function, Predicate<? super MEDIUM> predicate);
 
-  default S check(String methodName, Object... args) {
+  default SELF check(String methodName, Object... args) {
     return check(CrestPredicates.invoke(methodName, args));
   }
 
-  default S equalTo(O value) {
+  default SELF equalTo(OUT value) {
     return this.check(CrestPredicates.equalTo(value));
   }
 
-  Matcher<? super I> all();
+  Matcher<? super IN> all();
 
-  Matcher<? super I> any();
+  Matcher<? super IN> any();
 
   /**
    * Synonym for {@code all()}.
@@ -66,7 +65,7 @@ public interface MatcherBuilder<I, O, S extends MatcherBuilder<I, O, S>> {
    * @return A matcher built by this object
    * @see MatcherBuilder#all
    */
-  default Matcher<? super I> matcher() {
+  default Matcher<? super IN> matcher() {
     return all();
   }
 }

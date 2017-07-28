@@ -84,4 +84,8 @@ public enum CrestFunctions {
   public static <E> Function<E[], List<E>> arrayToList() {
     return Formattable.function("arrayToList", Arrays::asList);
   }
+
+  public static Function<String, Integer> countLines() {
+    return Formattable.function("countLines", (String s) -> s.split("\n").length);
+  }
 }

@@ -47,11 +47,13 @@ public class AsObject<I, O, S extends AsObject<I, O, S>> implements MatcherBuild
     return (S) this;
   }
 
+  @SuppressWarnings("unchecked")
   public S isSameAs(O value) {
     this.predicates.add(CrestPredicates.isSameAs(value));
     return (S) this;
   }
 
+  @SuppressWarnings("unchecked")
   public S isInstanceOf(Class<?> value) {
     this.predicates.add(CrestPredicates.isInstanceOf(value));
     return (S) this;

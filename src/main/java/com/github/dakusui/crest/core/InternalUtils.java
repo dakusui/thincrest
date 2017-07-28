@@ -13,6 +13,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static com.github.dakusui.crest.functions.CrestPredicates.isFalse;
 import static com.github.dakusui.crest.functions.CrestPredicates.isTrue;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;

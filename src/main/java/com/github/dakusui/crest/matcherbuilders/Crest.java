@@ -2,6 +2,7 @@ package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.core.Formattable;
 import com.github.dakusui.crest.functions.CrestFunctions;
+import com.github.dakusui.crest.matcherbuilders.primitives.*;
 import org.hamcrest.Description;
 import org.hamcrest.DiagnosingMatcher;
 import org.hamcrest.Matcher;
@@ -61,6 +62,42 @@ public enum Crest {
     return new AsBoolean<>(function);
   }
 
+  public static <I> AsByte<I> asByte(Function<? super I, Byte> function) {
+    return new AsByte<>(function);
+  }
+
+  public static <I> AsByte<I> asByte(String methodName, Object... args) {
+    return asByte(CrestFunctions.invoke(methodName, (Object[]) args).andThen(CrestFunctions.cast(Byte.class)));
+  }
+
+  public static AsByte<Byte> asByte() {
+    return asByte(CrestFunctions.identity());
+  }
+
+  public static <I> AsChar<I> asChar(Function<? super I, Character> function) {
+    return new AsChar<>(function);
+  }
+
+  public static <I> AsChar<I> asChar(String methodName, Object... args) {
+    return asChar(CrestFunctions.invoke(methodName, (Object[]) args).andThen(CrestFunctions.cast(Character.class)));
+  }
+
+  public static AsChar<Character> asChar() {
+    return asChar(CrestFunctions.identity());
+  }
+
+  public static <I> AsShort<I> asShort(Function<? super I, Short> function) {
+    return new AsShort<>(function);
+  }
+
+  public static <I> AsShort<I> asShort(String methodName, Object... args) {
+    return asShort(CrestFunctions.invoke(methodName, (Object[]) args).andThen(CrestFunctions.cast(Short.class)));
+  }
+
+  public static AsShort<Short> asShort() {
+    return asShort(CrestFunctions.identity());
+  }
+
   public static <I> AsInteger<I> asInteger(Function<? super I, Integer> function) {
     return new AsInteger<>(function);
   }
@@ -70,22 +107,63 @@ public enum Crest {
   }
 
   public static AsInteger<Integer> asInteger() {
-    return asInteger(Function.identity());
+    return asInteger(CrestFunctions.identity());
+  }
+
+  public static <I> AsLong<I> asLong(Function<? super I, Long> function) {
+    return new AsLong<>(function);
+  }
+
+  public static <I> AsLong<I> asLong(String methodName, Object... args) {
+    return asLong(CrestFunctions.invoke(methodName, (Object[]) args).andThen(CrestFunctions.cast(Long.class)));
+  }
+
+  public static AsLong<Long> asLong() {
+    return asLong(CrestFunctions.identity());
+  }
+
+  public static <I> AsFloat<I> asFloat(Function<? super I, Float> function) {
+    return new AsFloat<>(function);
+  }
+
+  public static <I> AsFloat<I> asFloat(String methodName, Object... args) {
+    return asFloat(CrestFunctions.invoke(methodName, (Object[]) args).andThen(CrestFunctions.cast(Float.class)));
+  }
+
+  public static AsFloat<Float> asFloat() {
+    return asFloat(CrestFunctions.identity());
+  }
+
+  public static <I> AsDouble<I> asDouble(Function<? super I, Double> function) {
+    return new AsDouble<>(function);
+  }
+
+  public static <I> AsDouble<I> asDouble(String methodName, Object... args) {
+    return asDouble(CrestFunctions.invoke(methodName, (Object[]) args).andThen(CrestFunctions.cast(Double.class)));
+  }
+
+  public static AsDouble<Double> asDouble() {
+    return asDouble(CrestFunctions.identity());
   }
 
   /*
    * Casts a given object into the given comparable type
    */
-  public static <I extends Comparable<? super I>> AsComparable<? super I, I> asComparableOf(Class<I> type) {
-    return asComparable(CrestFunctions.cast(type));
+  public static <I extends Comparable<? super I>, S extends AsComparable<I, I, S>>
+  S asComparableOf(Class<I> type) {
+    return asComparable(CrestFunctions.<I>cast(type));
   }
 
-  public static <I, T extends Comparable<? super T>> AsComparable<? super I, T> asComparable(Function<? super I, ? extends T> function) {
-    return new AsComparable<>(function);
+  @SuppressWarnings("unchecked")
+  public static <I, T extends Comparable<? super T>, S extends AsComparable<I, T, S>>
+  S asComparable(Function<? super I, ? extends T> function) {
+    return (S) new AsComparable<>(function);
   }
 
-  public static <I, T extends Comparable<? super T>> AsComparable<? super I, T> asComparableOf(Class<T> type, String methodName, Object... args) {
-    return asComparable(CrestFunctions.invoke(methodName, (Object[]) args).<T>andThen(CrestFunctions.cast(type)));
+  @SuppressWarnings("unchecked")
+  public static <I, T extends Comparable<? super T>, S extends AsComparable<I, T, S>>
+  S asComparableOf(Class<T> type, String methodName, Object... args) {
+    return (S) asComparable(CrestFunctions.invoke(methodName, (Object[]) args).<T>andThen(CrestFunctions.cast(type)));
   }
 
   public static <I> AsString<I> asString() {
@@ -106,11 +184,19 @@ public enum Crest {
   }
 
   public static <I extends Collection<? extends E>, E> AsList<I, E> asList() {
-    return new AsList<>(CrestFunctions.collectionToList());
+    return asList(CrestFunctions.collectionToList());
   }
 
   public static <I, E> AsList<I, E> asList(Function<? super I, ? extends List<E>> function) {
-    return new AsList<I, E>(function);
+    return new AsList<>(function);
+  }
+
+  public static <I extends Map<K, V>, K, V> AsMap<I, K, V> asMap() {
+    return asMap(CrestFunctions.identity());
+  }
+
+  public static <I, K, V> AsMap<I, K, V> asMap(Function<? super I, ? extends Map<K, V>> function) {
+    return new AsMap<>(function);
   }
 
   public static <T> void assertThat(T actual, Matcher<? super T> matcher) {

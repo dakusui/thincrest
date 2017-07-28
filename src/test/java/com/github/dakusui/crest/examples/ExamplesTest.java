@@ -16,12 +16,23 @@ import static org.junit.Assert.assertEquals;
 
 public class ExamplesTest {
   @Test
-  public void runExample2() {
+  public void simpleExample() {
+    Class<?> exampleClass = SimpleExamples.class;
+    verifyExample(exampleClass);
+  }
+
+  @Test
+  public void inThincrest() {
+    Class<?> exampleClass = InThincrest.class;
+    verifyExample(exampleClass);
+  }
+
+  private void verifyExample(Class<?> javaTestClass) {
     List<String> expectation = new LinkedList<>();
     List<String> actualResult = new LinkedList<>();
 
     JUnitCore jUnitCore = new JUnitCore();
-    TestClass testClass = new TestClass(SimpleExamples.class);
+    TestClass testClass = new TestClass(javaTestClass);
     for (FrameworkMethod m : testClass.getAnnotatedMethods(Test.class).stream().sorted(Comparator.comparing(FrameworkMethod::getName)).collect(Collectors.toList())) {
       Request request = Request.method(testClass.getJavaClass(), m.getName());
       Result result = jUnitCore.run(request);

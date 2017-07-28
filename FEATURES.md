@@ -25,13 +25,13 @@
 | V | 20|数値であることをチェックする 	|- 	|containsOnlyDigits|
 | V | 21|行数をチェックする 	|- 	|hasLineCount|
 |   | 22|指定した順序で文字列が現れることをチェックする 	|is + stringContainsInOrder 	|containsSequence|
-|   | 23|指定した範囲の値であることをチェックする 	|is + closeTo 	|isCloseTo|
-|   |   |指定した範囲の値であることをチェックする 	|is + closeTo 	|isBetweebn|
+|   | 23|指定した範囲の値に近いかチェックする 	|is + closeTo 	|isCloseTo|
+|   |23a|指定した範囲の値であることをチェックする 	|?|isBetweebn|
 | V | 24|指定した値より大きいことをチェックする 	|is + greaterThan 	|isGreaterThan|
 | V | 25|指定した値以上であることをチェックする 	|is + greaterThanOrEqualTo 	|isGreaterThanOrEqualTo|
 | V | 26|指定した値より小さいことをチェックする 	|is + lessThan 	|isLessThan|
 | V | 27|指定した値以下であることをチェックする 	|is + lessThanOrEqualTo 	|isLessThanOrEqualTo|
-| ? | 28|X全ての要素が等しいことをチェックする 	|is + contains 	|contains|
+| V | 28|全ての要素が等しいことをチェックする 	|is + contains ?|contains?|
 | V | 29|指定した要素を持つことをチェックする 	|hasItem 	|containsOnly|
 | V | 30|指定した要素を全て含むことをチェックする 	|hasItems 	|        |
 | V |   |(containsExactly)                     |           |containsOnly|

@@ -17,6 +17,7 @@ import java.beans.PropertyDescriptor;
 import java.util.*;
 
 import static com.github.dakusui.crest.functions.CrestFunctions.arrayToList;
+import static com.github.dakusui.crest.functions.CrestFunctions.countLines;
 import static com.github.dakusui.crest.functions.CrestFunctions.size;
 import static com.github.dakusui.crest.functions.CrestPredicates.eq;
 import static com.github.dakusui.crest.functions.CrestPredicates.isEmpty;
@@ -182,14 +183,14 @@ public class InThincrest {
     Crest.assertThat(
         aString,
         asInteger(
-            Formattable.function("countLines", (String s) -> s.split("\n").length)
+            countLines()
         ).eq(30).matcher()
     );
   }
 
   @Test
   public void qiita_21_simpler$thenFail() {
-    // or more simply, if you don't need friendly method explanation on failure.
+    // or, if you don't need friendly method explanation on failure.
 
     Crest.assertThat(
         aString,
@@ -198,7 +199,7 @@ public class InThincrest {
   }
 
   @Test
-  public void qiita_24_25_26_27_integer$thenFail() {
+  public void qiita_24_25_26_27_integer$thenPass() {
     Crest.assertThat(
         123,
         allOf(
@@ -211,8 +212,76 @@ public class InThincrest {
   }
 
   @Test
-  public void qiita_29_30_32$thenFail() {
+  public void qiita_23a$thenPass() {
+    Crest.assertThat(
+        123.4,
+        asDouble().ge(100.0).le(200.0).matcher()
+    );
+  }
 
+  @Test
+  public void qiita_23a$thenFail() {
+    Crest.assertThat(
+        200.1,
+        asDouble().ge(100.0).le(200.0).matcher()
+    );
+  }
+
+
+  @Test
+  public void qiita_24_25_26_27_integer1$thenFail() {
+    Crest.assertThat(
+        -123,
+        allOf(
+            asInteger().gt(100).matcher(),
+            asInteger().ge(100).matcher(),
+            asInteger().lt(200).matcher(),
+            asInteger().le(200).matcher()
+        )
+    );
+  }
+
+  @Test
+  public void qiita_24_25_26_27_integer2$thenFail() {
+    Crest.assertThat(
+        1230,
+        allOf(
+            asInteger().gt(100).matcher(),
+            asInteger().ge(100).matcher(),
+            asInteger().lt(200).matcher(),
+            asInteger().le(200).matcher()
+        )
+    );
+  }
+
+  @Test
+  public void qiita_28$thenPass() {
+    Crest.assertThat(
+        aList,
+        asList().containsExactly(Arrays.asList(
+            "hoge", "fuga", "piyo"
+        )).matcher()
+    );
+  }
+
+  @Test
+  public void qiita_28extra$thenFail() {
+    Crest.assertThat(
+        aList,
+        asList().containsExactly(Arrays.asList(
+            "hoge", "fuga", "piyo", "hi"
+        )).matcher()
+    );
+  }
+
+  @Test
+  public void qiita_28missing$thenFail() {
+    Crest.assertThat(
+        aList,
+        asList().containsExactly(Arrays.asList(
+            "hoge", "fuga"
+        )).matcher()
+    );
   }
 
   @Test
@@ -282,7 +351,7 @@ public class InThincrest {
   }
 
   @Test
-  public void qiita_41() {
+  public void qiita_41$thenFail() {
     Crest.assertThat(
         anArray,
         asList(CrestFunctions.arrayToList()).check(CrestFunctions.size(), CrestPredicates.eq(3)).matcher()
@@ -298,7 +367,7 @@ public class InThincrest {
   public void qiita_42$thenFail() {
     Crest.assertThat(
         anArray,
-        // To check if its empty or not, type doesn't matter. Let's say 'Object'.
+        // To check if it's empty or not, type doesn't matter. Let's say 'Object'.
         Crest.asList(arrayToList()).isEmpty().matcher()
     );
   }
@@ -307,13 +376,13 @@ public class InThincrest {
   public void qiita_43$thenFail() {
     Crest.assertThat(
         anArray,
-        // To check if its empty or not, type doesn't matter. Let's say 'Object'.
+        // To check if it's empty or not, type doesn't matter. Let's say 'Object'.
         Crest.asList(arrayToList()).contains("hello").matcher()
     );
   }
 
   @Test
-  public void hamcrestSandbox() {
+  public void hamcrestSandbox$thenFail() {
     assertThat("Hello, world", Matchers.stringContainsInOrder("Hello", "world"));
     assertThat("Hello, world", Matchers.stringContainsInOrder("world", "Hello"));
     Matchers.equalToIgnoringWhiteSpace("");
@@ -325,28 +394,4 @@ public class InThincrest {
 
   }
 
-  @Test
-  public void property() throws IntrospectionException {
-    class Tmp {
-      public String a = "hello";
-      public String b = "world";
-      public String c = "everyone";
-
-      public String getA() {
-        return a;
-      }
-    }
-    PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(new Tmp().getClass(), Object.class).getPropertyDescriptors();
-    for (PropertyDescriptor each : propertyDescriptors) {
-      System.out.println(each);
-    }
-  }
-
-  @Test
-  public void describedAsTest() {
-    Assert.assertThat(
-        "world",
-        new DescribedAs<>("abcde  - %0 - %1 %2", Matchers.equalTo("hello"), new Object[] { 1, 2, 3 })
-    );
-  }
 }

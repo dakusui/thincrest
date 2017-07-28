@@ -173,7 +173,7 @@ public class SimpleExamples {
         "Gallia est omnis divisa in partes tres, quarun unum incolunt Belgae, "
             + "alium Aquitani, tertium linua ipsorum Celtae, nostra Galli appelantur",
         allOf(
-            asString().check("contains", "est").containsString("Caesar").matcher(),
+            asString().containsString("Caesar").check("contains", "est").containsString("Caesar").matcher(),
             asObject("length").check(Formattable.predicate(">1024", o -> ((Integer) o) > 1024)).matcher()
         )
     );
@@ -281,7 +281,7 @@ public class SimpleExamples {
   }
 
   @Test
-  public void givenString$whenParseIntAndTest$thenPass(){
+  public void givenString$whenParseIntAndTest$thenPass() {
     assertThat(
         "123",
         asInteger("length").eq(3).matcher()
