@@ -1,5 +1,6 @@
 package com.github.dakusui.crest.examples;
 
+import com.github.dakusui.crest.ComparablesExample;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -25,6 +26,41 @@ public class ExamplesTest {
   public void inThincrest() {
     Class<?> exampleClass = InThincrest.class;
     verifyExample(exampleClass);
+  }
+
+  @Test
+  public void comparableExample$Byte() {
+    verifyExample(ComparablesExample.ByteExample.class);
+  }
+
+  @Test
+  public void comparableExample$Char() {
+    verifyExample(ComparablesExample.CharExample.class);
+  }
+
+  @Test
+  public void comparableExample$Short() {
+    verifyExample(ComparablesExample.ShortExample.class);
+  }
+
+  @Test
+  public void comparableExample$Integer() {
+    verifyExample(ComparablesExample.IntegerExample.class);
+  }
+
+  @Test
+  public void comparableExample$Long() {
+    verifyExample(ComparablesExample.LongExample.class);
+  }
+
+  @Test
+  public void comparableExample$Float() {
+    verifyExample(ComparablesExample.FloatExample.class);
+  }
+
+  @Test
+  public void comparableExample$Double() {
+    verifyExample(ComparablesExample.DoubleExample.class);
   }
 
   private void verifyExample(Class<?> javaTestClass) {

@@ -41,8 +41,8 @@
 |   | 34|指定したエントリを持つことをチェックする 	|hasEntry 	|containsEntry|
 |   | 35|指定したキーを持つことをチェックする 	|hasKey 	|containsKey|
 |   | 36|指定した値を持つことをチェックする 	|hasValue 	|containsValue|
-| X | 27|指定したプロパティを持つことをチェックする 	|hasProperty 	|filteredOn|
-| X | 38|全てのプロパティが等しいことをチェックする 	|is + samePropertyValuesAs 	|isEqualToComparingFieldByField|
+| - | 27|指定したプロパティを持つことをチェックする 	|hasProperty 	|filteredOn|
+| - | 38|全てのプロパティが等しいことをチェックする 	|is + samePropertyValuesAs 	|isEqualToComparingFieldByField|
 | ? | 39|指定した要素と配列の要素が全て等しいことをチェックする 	|is + arrayContaining 	|containsExactly|
 | V | 40|順序を無視して、指定した要素が全て配列に含まれることをチェックする 	|is + arrayContainingInAnyOrder 	|contains|
 | V | 41|配列のサイズをチェックする 	|is + arrayWithSize 	|hasSize|

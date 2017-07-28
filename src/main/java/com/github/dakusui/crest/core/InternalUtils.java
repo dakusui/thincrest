@@ -13,7 +13,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static com.github.dakusui.crest.functions.CrestPredicates.isFalse;
 import static com.github.dakusui.crest.functions.CrestPredicates.isTrue;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -75,16 +74,42 @@ public enum InternalUtils {
     for (int i = 0; i < args.length; i++) {
       if (args[i] == null)
         continue;
-      if (!formalParameters[i].isAssignableFrom(args[i].getClass()))
+      if (!formalParameters[i].isAssignableFrom(toPrimitiveIfWrapper(args[i].getClass())))
         return false;
     }
     return true;
   }
 
-  public static <T> Optional<T> getIfOnlyOneElseThrow(List<T> in) {
-    if (in.size() == 1)
-      return Optional.of(in.get(0));
-    return Optional.empty();
+  private static Class<?> toPrimitiveIfWrapper(Class<?> in) {
+    for (Class<?>[] pair : new Class<?>[][] {
+        { boolean.class, Boolean.class },
+        { byte.class, Byte.class },
+        { char.class, Character.class },
+        { short.class, Short.class },
+        { int.class, Integer.class },
+        { long.class, Long.class },
+        { float.class, Float.class },
+        { double.class, Double.class },
+    }) {
+      if (Objects.equals(in, pair[1]))
+        return pair[0];
+    }
+    return in;
+  }
+
+
+  private static <T> Optional<T> getIfOnlyOneElseThrow(List<T> foundMethods, Class<?> aClass, String methodName, Object[] args) {
+    if (foundMethods.isEmpty())
+      return Optional.empty();
+    if (foundMethods.size() == 1)
+      return Optional.of(foundMethods.get(0));
+    throw new RuntimeException(String.format(
+        "Methods matching '%s%s' were more than one were matching in %s.: %s",
+        methodName,
+        asList(args),
+        aClass.getCanonicalName(),
+        foundMethods
+    ));
   }
 
   public static Method findMethod(Class<?> aClass, String methodName, Object[] args) {
@@ -97,12 +122,15 @@ public enum InternalUtils {
             (Method m) -> areArgsCompatible(m.getParameterTypes(), args)
         ).collect(
             toList()
-        )
+        ),
+        aClass,
+        methodName,
+        args
     ).orElseThrow(
         () -> new RuntimeException(String.format(
-            "Method matching '%s%s' was not found or more than one were mathing in %s.",
+            "Method matching '%s%s' was not found in %s.",
             methodName,
-            asList(args),
+            Arrays.asList(args),
             aClass.getCanonicalName()
         ))
     );

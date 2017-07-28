@@ -53,6 +53,14 @@ public enum Crest {
     return new AsObject<>(function);
   }
 
+  public static AsBoolean<Boolean> asBoolean() {
+    return asBoolean(CrestFunctions.identity());
+  }
+
+  public static <I> AsBoolean<I> asBoolean(String methodName, Object... args) {
+    return asBoolean(CrestFunctions.invoke(methodName, (Object[]) args).andThen(CrestFunctions.cast(Boolean.class)));
+  }
+
   public static <I> AsBoolean<I> asBoolean(Predicate<? super I> predicate) {
     Objects.requireNonNull(predicate);
     return asBoolean(Formattable.function(predicate.toString(), predicate::test));
