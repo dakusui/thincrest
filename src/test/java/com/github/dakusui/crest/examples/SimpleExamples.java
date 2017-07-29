@@ -5,8 +5,7 @@ import com.github.dakusui.crest.functions.CrestFunctions;
 import com.github.dakusui.crest.matcherbuilders.Crest;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 
 import static com.github.dakusui.crest.matcherbuilders.Crest.*;
 
@@ -268,7 +267,16 @@ public class SimpleExamples {
   public void givenList$$whenIsEmpty$thenFail() {
     assertThat(
         Arrays.asList(100, 200, 300, 400, 500),
-        Crest.asList().isEmpty().matcher()
+        Crest.asList().contains("100").isEmpty().matcher()
+    );
+  }
+
+  @Test
+  public void givenTypedList$$whenIsEmpty$thenFail() {
+    List<Integer> aList = Arrays.asList(100, 200, 300, 400, 500);
+    assertThat(
+        aList,
+        Crest.asList().contains("100").isEmpty().matcher()
     );
   }
 
@@ -285,6 +293,32 @@ public class SimpleExamples {
     assertThat(
         "123",
         asInteger("length").eq(3).matcher()
+    );
+  }
+
+  @Test
+  public void givenMap$when$thenPass() {
+    Map<String, Integer> map = new HashMap<String, Integer>() {{
+      put("hello", 5);
+      put("world", 5);
+      put("everyone", 8);
+    }};
+    assertThat(
+        map,
+        Crest.<Map<String, Integer>, String, Integer>asMap().hasKey("hello").matcher()
+    );
+  }
+
+  @Test
+  public void givenMap$when$thenFail() {
+    Map<String, Integer> map = new HashMap<String, Integer>() {{
+      put("hello", 5);
+      put("world", 5);
+      put("everyone", 8);
+    }};
+    assertThat(
+        map,
+        Crest.<Map<String, Integer>, String, Integer>asMap().hasKey("hello!").matcher()
     );
   }
 }

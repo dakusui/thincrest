@@ -4,8 +4,8 @@ import com.github.dakusui.crest.matcherbuilders.AsComparable;
 
 import java.util.function.Function;
 
-public class AsLong<I> extends AsComparable<I, Long, AsLong<I>> {
-  public AsLong(Function<? super I, ? extends Long> function) {
+public class AsLong<IN> extends AsComparable<IN, Long, AsLong<IN>> {
+  public AsLong(Function<? super IN, ? extends Long> function) {
     super(function);
   }
 }

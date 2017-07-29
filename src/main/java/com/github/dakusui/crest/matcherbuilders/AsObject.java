@@ -12,64 +12,64 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class AsObject<I, O, S extends AsObject<I, O, S>> implements MatcherBuilder<I, O, S> {
-  private final Function<? super I, ? extends O> function;
-  private final List<Predicate<? super O>>       predicates;
+public class AsObject<IN, OUT, SELF extends AsObject<IN, OUT, SELF>> implements MatcherBuilder<IN, OUT, SELF> {
+  private final Function<? super IN, ? extends OUT> function;
+  private final List<Predicate<? super OUT>>        predicates;
 
-  public AsObject(Function<? super I, ? extends O> function) {
+  public AsObject(Function<? super IN, ? extends OUT> function) {
     this.function = function;
     this.predicates = new LinkedList<>();
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public S check(Predicate<? super O> predicate) {
+  public SELF check(Predicate<? super OUT> predicate) {
     this.predicates.add(predicate);
-    return (S) this;
+    return (SELF) this;
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public <P> S check(Function<? super O, ? extends P> function, Predicate<? super P> predicate) {
-    this.predicates.add(new TransformingPredicate<P, O>(predicate, function));
-    return (S) this;
+  public <P> SELF check(Function<? super OUT, ? extends P> function, Predicate<? super P> predicate) {
+    this.predicates.add(new TransformingPredicate<P, OUT>(predicate, function));
+    return (SELF) this;
   }
 
   @SuppressWarnings("unchecked")
-  public S isNull() {
+  public SELF isNull() {
     this.predicates.add(Formattable.predicate("==null", Objects::isNull));
-    return (S) this;
+    return (SELF) this;
   }
 
   @SuppressWarnings("unchecked")
-  public S isNotNull() {
+  public SELF isNotNull() {
     this.predicates.add(Formattable.predicate("1=null", Objects::isNull));
-    return (S) this;
+    return (SELF) this;
   }
 
   @SuppressWarnings("unchecked")
-  public S isSameAs(O value) {
+  public SELF isSameAs(OUT value) {
     this.predicates.add(CrestPredicates.isSameAs(value));
-    return (S) this;
+    return (SELF) this;
   }
 
   @SuppressWarnings("unchecked")
-  public S isInstanceOf(Class<?> value) {
+  public SELF isInstanceOf(Class<?> value) {
     this.predicates.add(CrestPredicates.isInstanceOf(value));
-    return (S) this;
+    return (SELF) this;
   }
 
   @Override
-  public Matcher<? super I> all() {
+  public Matcher<? super IN> all() {
     return matcher(Op.AND);
   }
 
   @Override
-  public Matcher<? super I> any() {
+  public Matcher<? super IN> any() {
     return matcher(Op.OR);
   }
 
-  private Matcher<? super I> matcher(Op op) {
+  private Matcher<? super IN> matcher(Op op) {
     InternalUtils.requireState(!predicates.isEmpty());
     return (predicates.size() == 1) ?
         InternalUtils.toMatcher(predicates.get(0), this.function) :

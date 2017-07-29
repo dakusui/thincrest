@@ -4,8 +4,8 @@ import com.github.dakusui.crest.matcherbuilders.AsComparable;
 
 import java.util.function.Function;
 
-public class AsFloat<I> extends AsComparable<I, Float, AsFloat<I>> {
-  public AsFloat(Function<? super I, ? extends Float> function) {
+public class AsFloat<IN> extends AsComparable<IN, Float, AsFloat<IN>> {
+  public AsFloat(Function<? super IN, ? extends Float> function) {
     super(function);
   }
 }

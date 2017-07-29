@@ -6,19 +6,13 @@ import com.github.dakusui.crest.functions.CrestPredicates;
 import com.github.dakusui.crest.matcherbuilders.Crest;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
-import org.hamcrest.core.DescribedAs;
 import org.hamcrest.core.StringContains;
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.util.*;
+import java.util.function.Predicate;
 
-import static com.github.dakusui.crest.functions.CrestFunctions.arrayToList;
-import static com.github.dakusui.crest.functions.CrestFunctions.countLines;
-import static com.github.dakusui.crest.functions.CrestFunctions.size;
+import static com.github.dakusui.crest.functions.CrestFunctions.*;
 import static com.github.dakusui.crest.functions.CrestPredicates.eq;
 import static com.github.dakusui.crest.functions.CrestPredicates.isEmpty;
 import static com.github.dakusui.crest.matcherbuilders.Crest.*;
@@ -312,7 +306,57 @@ public class InThincrest {
   public void qiita_39$thenPass() {
     Crest.assertThat(
         anArray,
-        Crest.asList(arrayToList()).containsExactly(Arrays.asList("Gallia", "est", "omnis", "divisa")).matcher()
+        Crest.asList(
+            arrayToList()
+        ).containsExactly(
+            Arrays.asList("Gallia", "est", "omnis", "divisa")
+        ).matcher()
+    );
+  }
+
+  @Test
+  public void qiita_39_typed$thenPass() {
+    Crest.assertThat(
+        anArray,
+        Crest.asListOf(
+            String.class,
+            arrayToList()
+        ).containsExactly(
+            Arrays.asList("Gallia", "est", "omnis", "divisa")
+        ).anyMatch(
+            (Predicate<String>) s -> s.matches("es.")
+        ).matcher()
+    );
+  }
+
+
+  @Test
+  public void qiita_39_typed_2$thenFail() {
+    Crest.assertThat(
+        anArray,
+        Crest.asListOf(
+            String.class,
+            arrayToList()
+        ).containsExactly(
+            Arrays.asList("Gallia", "est", "omnis", "divisa")
+        ).noneMatch(
+            (Predicate<String>) s -> s.matches("es.")
+        ).matcher()
+    );
+  }
+
+  @Test
+  public void qiita_39_typed_3$thenFail() {
+    Crest.assertThat(
+        anArray,
+        Crest.asListOf(
+            String.class,
+            arrayToList()
+        ).containsExactly(
+            Arrays.asList("Gallia", "est", "omnis", "divisa")
+        ).allMatch(
+            (Predicate<String>) s -> s.matches("es.")
+        ).matcher()
     );
   }
 
@@ -345,8 +389,8 @@ public class InThincrest {
     Crest.assertThat(
         anArray,
         allOf(
-            Crest.asList(CrestFunctions.<String>arrayToList()).containsAll(Arrays.asList("Hello", "world")).matcher(),
-            Crest.asList(CrestFunctions.<String>arrayToList()).contains("Hello").matcher()
+            Crest.asListOf(String.class, CrestFunctions.arrayToList()).containsAll(Arrays.asList("Hello", "world")).matcher(),
+            Crest.asListOf(String.class, CrestFunctions.arrayToList()).contains("Hello").matcher()
         ));
   }
 
@@ -375,9 +419,9 @@ public class InThincrest {
   @Test
   public void qiita_43$thenFail() {
     Crest.assertThat(
-        anArray,
+        aCollection,
         // To check if it's empty or not, type doesn't matter. Let's say 'Object'.
-        Crest.asList(arrayToList()).contains("hello").matcher()
+        Crest.asListOf(String.class).contains("hello").matcher()
     );
   }
 
@@ -391,7 +435,6 @@ public class InThincrest {
 
     Matchers.empty();
     Matchers.hasProperty("");
-
   }
 
 }

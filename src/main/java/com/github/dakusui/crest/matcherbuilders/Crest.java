@@ -16,6 +16,9 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * A facade class of 'thincrest'.
+ */
 public enum Crest {
   ;
 
@@ -191,16 +194,24 @@ public enum Crest {
     return new AsStream<>(CrestFunctions.stream());
   }
 
-  public static <I extends Collection<? extends E>, E> AsList<I, E> asList() {
-    return asList(CrestFunctions.collectionToList());
+  public static <I extends Collection<?>> AsList<? super I, ?> asList() {
+    return asListOf(Object.class, CrestFunctions.collectionToList());
   }
 
-  public static <I, E> AsList<I, E> asList(Function<? super I, ? extends List<E>> function) {
+  public static <I> AsList<? super I, ?> asList(Function<? super I, ? extends List<Object>> function) {
+    return asListOf(Object.class, function);
+  }
+
+  public static <I extends Collection<E>, E> AsList<I, E> asListOf(Class<E> type) {
+    return asListOf(type, CrestFunctions.collectionToList());
+  }
+
+  public static <I, E> AsList<I, E> asListOf(Class<E> type, Function<? super I, ? extends List<E>> function) {
     return new AsList<>(function);
   }
 
-  public static <I extends Map<K, V>, K, V> AsMap<I, K, V> asMap() {
-    return asMap(CrestFunctions.identity());
+  public static <I extends Map<? extends K, ? extends V>, K, V> AsMap<I, K, V> asMap() {
+    return null;//asMap(Formattable.function("identity", map -> map));
   }
 
   public static <I, K, V> AsMap<I, K, V> asMap(Function<? super I, ? extends Map<K, V>> function) {

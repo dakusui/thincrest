@@ -168,7 +168,7 @@ public enum CrestPredicates {
     );
   }
 
-  public static <E> Predicate<? super Collection<? super E>> containsAll(Collection<? extends E> collection) {
+  public static <E> Predicate<? super Collection<? super E>> containsAll(Collection<?> collection) {
     requireNonNull(collection);
     return Formattable.predicate(
         String.format("containsAll%s", collection),
@@ -181,7 +181,7 @@ public enum CrestPredicates {
    * unlike AssertJ, this method returns true even if target collection does not over all the items in given
    * collection as long as all the items in the target collection are found in given one.
    */
-  public static <E> Predicate<? super Collection<? super E>> containsOnly(Collection<? extends E> collection) {
+  public static <E> Predicate<? super Collection<? super E>> containsOnly(Collection<?> collection) {
     requireNonNull(collection);
     return Formattable.predicate(
         String.format("containsOnly%s", collection),
@@ -194,7 +194,7 @@ public enum CrestPredicates {
    * This method returns true if and only if all the items in the target collection
    * and the given collection are equal.
    */
-  public static <E> Predicate<? super Collection<? super E>> containsExactly(Collection<? extends E> collection) {
+  public static <E> Predicate<? super Collection<?>> containsExactly(Collection<?> collection) {
     requireNonNull(collection);
     return Formattable.predicate(
         String.format("containsExactly%s", collection),
@@ -202,8 +202,9 @@ public enum CrestPredicates {
     );
   }
 
-  public static <E> Predicate<? super Collection<? super E>> contains(E entry) {
+  public static <E> Predicate<? super Collection<E>> contains(Object entry) {
     requireNonNull(entry);
+    //noinspection SuspiciousMethodCalls
     return Formattable.predicate(
         String.format("contains[%s]", entry),
         c -> c.contains(entry)

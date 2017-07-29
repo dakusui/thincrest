@@ -4,7 +4,8 @@ import com.github.dakusui.crest.functions.CrestPredicates;
 
 import java.util.function.Function;
 
-public class AsComparable<IN, OF_TYPE extends Comparable<? super OF_TYPE>, SELF extends AsComparable<IN, OF_TYPE, SELF>> extends AsObject<IN, OF_TYPE, SELF> {
+public class AsComparable<IN, OF_TYPE extends Comparable<? super OF_TYPE>,
+    SELF extends AsComparable<IN, OF_TYPE, SELF>> extends AsObject<IN, OF_TYPE, SELF> {
   public AsComparable(Function<? super IN, ? extends OF_TYPE> function) {
     super(function);
   }
