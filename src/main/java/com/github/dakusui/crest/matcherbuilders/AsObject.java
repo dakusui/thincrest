@@ -1,6 +1,5 @@
 package com.github.dakusui.crest.matcherbuilders;
 
-import com.github.dakusui.crest.core.Formattable;
 import com.github.dakusui.crest.core.InternalUtils;
 import com.github.dakusui.crest.functions.CrestPredicates;
 import com.github.dakusui.crest.functions.TransformingPredicate;
@@ -28,35 +27,25 @@ public class AsObject<IN, OUT, SELF extends AsObject<IN, OUT, SELF>> implements 
     return (SELF) this;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public <P> SELF check(Function<? super OUT, ? extends P> function, Predicate<? super P> predicate) {
-    this.predicates.add(new TransformingPredicate<P, OUT>(predicate, function));
-    return (SELF) this;
+    return this.check(new TransformingPredicate<P, OUT>(predicate, function));
   }
 
-  @SuppressWarnings("unchecked")
   public SELF isNull() {
-    this.predicates.add(Formattable.predicate("==null", Objects::isNull));
-    return (SELF) this;
+    return this.check(CrestPredicates.isNull());
   }
 
-  @SuppressWarnings("unchecked")
   public SELF isNotNull() {
-    this.predicates.add(Formattable.predicate("1=null", Objects::isNull));
-    return (SELF) this;
+    return this.check(CrestPredicates.isNotNull());
   }
 
-  @SuppressWarnings("unchecked")
   public SELF isSameAs(OUT value) {
-    this.predicates.add(CrestPredicates.isSameAs(value));
-    return (SELF) this;
+    return this.check(CrestPredicates.isSameAs(value));
   }
 
-  @SuppressWarnings("unchecked")
   public SELF isInstanceOf(Class<?> value) {
-    this.predicates.add(CrestPredicates.isInstanceOf(value));
-    return (SELF) this;
+    return this.check(CrestPredicates.isInstanceOf(value));
   }
 
   @Override
@@ -75,5 +64,4 @@ public class AsObject<IN, OUT, SELF extends AsObject<IN, OUT, SELF>> implements 
         InternalUtils.toMatcher(predicates.get(0), this.function) :
         Objects.requireNonNull(op).create(predicates, this.function);
   }
-
 }

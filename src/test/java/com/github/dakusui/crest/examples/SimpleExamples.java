@@ -39,7 +39,10 @@ public class SimpleExamples {
   public void givenListOf_Hello_World_$whenAsStringAndCheckIfContainsString_Hello_$thenPass() {
     assertThat(
         Arrays.asList("Hello", "world"),
-        asString().containsString("Hello").matcher()
+        ////
+        // You can use '$()' instead of 'matcher()' to build a matcher and make
+        // the building process look more 'natural English sentence' like.
+        asString().containsString("Hello").$()
     );
   }
 
@@ -47,7 +50,7 @@ public class SimpleExamples {
   public void givenListOf_Hello_World_$whenAsStringWithDynamic_toUpperCase_andContainsString_hello$thenFail() {
     assertThat(
         Arrays.asList("Hello", "world").toString(),
-        asString("toUpperCase").containsString("hello!").matcher()
+        asString("toUpperCase").containsString("hello!").$()
     );
   }
 
