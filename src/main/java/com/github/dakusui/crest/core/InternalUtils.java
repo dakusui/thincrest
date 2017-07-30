@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import static com.github.dakusui.crest.functions.CrestPredicates.isTrue;
 import static java.util.Arrays.asList;
@@ -19,10 +18,6 @@ import static java.util.stream.Collectors.toList;
 
 public enum InternalUtils {
   ;
-
-  public static void requireState(boolean stateCondition) {
-    requireState(v -> v, stateCondition);
-  }
 
   public static <I, O> BaseMatcher<? super I> toMatcher(Predicate<? super O> p, Function<? super I, ? extends O> function) {
     return new BaseMatcher<I>() {
@@ -42,7 +37,7 @@ public enum InternalUtils {
       @SuppressWarnings("unchecked")
       @Override
       public void describeMismatch(Object item, Description description) {
-        requireState(isTrue(), matchesDone);
+        Precondition.requireState(isTrue(), matchesDone);
         description
             .appendDescriptionOf(this).appendText(" ")
             .appendText(String.format("was false because %s=", formatFunction(function, "x")))
@@ -147,22 +142,4 @@ public enum InternalUtils {
     }
   }
 
-  private static <E extends Throwable, T> T require(Predicate<? super T> condition, T value, Supplier<E> exceptionSupplier) throws E {
-    if (!condition.test(value))
-      throw exceptionSupplier.get();
-    return value;
-  }
-
-  public static <T> T requireState(Predicate<T> condition, T value, Supplier<String> messageOnFailure) {
-    return require(condition, value, () -> new IllegalStateException(messageOnFailure.get()));
-  }
-
-  public static <T> T requireState(Predicate<T> condition, T value, String messageOnFailure) {
-    return requireState(condition, value, () -> messageOnFailure);
-  }
-
-  @SuppressWarnings("UnusedReturnValue")
-  public static <T> T requireState(Predicate<T> check, T value) {
-    return requireState(check, value, (String) null);
-  }
 }
