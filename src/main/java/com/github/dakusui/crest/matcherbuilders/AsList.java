@@ -37,7 +37,7 @@ public class AsList<IN, ENTRY> extends AsObject<IN, List<ENTRY>, AsList<IN, ENTR
     return this.check(
         Formattable.predicate(
             String.format("allMatch[%s]", predicate),
-            entries -> entries.stream().noneMatch(predicate)
+            entries -> entries.stream().allMatch(predicate)
         ));
   }
 
@@ -45,7 +45,7 @@ public class AsList<IN, ENTRY> extends AsObject<IN, List<ENTRY>, AsList<IN, ENTR
     return this.check(
         Formattable.predicate(
             String.format("anyMatch[%s]", predicate),
-            entries -> entries.stream().noneMatch(predicate)
+            entries -> entries.stream().anyMatch(predicate)
         ));
   }
 

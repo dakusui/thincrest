@@ -6,6 +6,7 @@ import com.github.dakusui.crest.matcherbuilders.Crest;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.function.Function;
 
 import static com.github.dakusui.crest.matcherbuilders.Crest.*;
 
@@ -55,6 +56,30 @@ public class SimpleExamples {
     assertThat(
         Arrays.asList("Hello", "world").toString(),
         asString("toUpperCase").containsString("HELLO").matcher()
+    );
+  }
+
+  @Test
+  public void givenListOf_Hello_World_$whenAsListAndCheckIfContainsOnlyString_Hello_$thenFail() {
+    assertThat(
+        Arrays.asList("Hello", "world"),
+        asList().containsOnly(Collections.singletonList("Hello")).matcher()
+    );
+  }
+
+  @Test
+  public void givenListOf_Hello_World_$whenAsListAndCheckIfContainsOnlyString_Hello_World_$thenPass() {
+    assertThat(
+        Arrays.asList("Hello", "world"),
+        asList().containsOnly(Arrays.asList("Hello", "world")).matcher()
+    );
+  }
+
+  @Test
+  public void givenListOf_Hello_World_$whenAsListAndCheckIfContainsOnly_Hello_world_everyone_$thenPass() {
+    assertThat(
+        Arrays.asList("Hello", "world"),
+        asList().containsOnly(Arrays.asList("Hello", "world", "everyone")).matcher()
     );
   }
 
@@ -297,20 +322,67 @@ public class SimpleExamples {
   }
 
   @Test
-  public void givenMap$when$thenPass() {
-    Map<String, Integer> map = new HashMap<String, Integer>() {{
-      put("hello", 5);
-      put("world", 5);
-      put("everyone", 8);
-    }};
+  public void givenArray$whenHasKey$thenFail() {
+    Object[][] in = {
+        { "hello", 5 },
+        { "world", 5 },
+        { "everyone", 8 },
+    };
+    Function<Object[][], HashMap<Object, Object>> arrToMap = Formattable.function(
+        "arrToMap",
+        (Object[][] arr) -> new HashMap<Object, Object>() {
+          {
+            for (Object[] each : arr)
+              put(each[0], each[1]);
+          }
+        }
+    );
     assertThat(
-        map,
-        Crest.<Map<String, Integer>, String, Integer>asMap().hasKey("hello").matcher()
+        in,
+        Crest.asMap(arrToMap).hasKey("").hasKey(200).matcher()
     );
   }
 
   @Test
-  public void givenMap$when$thenFail() {
+  public void givenArray$whenHasKey$thenPass() {
+    Object[][] in = {
+        { "hello", 5 },
+        { "world", 5 },
+        { "everyone", 8 },
+    };
+    Function<Object[][], HashMap<Object, Object>> arrToMap = Formattable.function(
+        "arrToMap",
+        (Object[][] arr) -> new HashMap<Object, Object>() {
+          {
+            for (Object[] each : arr)
+              put(each[0], each[1]);
+          }
+        }
+    );
+    assertThat(
+        in,
+        Crest.asMap(arrToMap).hasKey("hello").hasKey("world").matcher()
+    );
+  }
+
+  @Test
+  public void givenMapWithoutTypes$whenHasKey$thenFail() {
+    Map map = new HashMap<Object, Object>() {{
+      put("hello", 5);
+      put("world", 5);
+      put("everyone", 8);
+    }};
+    assertThat(
+        map,
+        allOf(
+            Crest.asMap().hasKey("").hasKey(200).matcher()
+        )
+    );
+  }
+
+
+  @Test
+  public void givenMap$whenHasValue$thenPass() {
     Map<String, Integer> map = new HashMap<String, Integer>() {{
       put("hello", 5);
       put("world", 5);
@@ -318,7 +390,82 @@ public class SimpleExamples {
     }};
     assertThat(
         map,
-        Crest.<Map<String, Integer>, String, Integer>asMap().hasKey("hello!").matcher()
+        Crest.asMapOf(String.class, Integer.class).hasValue(5).matcher()
+    );
+  }
+
+  @Test
+  public void givenMap$whenHasValue$thenFail() {
+    Map<String, Integer> map = new HashMap<String, Integer>() {{
+      put("hello", 5);
+      put("world", 5);
+      put("everyone", 8);
+    }};
+    assertThat(
+        map,
+        allOf(
+            Crest.asMapOf(String.class, Integer.class).hasValue(10).matcher()
+        )
+    );
+  }
+
+  @Test
+  public void givenMap$whenHasEntry$thenPass() {
+    Map<String, Integer> map = new HashMap<String, Integer>() {{
+      put("hello", 5);
+      put("world", 5);
+      put("everyone", 8);
+    }};
+    assertThat(
+        map,
+        Crest.asMapOf(String.class, Integer.class).hasEntry("world", 5).matcher()
+    );
+  }
+
+  @Test
+  public void givenMap$whenHasEntry$thenFail() {
+    Map<String, Integer> map = new HashMap<String, Integer>() {{
+      put("hello", 5);
+      put("world", 5);
+      put("everyone", 8);
+    }};
+    assertThat(
+        map,
+        allOf(
+            Crest.asMapOf(String.class, Integer.class).hasEntry("hello", 8).matcher()
+        )
+    );
+  }
+
+  @Test
+  public void givenTrue$whenAsBooleanAndCheck$thenFail() {
+    assertThat(
+        true,
+        asBoolean().isFalse().matcher()
+    );
+  }
+
+  @Test
+  public void givenTrue$whenAsBooleanAndCheck$thenPass() {
+    assertThat(
+        true,
+        asBoolean().isTrue().matcher()
+    );
+  }
+
+  @Test
+  public void given_true_$whenAsBooleanAndCheck$thenFail() {
+    assertThat(
+        "true",
+        asBoolean("equals", "hello").isTrue().matcher()
+    );
+  }
+
+  @Test
+  public void given_true_$whenAsBooleanAndCheck$thenPass() {
+    assertThat(
+        "true",
+        asBoolean("equals", "true").isTrue().matcher()
     );
   }
 }

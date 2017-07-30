@@ -6,28 +6,28 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class AsMap<I, K, V> extends AsObject<I, Map<K, V>, AsMap<I, K, V>> {
+public class AsMap<I, K, V, SELF extends AsMap<I, K, V, SELF>> extends AsObject<I, Map<K, V>, SELF> {
   public AsMap(Function<? super I, ? extends Map<K, V>> function) {
     super(function);
   }
 
-  public AsMap<I, K, V> hasEntry(K key, V value) {
+  public AsMap<I, K, V, SELF> hasEntry(K key, V value) {
     return this.check(Formattable.predicate(
-        "containsKey",
+        String.format("hasEntry[%s,%s]", key, value),
         map -> map.containsKey(key) && Objects.equals(map.get(key), value)
     ));
   }
 
-  public AsMap<I, K, V> hasKey(K key) {
+  public AsMap<I, K, V, SELF> hasKey(K key) {
     return this.check(Formattable.predicate(
-        "hasKey",
+        String.format("hasKey[%s]", key),
         map -> map.containsKey(key)
     ));
   }
 
-  public AsMap<I, K, V> hasValue(V value) {
+  public AsMap<I, K, V, SELF> hasValue(V value) {
     return this.check(Formattable.predicate(
-        "hasValue",
+        String.format("hasValue[%s]", value),
         map -> map.containsValue(value)
     ));
   }

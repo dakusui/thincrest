@@ -2,8 +2,8 @@
 **thincrest**(pronounced 'think rest') is a thin wrapper library for **Hamcrest**[[1]].
 
 # Background 
-Following is a citation from a wikipedia article about the history of assertion 
-mechanisms until the time when **Hamcres** came to exist. 
+Following is an excerpt from a wikipedia article about the history of assertion 
+mechanisms until the time when **Hamcrest** came to exist. 
 
 
 >"First generation" unit test frameworks provide an 'assert' statement, allowing 
@@ -47,6 +47,20 @@ of primitive matchers.
  declarative style rather than a procedural style.
 >
 > -- <cite>Wikipedia article on "Hamcrest"</cite>[[3]]
+
+After Hamcrest, people came to want IDE to help them because they found it is
+tedious to find an appropriate matcher class or its factory method for their needs.
+Solutions to it were, **Assert J**[[4]], **Google Truth**[[5]], etc.
+
+The author of **thincrest** still feels the testing process can become sometimes
+painful when one fails.
+
+When you verify a feature under test, there are input for the feature and output
+from it. And output is what we are going to verify. But output is not only simple
+types such as ```String```, ```int```, ```boolean```. In most non-trivial cases,
+it has its own structure. 
+
+
 
 What a matcher or an assertion does can be divided three parts, which are transforming
 (or extracting value from) SUT's output, verify if the value satisfies a certain
@@ -347,10 +361,12 @@ versions.
 * [1] "Hamcrest"
 * [2] "Summary of Changes in version 4.4", JUnit team
 * [3] "Hamcrest" article in Wikipedia
-* [4] "Google Truth"
+* [4] "Assert J"
+* [5] "Google Truth"
 
 [0]: http://junit.org/junit4/
 [1]: http://hamcrest.org/
 [2]: https://github.com/junit-team/junit4/blob/master/doc/ReleaseNotes4.4.md#summary-of-changes-in-version-44
 [3]: https://en.wikipedia.org/wiki/Hamcrest
 [4]: http://google.github.io/truth/
+[5]: http://google.github.io/truth/

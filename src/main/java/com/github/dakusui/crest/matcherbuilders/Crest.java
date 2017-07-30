@@ -14,6 +14,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -65,7 +66,7 @@ public enum Crest {
   }
 
   public static <I> AsBoolean<I> asBoolean(Predicate<? super I> predicate) {
-    Objects.requireNonNull(predicate);
+    requireNonNull(predicate);
     return asBoolean(Formattable.function(predicate.toString(), predicate::test));
   }
 
@@ -162,7 +163,7 @@ public enum Crest {
    */
   public static <I extends Comparable<? super I>, S extends AsComparable<I, I, S>>
   S asComparableOf(Class<I> type) {
-    return asComparable(CrestFunctions.<I>cast(type));
+    return asComparable(CrestFunctions.cast(type));
   }
 
   @SuppressWarnings("unchecked")
@@ -182,7 +183,7 @@ public enum Crest {
   }
 
   public static <I> AsString<I> asString(Function<? super I, ? extends String> function) {
-    return new AsString<>(Objects.requireNonNull(function));
+    return new AsString<>(requireNonNull(function));
   }
 
   @SuppressWarnings({ "RedundantCast", "unchecked" })
@@ -206,16 +207,27 @@ public enum Crest {
     return asListOf(type, CrestFunctions.collectionToList());
   }
 
-  public static <I, E> AsList<I, E> asListOf(Class<E> type, Function<? super I, ? extends List<E>> function) {
+  public static <I, E> AsList<I, E> asListOf(@SuppressWarnings("unused") Class<E> type, Function<? super I, ? extends List<E>> function) {
     return new AsList<>(function);
   }
 
-  public static <I extends Map<? extends K, ? extends V>, K, V> AsMap<I, K, V> asMap() {
-    return null;//asMap(Formattable.function("identity", map -> map));
+  public static <I extends Map, SELF extends AsMap<I, Object, Object, SELF>> SELF asMap() {
+    return asMapOf(Object.class, Object.class, Formattable.function("mapToMap", o -> new HashMap<>()));
   }
 
-  public static <I, K, V> AsMap<I, K, V> asMap(Function<? super I, ? extends Map<K, V>> function) {
-    return new AsMap<>(function);
+  public static <I, SELF extends AsMap<I, Object, Object, SELF>> SELF asMap(Function<? super I, ? extends Map<Object, Object>> function) {
+    return asMapOf(Object.class, Object.class, function);
+  }
+
+  public static <I extends Map<K, V>, K, V, SELF extends AsMap<I, K, V, SELF>> SELF asMapOf(Class<K> keyType, Class<V> valueType) {
+    return asMapOf(keyType, valueType, CrestFunctions.identity());
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <I, K, V, SELF extends AsMap<I, K, V, SELF>> SELF asMapOf(Class<K> keyType, Class<V> valueType, Function<? super I, ? extends Map<K, V>> function) {
+    requireNonNull(keyType);
+    requireNonNull(valueType);
+    return (SELF) new AsMap<I, K, V, SELF>(function);
   }
 
   public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
@@ -243,7 +255,7 @@ public enum Crest {
 
     IndentManagedDiagnosingMatcher(boolean topLevel, Collection<? extends Matcher<? super T>> matchers) {
       this.topLevel = topLevel;
-      this.matchers = Objects.requireNonNull(matchers);
+      this.matchers = requireNonNull(matchers);
     }
 
     @Override
@@ -368,7 +380,7 @@ public enum Crest {
   }
 
   public static class AllOf<T> extends IndentManagedDiagnosingMatcher<T> {
-    public AllOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
+    AllOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
       super(showTarget, matchers);
     }
 
@@ -389,7 +401,7 @@ public enum Crest {
   }
 
   public static class AnyOf<T> extends IndentManagedDiagnosingMatcher<T> {
-    public AnyOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
+    AnyOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
       super(showTarget, matchers);
     }
 

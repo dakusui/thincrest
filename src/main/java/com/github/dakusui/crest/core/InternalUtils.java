@@ -21,8 +21,7 @@ public enum InternalUtils {
   ;
 
   public static void requireState(boolean stateCondition) {
-    if (!stateCondition)
-      throw new IllegalStateException();
+    requireState(v -> v, stateCondition);
   }
 
   public static <I, O> BaseMatcher<? super I> toMatcher(Predicate<? super O> p, Function<? super I, ? extends O> function) {
@@ -73,7 +72,10 @@ public enum InternalUtils {
       return false;
     for (int i = 0; i < args.length; i++) {
       if (args[i] == null)
-        continue;
+        if (formalParameters[i].isPrimitive())
+          return false;
+        else
+          continue;
       if (!formalParameters[i].isAssignableFrom(toPrimitiveIfWrapper(args[i].getClass())))
         return false;
     }
@@ -104,7 +106,7 @@ public enum InternalUtils {
     if (foundMethods.size() == 1)
       return Optional.of(foundMethods.get(0));
     throw new RuntimeException(String.format(
-        "Methods matching '%s%s' were more than one were matching in %s.: %s",
+        "Methods matching '%s%s' were found more than one in %s.: %s",
         methodName,
         asList(args),
         aClass.getCanonicalName(),
@@ -128,7 +130,7 @@ public enum InternalUtils {
         args
     ).orElseThrow(
         () -> new RuntimeException(String.format(
-            "Method matching '%s%s' was not found in %s.",
+            "Method matching '%s%s' was not found in %s.(CAUTION: This method doesn't try to cast or unbox arguments to find a method)",
             methodName,
             Arrays.asList(args),
             aClass.getCanonicalName()

@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 public enum Formattable {
   ;
 
-  public static <T, R> Function<T, R> function(String s, Function<T, R> function) {
+  public static <T, R> Function<T, R> function(String s, Function<? super T, ? extends R> function) {
     Objects.requireNonNull(s);
     Objects.requireNonNull(function);
     return new Function<T, R>() {
@@ -53,7 +53,7 @@ public enum Formattable {
     };
   }
 
-  public static <T> Predicate<T> predicate(String s, Predicate<T> predicate) {
+  public static <T> Predicate<T> predicate(String s, Predicate<? super T> predicate) {
     return new Predicate<T>() {
       @Override
       public boolean test(T t) {
