@@ -1,5 +1,8 @@
 # thincrest
-**thincrest**(pronounced 'think rest') is a thin wrapper library for **Hamcrest**[[1]].
+***Documentation is WORK IN PROGRESS, sorry.***
+
+
+**thincrest**(pronounced 'think rest') used to be a thin wrapper library for **Hamcrest**[[1]].
 
 # Background 
 Following is an excerpt from a wikipedia article about the history of assertion 
@@ -91,7 +94,7 @@ matchers one by one.
     <dependency>
       <groupId>com.github.dakusui</groupId>
       <artifactId>thincrest</artifactId>
-      <version>[2.0.0,)</version>
+      <version>[3.0.0,)</version>
       <scope>test</scope>
     </dependency>
 ```
@@ -111,7 +114,8 @@ This enables you to use following static methods without typing the class name.
 * asComparableOf(...)
 * asString(...)
 * asStream(...)
-* asList(...)
+* asObjectList(...)
+* asListOf(...)
 * assertThat(...)
 
 ## Examples

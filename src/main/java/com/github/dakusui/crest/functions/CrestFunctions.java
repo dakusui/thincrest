@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.functions;
 
-import com.github.dakusui.crest.core.Formattable;
+import com.github.dakusui.crest.core.Printable;
 import com.github.dakusui.crest.core.InternalUtils;
 
 import java.util.Arrays;
@@ -17,14 +17,14 @@ public enum CrestFunctions {
   ;
 
   public static <E> Function<E, E> identity() {
-    return Formattable.function(
+    return Printable.function(
         "identity",
         Function.identity()
     );
   }
 
   public static <E> Function<? super E, String> stringify() {
-    return Formattable.function(
+    return Printable.function(
         "toString",
         Object::toString
     );
@@ -32,49 +32,49 @@ public enum CrestFunctions {
 
   @SuppressWarnings("unchecked")
   public static <I, E> Function<? super I, ? extends E> invoke(String methodName, Object... args) {
-    return Formattable.function(
+    return Printable.function(
         String.format("@%s%s", methodName, asList(args)),
         (I target) -> (E) InternalUtils.invokeMethod(target, methodName, args)
     );
   }
 
   public static Function<? super String, Integer> length() {
-    return Formattable.function(
+    return Printable.function(
         "length",
         String::length
     );
   }
 
   public static <E> Function<List<? extends E>, ? extends E> elementAt(int i) {
-    return Formattable.function(
+    return Printable.function(
         String.format("elementAt[%s]", i),
         es -> (E) es.get(i)
     );
   }
 
   public static Function<? super Collection, Integer> size() {
-    return Formattable.function(
+    return Printable.function(
         "size",
         Collection::size
     );
   }
 
   public static <E> Function<Collection<? extends E>, Stream<? extends E>> stream() {
-    return Formattable.function(
+    return Printable.function(
         "stream",
         Collection::stream
     );
   }
 
   public static <E> Function<? super Object, ? extends E> cast(Class<E> type) {
-    return Formattable.function(
+    return Printable.function(
         String.format("castTo[%s]", requireNonNull(type).getSimpleName()),
         type::cast
     );
   }
 
   public static <I extends Collection<? extends E>, E> Function<I, List<E>> collectionToList() {
-    return Formattable.function("collectionToList", (I c) -> new LinkedList<E>() {
+    return Printable.function("collectionToList", (I c) -> new LinkedList<E>() {
       {
         addAll(c);
       }
@@ -82,10 +82,10 @@ public enum CrestFunctions {
   }
 
   public static <E> Function<E[], List<E>> arrayToList() {
-    return Formattable.function("arrayToList", Arrays::asList);
+    return Printable.function("arrayToList", Arrays::asList);
   }
 
   public static Function<String, Integer> countLines() {
-    return Formattable.function("countLines", (String s) -> s.split("\n").length);
+    return Printable.function("countLines", (String s) -> s.split("\n").length);
   }
 }

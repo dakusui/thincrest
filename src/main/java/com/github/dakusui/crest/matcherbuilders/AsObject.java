@@ -1,9 +1,8 @@
 package com.github.dakusui.crest.matcherbuilders;
 
-import com.github.dakusui.crest.core.InternalUtils;
+import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.functions.CrestPredicates;
 import com.github.dakusui.crest.functions.TransformingPredicate;
-import org.hamcrest.Matcher;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -59,9 +58,8 @@ public class AsObject<IN, OUT, SELF extends AsObject<IN, OUT, SELF>> implements 
   }
 
   private Matcher<? super IN> matcher(Op op) {
-    InternalUtils.requireState(!predicates.isEmpty());
     return (predicates.size() == 1) ?
-        InternalUtils.toMatcher(predicates.get(0), this.function) :
+        Matcher.Leaf.create(predicates.get(0), this.function) :
         Objects.requireNonNull(op).create(predicates, this.function);
   }
 }

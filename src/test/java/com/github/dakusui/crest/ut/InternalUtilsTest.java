@@ -39,16 +39,6 @@ public class InternalUtilsTest {
     );
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void givenUnexpectedState$whenRequireState$thenIllegalStateExceptionThrown() {
-    InternalUtils.requireState(false);
-  }
-
-  @Test
-  public void givenExpectedState$whenRequireState$thenIllegalStateExceptionThrown() {
-    InternalUtils.requireState(true);
-  }
-
   /*
    * This method is used by 'tryToFindMethod$whenMultipleMethodsFound$thenExceptionThrown'
    * reflectively.

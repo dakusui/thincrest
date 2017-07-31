@@ -1,11 +1,10 @@
 package com.github.dakusui.crest.examples;
 
-import com.github.dakusui.crest.core.Formattable;
+import com.github.dakusui.crest.core.Printable;
 import com.github.dakusui.crest.functions.CrestFunctions;
 import com.github.dakusui.crest.functions.CrestPredicates;
 import com.github.dakusui.crest.matcherbuilders.Crest;
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matchers;
 import org.hamcrest.core.StringContains;
 import org.junit.Test;
 
@@ -33,7 +32,7 @@ public class InThincrest {
         aList,
         allOf(
             asInteger(size()).eq(0).matcher(),
-            Crest.asList().containsAll(Arrays.asList("hoge", "fuga", "piyo", "poyo")).matcher()
+            Crest.asObjectList().containsAll(Arrays.asList("hoge", "fuga", "piyo", "poyo")).matcher()
         )
     );
   }
@@ -92,8 +91,8 @@ public class InThincrest {
     Crest.assertThat(
         aList,
         allOf(
-            asList().isInstanceOf(LinkedList.class).matcher(),
-            asList().isSameAs(Collections.emptyList()).matcher()
+            asObjectList().isInstanceOf(LinkedList.class).matcher(),
+            asObjectList().isSameAs(Collections.emptyList()).matcher()
         )
     );
     CoreMatchers.containsString("");
@@ -143,7 +142,7 @@ public class InThincrest {
     Crest.assertThat(
         aString,
         asString(
-            Formattable.function("trimSpace", (String s) -> s.replaceAll("\\s", ""))
+            Printable.function("trimSpace", (String s) -> s.replaceAll("\\s", ""))
         ).equalsIgnoreCase("HELLO,WORLD!").matcher()
     );
   }
@@ -168,7 +167,7 @@ public class InThincrest {
   public void qiita_20_another$thenFail() {
     Crest.assertThat(
         aString,
-        asString().check(Formattable.predicate("containsOnlyDigits", s -> s.matches("[0-9]+"))).matcher()
+        asString().check(Printable.predicate("containsOnlyDigits", s -> s.matches("[0-9]+"))).matcher()
     );
   }
 
@@ -252,7 +251,7 @@ public class InThincrest {
   public void qiita_28$thenPass() {
     Crest.assertThat(
         aList,
-        asList().containsExactly(Arrays.asList(
+        asObjectList().containsExactly(Arrays.asList(
             "hoge", "fuga", "piyo"
         )).matcher()
     );
@@ -262,7 +261,7 @@ public class InThincrest {
   public void qiita_28extra$thenFail() {
     Crest.assertThat(
         aList,
-        asList().containsExactly(Arrays.asList(
+        asObjectList().containsExactly(Arrays.asList(
             "hoge", "fuga", "piyo", "hi"
         )).matcher()
     );
@@ -272,7 +271,7 @@ public class InThincrest {
   public void qiita_28missing$thenFail() {
     Crest.assertThat(
         aList,
-        asList().containsExactly(Arrays.asList(
+        asObjectList().containsExactly(Arrays.asList(
             "hoge", "fuga"
         )).matcher()
     );
@@ -283,7 +282,7 @@ public class InThincrest {
     Crest.assertThat(
         aCollection,
         allOf(
-            asList().isEmpty().matcher(),
+            asObjectList().isEmpty().matcher(),
             asInteger(size()).equalTo(2).matcher()
         )
     );
@@ -294,7 +293,7 @@ public class InThincrest {
     Crest.assertThat(
         anIterator,
         // To check if its empty or not, type doesn't matter. Let's say 'Object'.
-        Crest.asList((Iterator i) -> new LinkedList<Object>() {{
+        Crest.asObjectList((Iterator i) -> new LinkedList<Object>() {{
           while (i.hasNext()) {
             add(i.next());
           }
@@ -306,7 +305,7 @@ public class InThincrest {
   public void qiita_39$thenPass() {
     Crest.assertThat(
         anArray,
-        Crest.asList(
+        Crest.asObjectList(
             arrayToList()
         ).containsExactly(
             Arrays.asList("Gallia", "est", "omnis", "divisa")
@@ -364,7 +363,7 @@ public class InThincrest {
   public void qiita_39duplicate$thenPass() {
     Crest.assertThat(
         anArray,
-        Crest.asList(arrayToList()).containsExactly(Arrays.asList("Gallia", "est", "omnis", "omnis", "divisa")).matcher()
+        Crest.asObjectList(arrayToList()).containsExactly(Arrays.asList("Gallia", "est", "omnis", "omnis", "divisa")).matcher()
     );
   }
 
@@ -372,7 +371,7 @@ public class InThincrest {
   public void qiita_39missing$thenFail() {
     Crest.assertThat(
         anArray,
-        Crest.asList(arrayToList()).containsExactly(Arrays.asList("Gallia", "est", "omnis", "divisa", "in")).matcher()
+        Crest.asObjectList(arrayToList()).containsExactly(Arrays.asList("Gallia", "est", "omnis", "divisa", "in")).matcher()
     );
   }
 
@@ -380,7 +379,7 @@ public class InThincrest {
   public void qiita_39extra$thenFail() {
     Crest.assertThat(
         anArray,
-        Crest.asList(arrayToList()).containsExactly(Arrays.asList("est", "omnis", "divisa")).matcher()
+        Crest.asObjectList(arrayToList()).containsExactly(Arrays.asList("est", "omnis", "divisa")).matcher()
     );
   }
 
@@ -398,12 +397,12 @@ public class InThincrest {
   public void qiita_41$thenFail() {
     Crest.assertThat(
         anArray,
-        asList(CrestFunctions.arrayToList()).check(CrestFunctions.size(), CrestPredicates.eq(3)).matcher()
+        asObjectList(CrestFunctions.arrayToList()).check(CrestFunctions.size(), CrestPredicates.eq(3)).matcher()
     );
 
     Crest.assertThat(
         anArray,
-        asList(arrayToList()).check(size(), eq(3)).matcher()
+        asObjectList(arrayToList()).check(size(), eq(3)).matcher()
     );
   }
 
@@ -412,7 +411,7 @@ public class InThincrest {
     Crest.assertThat(
         anArray,
         // To check if it's empty or not, type doesn't matter. Let's say 'Object'.
-        Crest.asList(arrayToList()).isEmpty().matcher()
+        Crest.asObjectList(arrayToList()).isEmpty().matcher()
     );
   }
 
@@ -424,17 +423,4 @@ public class InThincrest {
         Crest.asListOf(String.class).contains("hello").matcher()
     );
   }
-
-  @Test
-  public void hamcrestSandbox$thenFail() {
-    assertThat("Hello, world", Matchers.stringContainsInOrder("Hello", "world"));
-    assertThat("Hello, world", Matchers.stringContainsInOrder("world", "Hello"));
-    Matchers.equalToIgnoringWhiteSpace("");
-
-    Matchers.stringContainsInOrder();
-
-    Matchers.empty();
-    Matchers.hasProperty("");
-  }
-
 }

@@ -1,21 +1,20 @@
 package com.github.dakusui.crest.matcherbuilders;
 
-import com.github.dakusui.crest.core.Formattable;
+import com.github.dakusui.crest.core.Assertion;
+import com.github.dakusui.crest.core.Matcher;
+import com.github.dakusui.crest.core.Printable;
 import com.github.dakusui.crest.functions.CrestFunctions;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
-import org.hamcrest.Description;
-import org.hamcrest.DiagnosingMatcher;
-import org.hamcrest.Matcher;
-import org.hamcrest.StringDescription;
-import org.junit.ComparisonFailure;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 
 /**
  * A facade class of 'thincrest'.
@@ -28,10 +27,10 @@ public enum Crest {
    * For example:
    * <pre>assertThat("myValue", allOf(startsWith("my"), containsString("Val")))</pre>
    */
-  @SuppressWarnings("Convert2Diamond")
+  @SuppressWarnings("unchecked")
   @SafeVarargs
   public static <T> Matcher<T> allOf(Matcher<? super T>... matchers) {
-    return new AllOf<T>(true, Arrays.asList(matchers));
+    return Matcher.Conjunctive.create(true, asList(matchers));
   }
 
   /**
@@ -39,10 +38,10 @@ public enum Crest {
    * For example:
    * <pre>assertThat("myValue", anyOf(startsWith("my"), containsString("Val")))</pre>
    */
-  @SuppressWarnings("Convert2Diamond")
+  @SuppressWarnings("unchecked")
   @SafeVarargs
   public static <T> Matcher<T> anyOf(Matcher<? super T>... matchers) {
-    return new AnyOf<T>(true, Arrays.asList(matchers));
+    return Matcher.Disjunctive.create(true, asList(matchers));
   }
 
   public static <I, S extends AsObject<I, I, S>> AsObject<I, I, S> asObject() {
@@ -67,7 +66,7 @@ public enum Crest {
 
   public static <I> AsBoolean<I> asBoolean(Predicate<? super I> predicate) {
     requireNonNull(predicate);
-    return asBoolean(Formattable.function(predicate.toString(), predicate::test));
+    return asBoolean(Printable.function(predicate.toString(), predicate::test));
   }
 
   public static <I> AsBoolean<I> asBoolean(Function<? super I, Boolean> function) {
@@ -195,11 +194,11 @@ public enum Crest {
     return new AsStream<>(CrestFunctions.stream());
   }
 
-  public static <I extends Collection<?>> AsList<? super I, ?> asList() {
+  public static <I extends Collection<?>> AsList<? super I, ?> asObjectList() {
     return asListOf(Object.class, CrestFunctions.collectionToList());
   }
 
-  public static <I> AsList<? super I, ?> asList(Function<? super I, ? extends List<Object>> function) {
+  public static <I> AsList<? super I, ?> asObjectList(Function<? super I, ? extends List<Object>> function) {
     return asListOf(Object.class, function);
   }
 
@@ -212,7 +211,7 @@ public enum Crest {
   }
 
   public static <I extends Map, SELF extends AsMap<I, Object, Object, SELF>> SELF asMap() {
-    return asMapOf(Object.class, Object.class, Formattable.function("mapToMap", o -> new HashMap<>()));
+    return asMapOf(Object.class, Object.class, Printable.function("mapToMap", o -> new HashMap<>()));
   }
 
   public static <I, SELF extends AsMap<I, Object, Object, SELF>> SELF asMap(Function<? super I, ? extends Map<Object, Object>> function) {
@@ -235,190 +234,7 @@ public enum Crest {
   }
 
   public static <T> void assertThat(String message, T actual, Matcher<? super T> matcher) {
-    if (!matcher.matches(actual)) {
-      Description description = new StringDescription();
-      description.appendText(message).appendText("\nExpected: ").appendDescriptionOf(matcher).appendText("\n     but: ");
-      matcher.describeMismatch(actual, description);
-      Description actualDescription = new StringDescription();
-      matcher.describeMismatch(actual, actualDescription);
-      throw new ComparisonFailure(
-          description.toString(),
-          new StringDescription().appendDescriptionOf(matcher).toString(),
-          actualDescription.toString());
-    }
-  }
-
-  static abstract class IndentManagedDiagnosingMatcher<T> extends DiagnosingMatcher<T> {
-    private static ThreadLocal<Integer> indent = new ThreadLocal<>();
-    final boolean                                  topLevel;
-    final Collection<? extends Matcher<? super T>> matchers;
-
-    IndentManagedDiagnosingMatcher(boolean topLevel, Collection<? extends Matcher<? super T>> matchers) {
-      this.topLevel = topLevel;
-      this.matchers = requireNonNull(matchers);
-    }
-
-    @Override
-    protected final boolean matches(Object o, Description mismatch) {
-      enter();
-      try {
-        if (topLevel) {
-          mismatch.appendText("when x=");
-          mismatch.appendValue(o);
-          mismatch.appendText("; then ");
-        }
-
-        List<Exception> exceptions = new LinkedList<>();
-        boolean ret = matches(o, mismatch, exceptions);
-        for (Exception e : exceptions) {
-          mismatch.appendText("\n" + indent() + e.getMessage());
-          for (StackTraceElement s : e.getStackTrace()) {
-            mismatch.appendText("\n" + indent() + "  " + s.toString());
-          }
-        }
-        return ret;
-      } finally {
-        leave();
-      }
-    }
-
-    @Override
-    final public void describeTo(Description description) {
-      enter();
-      try {
-        description.appendList(
-            String.format("%s:[%n  ", name()) + indent(),
-            String.format("%n%s  ", indent()),
-            String.format("%n%s]%s", indent(), this.topLevel ? "->true" : ""),
-            matchers
-        );
-      } finally {
-        leave();
-      }
-    }
-
-    boolean matches(Object o, Description mismatch, List<Exception> exceptions) {
-      List<Exception> exceptions_ = new LinkedList<>();
-      boolean ret = !until();
-      List<Description> mismatches = new LinkedList<>();
-      for (Matcher<? super T> each : this.matchers) {
-        Description mismatchForEach = new StringDescription();
-        boolean current = tryToMatch(each, o, mismatchForEach, exceptions_);
-        if (!current)
-          mismatches.add(mismatchForEach);
-        ret = next(ret, current) && exceptions_.isEmpty();
-      }
-      String indent = indent();
-      mismatch.appendText(mismatches.stream(
-          ).map(Object::toString
-          ).collect(
-          toList()
-          ).stream(
-          ).collect(Collectors.joining(
-          String.format("%n"),
-          String.format("%s%s:[%n", indent.length() >= 2 ? indent.substring(2) : "", name()),
-          String.format("%n%s]->%s", indent, ret)
-          ))
-      );
-      exceptions.addAll(exceptions_);
-      return ret;
-    }
-
-    protected abstract boolean until();
-
-    boolean tryToMatch(Matcher<? super T> matcher, Object o, Description mismatch, List<Exception> exceptions) {
-      Exception exception = null;
-      try {
-        return matcher.matches(o);
-      } catch (Exception e) {
-        exception = e;
-        return false;
-      } finally {
-        mismatch.appendText("  " + indent());
-        if (exception == null) {
-          matcher.describeMismatch(o, mismatch);
-        } else {
-          exceptions.add(exception);
-          mismatch.appendDescriptionOf(matcher)
-              .appendText(" ")
-              .appendText(String.format("failed with %s(%s)", exception.getClass().getCanonicalName(), exception.getMessage()));
-        }
-      }
-    }
-
-    abstract boolean next(boolean previous, boolean current);
-
-    abstract String name();
-
-    static void enter() {
-      indent.set(
-          indent.get() == null ?
-              0 :
-              indent.get() + 1
-      );
-    }
-
-    static void leave() {
-      indent.set(
-          indent.get() <= 0 ?
-              null :
-              indent.get() - 1
-      );
-    }
-
-    static int indentLevel() {
-      return indent.get();
-    }
-
-    static String indent() {
-      StringBuilder b = new StringBuilder();
-      for (int i = 0; i < indentLevel(); i++) {
-        b.append("  ");
-      }
-      return b.toString();
-    }
-  }
-
-  public static class AllOf<T> extends IndentManagedDiagnosingMatcher<T> {
-    AllOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
-      super(showTarget, matchers);
-    }
-
-    @Override
-    boolean next(boolean previous, boolean current) {
-      return previous && current;
-    }
-
-    @Override
-    String name() {
-      return "and";
-    }
-
-    @Override
-    protected boolean until() {
-      return false;
-    }
-  }
-
-  public static class AnyOf<T> extends IndentManagedDiagnosingMatcher<T> {
-    AnyOf(boolean showTarget, List<? extends Matcher<? super T>> matchers) {
-      super(showTarget, matchers);
-    }
-
-    @Override
-    boolean next(boolean previous, boolean current) {
-      return previous || current;
-    }
-
-    @Override
-    String name() {
-      return "or";
-    }
-
-    @Override
-    protected boolean until() {
-      return true;
-    }
+    Assertion.assertThat(message, actual, matcher);
   }
 }
 

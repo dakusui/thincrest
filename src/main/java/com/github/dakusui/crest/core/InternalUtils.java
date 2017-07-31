@@ -1,8 +1,6 @@
 package com.github.dakusui.crest.core;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -11,60 +9,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
-import static com.github.dakusui.crest.functions.CrestPredicates.isTrue;
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 public enum InternalUtils {
   ;
-
-  public static void requireState(boolean stateCondition) {
-    requireState(v -> v, stateCondition);
-  }
-
-  public static <I, O> BaseMatcher<? super I> toMatcher(Predicate<? super O> p, Function<? super I, ? extends O> function) {
-    return new BaseMatcher<I>() {
-      boolean matchesDone = false;
-      O value = null;
-
-      @SuppressWarnings("unchecked")
-      @Override
-      public boolean matches(Object item) {
-        try {
-          return p.test(this.value = function.apply((I) item));
-        } finally {
-          matchesDone = true;
-        }
-      }
-
-      @SuppressWarnings("unchecked")
-      @Override
-      public void describeMismatch(Object item, Description description) {
-        requireState(isTrue(), matchesDone);
-        description
-            .appendDescriptionOf(this).appendText(" ")
-            .appendText(String.format("was false because %s=", formatFunction(function, "x")))
-            .appendValue(value)
-            .appendText(" does not satisfy it")
-        ;
-      }
-
-      @Override
-      public void describeTo(Description description) {
-        description.appendText(String.format(
-            "%s(%s)",
-            p.toString(),
-            formatFunction(function, "x")
-        ));
-      }
-
-      private String formatFunction(Function<?, ?> function, @SuppressWarnings("SameParameterValue") String variableName) {
-        return String.format("%s(%s)", function.toString(), variableName);
-      }
-    };
-  }
 
   @SuppressWarnings("unchecked")
   public static boolean areArgsCompatible(Class[] formalParameters, Object[] args) {
@@ -147,22 +98,72 @@ public enum InternalUtils {
     }
   }
 
-  private static <E extends Throwable, T> T require(Predicate<? super T> condition, T value, Supplier<E> exceptionSupplier) throws E {
-    if (!condition.test(value))
-      throw exceptionSupplier.get();
-    return value;
+  static String formatExpectation(Predicate p, Function function) {
+    return format("%s(%s)", p.toString(), formatFunction(function, "x"));
   }
 
-  public static <T> T requireState(Predicate<T> condition, T value, Supplier<String> messageOnFailure) {
-    return require(condition, value, () -> new IllegalStateException(messageOnFailure.get()));
+  static String formatFunction(Function<?, ?> function, @SuppressWarnings("SameParameterValue") String variableName) {
+    return format("%s(%s)", function.toString(), variableName);
   }
 
-  public static <T> T requireState(Predicate<T> condition, T value, String messageOnFailure) {
-    return requireState(condition, value, () -> messageOnFailure);
+  /*
+     * Based on BaseDescription#appendValue() of Hamcrest
+     *
+     * http://hamcrest.org/JavaHamcrest/
+     */
+  static String formatValue(Object value) {
+    if (value == null)
+      return "null";
+    if (value instanceof String)
+      return String.format("\"%s\"", toJavaSyntax((String) value));
+    if (value instanceof Character)
+      return String.format("\"%s\"", toJavaSyntax(((Character) value).charValue()));
+    if (value instanceof Short)
+      return String.format("<%ss>", value);
+    if (value instanceof Long)
+      return String.format("<%sL>", value);
+    if (value instanceof Float)
+      return String.format("<%sF>", value);
+    if (value.getClass().isArray())
+      return arrayToString(value);
+    return format("<%s>", value);
   }
 
-  @SuppressWarnings("UnusedReturnValue")
-  public static <T> T requireState(Predicate<T> check, T value) {
-    return requireState(check, value, (String) null);
+  private static String toJavaSyntax(String unformatted) {
+    StringBuilder b = new StringBuilder();
+    for (int i = 0; i < unformatted.length(); i++) {
+      b.append(toJavaSyntax(unformatted.charAt(i)));
+    }
+    return b.toString();
+  }
+
+  private static String toJavaSyntax(char ch) {
+    switch (ch) {
+    case '"':
+      return "\\\"";
+    case '\n':
+      return ("\\n");
+    case '\r':
+      return ("\\r");
+    case '\t':
+      return ("\\t");
+    default:
+      return Character.toString(ch);
+    }
+  }
+
+  private static String arrayToString(Object arr) {
+    StringBuilder b = new StringBuilder();
+    b.append("[");
+    int length = Array.getLength(arr);
+    if (length > 0) {
+      for (int i = 0; i < length - 1; i++) {
+        b.append(Array.get(arr, i));
+        b.append(",");
+      }
+      b.append(Array.get(arr, length - 1));
+    }
+    b.append("]");
+    return b.toString();
   }
 }
