@@ -1,5 +1,7 @@
 package com.github.dakusui.crest.core;
 
+import com.github.dakusui.crest.functions.TransformingPredicate;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -99,7 +101,10 @@ public enum InternalUtils {
   }
 
   static String formatExpectation(Predicate p, Function function) {
-    return format("%s(%s)", p.toString(), formatFunction(function, "x"));
+    if (p instanceof TransformingPredicate)
+      return format("%s%s", formatFunction(((TransformingPredicate) p).function(), formatFunction(function, "x")), ((TransformingPredicate) p).predicate());
+    else
+      return format("%s(%s)", p.toString(), formatFunction(function, "x"));
   }
 
   static String formatFunction(Function<?, ?> function, @SuppressWarnings("SameParameterValue") String variableName) {
