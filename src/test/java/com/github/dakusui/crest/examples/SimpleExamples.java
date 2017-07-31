@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.examples;
 
-import com.github.dakusui.crest.core.Formattable;
+import com.github.dakusui.crest.core.Printable;
 import com.github.dakusui.crest.functions.CrestFunctions;
 import com.github.dakusui.crest.matcherbuilders.Crest;
 import org.junit.Test;
@@ -66,7 +66,7 @@ public class SimpleExamples {
   public void givenListOf_Hello_World_$whenAsListAndCheckIfContainsOnlyString_Hello_$thenFail() {
     assertThat(
         Arrays.asList("Hello", "world"),
-        asList().containsOnly(Collections.singletonList("Hello")).matcher()
+        asObjectList().containsOnly(Collections.singletonList("Hello")).matcher()
     );
   }
 
@@ -74,7 +74,7 @@ public class SimpleExamples {
   public void givenListOf_Hello_World_$whenAsListAndCheckIfContainsOnlyString_Hello_World_$thenPass() {
     assertThat(
         Arrays.asList("Hello", "world"),
-        asList().containsOnly(Arrays.asList("Hello", "world")).matcher()
+        asObjectList().containsOnly(Arrays.asList("Hello", "world")).matcher()
     );
   }
 
@@ -82,7 +82,7 @@ public class SimpleExamples {
   public void givenListOf_Hello_World_$whenAsListAndCheckIfContainsOnly_Hello_world_everyone_$thenPass() {
     assertThat(
         Arrays.asList("Hello", "world"),
-        asList().containsOnly(Arrays.asList("Hello", "world", "everyone")).matcher()
+        asObjectList().containsOnly(Arrays.asList("Hello", "world", "everyone")).matcher()
     );
   }
 
@@ -108,9 +108,9 @@ public class SimpleExamples {
     assertThat(
         Arrays.asList("Hello", "world"),
         allOf(
-            asStream().allMatch(Formattable.predicate("==bye", "bye"::equals).negate()).matcher(),
-            asStream().noneMatch(Formattable.predicate("==bye", "bye"::equals)).matcher(),
-            asStream().anyMatch(Formattable.predicate("==bye", "bye"::equals).negate()).matcher()
+            asStream().allMatch(Printable.predicate("==bye", "bye"::equals).negate()).matcher(),
+            asStream().noneMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
+            asStream().anyMatch(Printable.predicate("==bye", "bye"::equals).negate()).matcher()
         )
     );
   }
@@ -120,9 +120,9 @@ public class SimpleExamples {
     assertThat(
         Arrays.asList("Hello", "world"),
         allOf(
-            asStream().allMatch(Formattable.predicate("==bye", "bye"::equals)).matcher(),
-            asStream().noneMatch(Formattable.predicate("==bye", "bye"::equals)).matcher(),
-            asStream().anyMatch(Formattable.predicate("==bye", "bye"::equals)).matcher()
+            asStream().allMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
+            asStream().noneMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
+            asStream().anyMatch(Printable.predicate("==bye", "bye"::equals)).matcher()
         )
     );
   }
@@ -132,9 +132,9 @@ public class SimpleExamples {
     assertThat(
         Arrays.asList("Hello", "world"),
         anyOf(
-            asStream().allMatch(Formattable.predicate("==bye", "bye"::equals)).matcher(),
-            asStream().noneMatch(Formattable.predicate("==bye", "bye"::equals)).matcher(),
-            asStream().anyMatch(Formattable.predicate("==bye", "bye"::equals)).matcher()
+            asStream().allMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
+            asStream().noneMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
+            asStream().anyMatch(Printable.predicate("==bye", "bye"::equals)).matcher()
         )
     );
   }
@@ -144,9 +144,9 @@ public class SimpleExamples {
     assertThat(
         Arrays.asList("Hello", "world"),
         anyOf(
-            asStream().allMatch(Formattable.predicate("==bye", "bye"::equals)).matcher(),
-            asStream().noneMatch(Formattable.predicate("==bye", "bye"::equals).negate()).matcher(),
-            asStream().anyMatch(Formattable.predicate("==bye", "bye"::equals)).matcher()
+            asStream().allMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
+            asStream().noneMatch(Printable.predicate("==bye", "bye"::equals).negate()).matcher(),
+            asStream().anyMatch(Printable.predicate("==bye", "bye"::equals)).matcher()
         )
     );
   }
@@ -201,7 +201,7 @@ public class SimpleExamples {
             + "alium Aquitani, tertium linua ipsorum Celtae, nostra Galli appelantur",
         allOf(
             asString().containsString("Caesar").check("contains", "est").containsString("Caesar").matcher(),
-            asObject("length").check(Formattable.predicate(">1024", o -> ((Integer) o) > 1024)).matcher()
+            asObject("length").check(Printable.predicate(">1024", o -> ((Integer) o) > 1024)).matcher()
         )
     );
   }
@@ -262,7 +262,7 @@ public class SimpleExamples {
   public void givenList$$whenContains101$thenFail() {
     assertThat(
         Arrays.asList(100, 200, 300, 400, 500),
-        Crest.asList().contains(101).matcher()
+        Crest.asObjectList().contains(101).matcher()
     );
   }
 
@@ -270,7 +270,7 @@ public class SimpleExamples {
   public void givenList$$whenContains100$thenPass() {
     assertThat(
         Arrays.asList(100, 200, 300, 400, 500),
-        Crest.asList().contains(100).matcher()
+        Crest.asObjectList().contains(100).matcher()
     );
   }
 
@@ -279,7 +279,7 @@ public class SimpleExamples {
   public void givenList$$whenContainsAll101$thenFail() {
     assertThat(
         Arrays.asList(100, 200, 300, 400, 500),
-        Crest.asList().containsAll(Arrays.asList(100, 101)).matcher()
+        Crest.asObjectList().containsAll(Arrays.asList(100, 101)).matcher()
     );
   }
 
@@ -287,7 +287,7 @@ public class SimpleExamples {
   public void givenList$$whenContainsAll100and200$thenPass() {
     assertThat(
         Arrays.asList(100, 200, 300, 400, 500),
-        Crest.asList().containsAll(Arrays.asList(100, 200)).matcher()
+        Crest.asObjectList().containsAll(Arrays.asList(100, 200)).matcher()
     );
   }
 
@@ -295,7 +295,7 @@ public class SimpleExamples {
   public void givenList$$whenIsEmpty$thenFail() {
     assertThat(
         Arrays.asList(100, 200, 300, 400, 500),
-        Crest.asList().contains("100").isEmpty().matcher()
+        Crest.asObjectList().contains("100").isEmpty().matcher()
     );
   }
 
@@ -304,7 +304,7 @@ public class SimpleExamples {
     List<Integer> aList = Arrays.asList(100, 200, 300, 400, 500);
     assertThat(
         aList,
-        Crest.asList().contains("100").isEmpty().matcher()
+        Crest.asObjectList().contains("100").isEmpty().matcher()
     );
   }
 
@@ -312,7 +312,7 @@ public class SimpleExamples {
   public void givenEmptyList$$whenIsEmpty$thenPass() {
     assertThat(
         Collections.emptyList(),
-        Crest.asList().isEmpty().matcher()
+        Crest.asObjectList().isEmpty().matcher()
     );
   }
 
@@ -331,7 +331,7 @@ public class SimpleExamples {
         { "world", 5 },
         { "everyone", 8 },
     };
-    Function<Object[][], HashMap<Object, Object>> arrToMap = Formattable.function(
+    Function<Object[][], HashMap<Object, Object>> arrToMap = Printable.function(
         "arrToMap",
         (Object[][] arr) -> new HashMap<Object, Object>() {
           {
@@ -353,7 +353,7 @@ public class SimpleExamples {
         { "world", 5 },
         { "everyone", 8 },
     };
-    Function<Object[][], HashMap<Object, Object>> arrToMap = Formattable.function(
+    Function<Object[][], HashMap<Object, Object>> arrToMap = Printable.function(
         "arrToMap",
         (Object[][] arr) -> new HashMap<Object, Object>() {
           {

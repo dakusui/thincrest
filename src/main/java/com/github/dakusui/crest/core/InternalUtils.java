@@ -12,14 +12,13 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.crest.functions.CrestPredicates.isTrue;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 public enum InternalUtils {
   ;
 
-  public static <I, O> BaseMatcher<? super I> toMatcher(Predicate<? super O> p, Function<? super I, ? extends O> function) {
+  public static <I, O> BaseMatcher<? super I> createLeafMatcher(Predicate<? super O> p, Function<? super I, ? extends O> function) {
     return new BaseMatcher<I>() {
       boolean matchesDone = false;
       O value = null;
@@ -37,7 +36,6 @@ public enum InternalUtils {
       @SuppressWarnings("unchecked")
       @Override
       public void describeMismatch(Object item, Description description) {
-        Precondition.requireState(isTrue(), matchesDone);
         description
             .appendDescriptionOf(this).appendText(" ")
             .appendText(String.format("was false because %s=", formatFunction(function, "x")))

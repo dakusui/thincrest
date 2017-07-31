@@ -1,7 +1,6 @@
 package com.github.dakusui.crest.ut;
 
-import com.github.dakusui.crest.core.Formattable;
-import com.github.dakusui.crest.functions.CrestFunctions;
+import com.github.dakusui.crest.core.Printable;
 import com.github.dakusui.crest.matcherbuilders.Crest;
 import com.github.dakusui.crest.utils.TestBase;
 import org.hamcrest.CoreMatchers;
@@ -27,7 +26,7 @@ import static org.junit.Assert.*;
 @RunWith(Enclosed.class)
 public class CrestTest {
 
-  private static final Predicate<Integer> FAILING_CHECK = Formattable.predicate("failingCheck", v -> {
+  private static final Predicate<Integer> FAILING_CHECK = Printable.predicate("failingCheck", v -> {
     throw new RuntimeException("FAILED");
   });
 

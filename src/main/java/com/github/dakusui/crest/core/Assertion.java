@@ -5,7 +5,6 @@ import org.junit.ComparisonFailure;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.crest.core.Precondition.ARGUMENT;
 import static com.github.dakusui.crest.functions.CrestPredicates.isNotNull;
 
 /**
@@ -14,15 +13,27 @@ import static com.github.dakusui.crest.functions.CrestPredicates.isNotNull;
  * @param <T> Type of object to be verified.
  */
 public interface Assertion<T> {
+  interface Description {
+    boolean wasSuccessful();
+
+    String expectation();
+
+    String actual();
+  }
+
   void perform(T value);
 
   default <I> boolean test(Predicate<? super I> predicate, I value) {
+    // TODO memoization
     return predicate.test(value);
   }
 
   default <I, O> O apply(Function<? super I, ? extends O> function, I value) {
+    // TODO memoization
     return function.apply(value);
   }
+
+  void appendText(String format, Object... args);
 
   static <T> void assertThat(T value, Matcher<? super T> matcher) {
     create(matcher).perform(value);
@@ -35,17 +46,19 @@ public interface Assertion<T> {
   class Impl<T> implements Assertion<T> {
     private final Matcher<? super T> matcher;
 
-    public Impl(Matcher<? super T> matcher) {
-      this.matcher = Precondition.require(ARGUMENT, matcher, isNotNull());
+    Impl(Matcher<? super T> matcher) {
+      this.matcher = Variable.Category.ARGUMENT.require("matcher", matcher, isNotNull());
     }
 
     @Override
     public void perform(T value) {
-      this.matcher.describeExpectation(this);
       if (!this.matcher.matches(value, this))
-        this.matcher.describeMismatch(this);
-      else
         throwComparisonFailure(this);
+    }
+
+    @Override
+    public void appendText(String format, Object... args) {
+
     }
 
     private static <T> void throwComparisonFailure(Impl<T> self) {

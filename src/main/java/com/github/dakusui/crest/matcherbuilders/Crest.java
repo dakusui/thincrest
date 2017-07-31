@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.matcherbuilders;
 
-import com.github.dakusui.crest.core.Formattable;
+import com.github.dakusui.crest.core.Printable;
 import com.github.dakusui.crest.functions.CrestFunctions;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
 import org.hamcrest.Description;
@@ -67,7 +67,7 @@ public enum Crest {
 
   public static <I> AsBoolean<I> asBoolean(Predicate<? super I> predicate) {
     requireNonNull(predicate);
-    return asBoolean(Formattable.function(predicate.toString(), predicate::test));
+    return asBoolean(Printable.function(predicate.toString(), predicate::test));
   }
 
   public static <I> AsBoolean<I> asBoolean(Function<? super I, Boolean> function) {
@@ -195,11 +195,11 @@ public enum Crest {
     return new AsStream<>(CrestFunctions.stream());
   }
 
-  public static <I extends Collection<?>> AsList<? super I, ?> asList() {
+  public static <I extends Collection<?>> AsList<? super I, ?> asObjectList() {
     return asListOf(Object.class, CrestFunctions.collectionToList());
   }
 
-  public static <I> AsList<? super I, ?> asList(Function<? super I, ? extends List<Object>> function) {
+  public static <I> AsList<? super I, ?> asObjectList(Function<? super I, ? extends List<Object>> function) {
     return asListOf(Object.class, function);
   }
 
@@ -212,7 +212,7 @@ public enum Crest {
   }
 
   public static <I extends Map, SELF extends AsMap<I, Object, Object, SELF>> SELF asMap() {
-    return asMapOf(Object.class, Object.class, Formattable.function("mapToMap", o -> new HashMap<>()));
+    return asMapOf(Object.class, Object.class, Printable.function("mapToMap", o -> new HashMap<>()));
   }
 
   public static <I, SELF extends AsMap<I, Object, Object, SELF>> SELF asMap(Function<? super I, ? extends Map<Object, Object>> function) {

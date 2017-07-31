@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.core.InternalUtils;
-import com.github.dakusui.crest.core.Precondition;
+import com.github.dakusui.crest.core.Variable;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -38,16 +38,6 @@ public class InternalUtilsTest {
         "wait/1",
         methodInfo
     );
-  }
-
-  @Test(expected = IllegalStateException.class)
-  public void givenUnexpectedState$whenRequireState$thenIllegalStateExceptionThrown() {
-    Precondition.requireState(false);
-  }
-
-  @Test
-  public void givenExpectedState$whenRequireState$thenIllegalStateExceptionThrown() {
-    Precondition.requireState(true);
   }
 
   /*

@@ -33,7 +33,7 @@ public interface MatcherBuilder<IN, OUT, SELF extends MatcherBuilder<IN, OUT, SE
       return create(
           predicates.stream(
           ).map(
-              predicate -> (BaseMatcher<Object>) InternalUtils.toMatcher(predicate, function)
+              predicate -> (BaseMatcher<Object>) InternalUtils.createLeafMatcher(predicate, function)
           ).collect(
               toList()
           )

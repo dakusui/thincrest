@@ -3,10 +3,10 @@ package com.github.dakusui.crest.core;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
-public enum Formattable {
+public enum Printable {
   ;
-
   public static <T, R> Function<T, R> function(String s, Function<? super T, ? extends R> function) {
     Objects.requireNonNull(s);
     Objects.requireNonNull(function);

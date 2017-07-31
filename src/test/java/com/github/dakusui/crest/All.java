@@ -10,7 +10,7 @@ import org.junit.runners.Suite;
     CrestFunctionsTest.class,
     CrestTest.class,
     CrestPredicatesTest.class,
-    FormattableTest.class,
+    PrintableTest.class,
     InternalUtilsTest.class,
     ExamplesTest.class
 })
