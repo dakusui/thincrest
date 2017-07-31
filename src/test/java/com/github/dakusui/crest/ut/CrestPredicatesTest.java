@@ -7,6 +7,8 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.stream.Stream;
 
 import static junit.framework.TestCase.assertTrue;
@@ -15,6 +17,30 @@ import static org.junit.Assert.assertFalse;
 
 @RunWith(Enclosed.class)
 public class CrestPredicatesTest {
+  public static class IsNullTest extends TestBase {
+    @Test
+    public void whenMet$thenTrue() {
+      assertTrue(CrestPredicates.isNull().test(null));
+    }
+
+    @Test
+    public void whenNotMet$thenFalse() {
+      assertFalse(CrestPredicates.isNull().test("Hello"));
+    }
+  }
+
+  public static class IsNotNullTest extends TestBase {
+    @Test
+    public void whenMet$thenTrue() {
+      assertTrue(CrestPredicates.isNotNull().test("HELLO"));
+    }
+
+    @Test
+    public void whenNotMet$thenFalse() {
+      assertFalse(CrestPredicates.isNotNull().test(null));
+    }
+  }
+
   public static class EqTest extends TestBase {
     @Test
     public void whenMet$thenTrue() {
@@ -29,7 +55,7 @@ public class CrestPredicatesTest {
 
     @Test
     public void whenToString$thenLooksGood() {
-      assertEquals("==[123]", CrestPredicates.eq(123).toString());
+      assertEquals("=[123]", CrestPredicates.eq(123).toString());
     }
   }
 
@@ -102,6 +128,25 @@ public class CrestPredicatesTest {
     @Test
     public void whenToString$thenLooksGood() {
       assertEquals("<=[123]", CrestPredicates.le(123).toString());
+    }
+  }
+
+  public static class ContainsOnlyTest extends TestBase {
+    @Test
+    public void whenMet$thenTrue() {
+      assertTrue(
+          CrestPredicates.containsOnly(Arrays.asList("a", "b")).test(Collections.singletonList("a"))
+      );
+      assertTrue(
+          CrestPredicates.containsOnly(Arrays.asList("a", "b")).test(Arrays.asList("a", "b"))
+      );
+    }
+
+    @Test
+    public void whenNotMet$thenFalse() {
+      assertFalse(
+          CrestPredicates.containsOnly(Arrays.asList("a", "b")).test(Arrays.asList("a", "b", "c"))
+      );
     }
   }
 

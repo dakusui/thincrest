@@ -1,13 +1,11 @@
 package com.github.dakusui.crest.ut;
 
-import com.github.dakusui.crest.core.Formattable;
-import com.github.dakusui.crest.functions.CrestFunctions;
+import com.github.dakusui.crest.core.Assertion;
+import com.github.dakusui.crest.core.Matcher;
+import com.github.dakusui.crest.core.Printable;
 import com.github.dakusui.crest.matcherbuilders.Crest;
 import com.github.dakusui.crest.utils.TestBase;
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.StringDescription;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -26,8 +24,20 @@ import static org.junit.Assert.*;
 
 @RunWith(Enclosed.class)
 public class CrestTest {
+  static class Description {
+    private final String content;
 
-  private static final Predicate<Integer> FAILING_CHECK = Formattable.predicate("failingCheck", v -> {
+    public Description(String s) {
+      this.content = s;
+    }
+
+    @Override
+    public String toString() {
+      return this.content;
+    }
+  }
+
+  private static final Predicate<Integer> FAILING_CHECK = Printable.predicate("failingCheck", v -> {
     throw new RuntimeException("FAILED");
   });
 
@@ -58,7 +68,7 @@ public class CrestTest {
           aList,
           allOf(
               Crest.asObject(
-                  CrestFunctions.elementAt(0)
+                  elementAt(0)
               ).check(
                   equalTo("Hello")).all()
               ,
@@ -101,8 +111,9 @@ public class CrestTest {
               "Expected: and:[\n"
               + "  equalTo[3](size(x))\n"
               + "  equalTo[hello](elementAt[0](x))\n"
-              + "]->true\n"
+              + "]\n"
               + "     but: when x=<[Hello, world, !]>; then and:[\n"
+              + "  equalTo[3](size(x))\n"
               + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
@@ -134,9 +145,10 @@ public class CrestTest {
                   "Expected: and:[\n"
                   + "  failingCheck(size(x))\n"
                   + "  equalTo[Hello](elementAt[0](x))\n"
-                  + "]->true\n"
+                  + "]\n"
                   + "     but: when x=<[Hello, world, !]>; then and:[\n"
                   + "  failingCheck(size(x)) failed with java.lang.RuntimeException(FAILED)\n"
+                  + "  equalTo[Hello](elementAt[0](x))\n"
                   + "]->false\n"
                   + "FAILED"
           ));
@@ -165,7 +177,7 @@ public class CrestTest {
               "Expected: and:[\n"
               + "  equalTo[2](size(x))\n"
               + "  equalTo[hello](elementAt[0](x))\n"
-              + "]->true\n"
+              + "]\n"
               + "     but: when x=<[Hello, world, !]>; then and:[\n"
               + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
               + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
@@ -235,6 +247,7 @@ public class CrestTest {
      *   Disj
      *   (3): E -> P      : error
      * </pre>
+     * In case an error is thrown, the assertion should fail even if all the other matchers are passing.
      */
     @Test
     public void whenErrorAndThenPassing$thenErrorThrownAndMessageAppropriate() {
@@ -254,9 +267,10 @@ public class CrestTest {
               "Expected: or:[\n"
               + "  failingCheck(size(x))\n"
               + "  equalTo[Hello](elementAt[0](x))\n"
-              + "]->true\n"
+              + "]\n"
               + "     but: when x=<[Hello, world, !]>; then or:[\n"
               + "  failingCheck(size(x)) failed with java.lang.RuntimeException(FAILED)\n"
+              + "  equalTo[Hello](elementAt[0](x))\n"
               + "]->false\n"
               + "FAILED"
           )
@@ -286,7 +300,7 @@ public class CrestTest {
               "Expected: or:[\n"
               + "  equalTo[2](size(x))\n"
               + "  equalTo[hello](elementAt[0](x))\n"
-              + "]->true\n"
+              + "]\n"
               + "     but: when x=<[Hello, world, !]>; then or:[\n"
               + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
               + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
@@ -323,7 +337,7 @@ public class CrestTest {
               + "    equalTo[hello](elementAt[0](x))\n"
               + "    equalTo[HELLO](elementAt[0](x))\n"
               + "  ]\n"
-              + "]->true\n"
+              + "]\n"
               + "     but: when x=<[Hello, world, !]>; then or:[\n"
               + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
               + "  and:[\n"
@@ -361,7 +375,7 @@ public class CrestTest {
               + "    equalTo[hello](elementAt[0](x))\n"
               + "    equalTo[HELLO](elementAt[0](x))\n"
               + "  ]\n"
-              + "]->true\n"
+              + "]\n"
               + "     but: when x=<[Hello, world, !]>; then and:[\n"
               + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
               + "  or:[\n"
@@ -375,15 +389,14 @@ public class CrestTest {
   }
 
   private static <T> Optional<Description> describeFailure(T actual, Matcher<? super T> matcher) {
-    if (!matcher.matches(actual)) {
-      Description description = new StringDescription();
-      description
-          .appendText("\nExpected: ")
-          .appendDescriptionOf(matcher)
-          .appendText("\n     but: ");
-      matcher.describeMismatch(actual, description);
+    Assertion<T> assertion = Assertion.create(null, matcher);
+    if (!matcher.matches(actual, assertion)) {
+      String description = "\nExpected: " +
+          String.join("\n", matcher.describeExpectation(assertion)) +
+          "\n     but: " +
+          String.join("\n", matcher.describeMismatch(actual, assertion));
 
-      return Optional.of(description);
+      return Optional.of(new Description(description));
     }
     return Optional.empty();
   }

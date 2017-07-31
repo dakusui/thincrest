@@ -1,9 +1,7 @@
 package com.github.dakusui.crest.matcherbuilders;
 
-import com.github.dakusui.crest.core.InternalUtils;
+import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.functions.CrestPredicates;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Matcher;
 
 import java.util.List;
 import java.util.function.Function;
@@ -12,20 +10,21 @@ import java.util.function.Predicate;
 import static java.util.stream.Collectors.toList;
 
 /*
- * 'S' for 'self'
  */
-public interface MatcherBuilder<I, O, S extends MatcherBuilder<I, O, S>> {
+public interface MatcherBuilder<IN, OUT, SELF extends MatcherBuilder<IN, OUT, SELF>> {
   enum Op {
     AND {
+      @SuppressWarnings("unchecked")
       @Override
       <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers) {
-        return new Crest.AllOf<>(false, matchers);
+        return Matcher.Conjunctive.create(false, (List<Matcher<? super I>>) matchers);
       }
     },
     OR {
+      @SuppressWarnings("unchecked")
       @Override
       <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers) {
-        return new Crest.AnyOf<>(false, matchers);
+        return Matcher.Disjunctive.create(false, (List<Matcher<? super I>>) matchers);
       }
     };
 
@@ -34,7 +33,7 @@ public interface MatcherBuilder<I, O, S extends MatcherBuilder<I, O, S>> {
       return create(
           predicates.stream(
           ).map(
-              predicate -> (BaseMatcher<Object>) InternalUtils.toMatcher(predicate, function)
+              predicate -> (Matcher<Object>) Matcher.Leaf.create(predicate, function)
           ).collect(
               toList()
           )
@@ -44,19 +43,21 @@ public interface MatcherBuilder<I, O, S extends MatcherBuilder<I, O, S>> {
     abstract <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers);
   }
 
-  S check(Predicate<? super O> predicate);
+  SELF check(Predicate<? super OUT> predicate);
 
-  default S check(String methodName, Object... args) {
+  <MEDIUM> SELF check(Function<? super OUT, ? extends MEDIUM> function, Predicate<? super MEDIUM> predicate);
+
+  default SELF check(String methodName, Object... args) {
     return check(CrestPredicates.invoke(methodName, args));
   }
 
-  default S equalTo(O value) {
+  default SELF equalTo(OUT value) {
     return this.check(CrestPredicates.equalTo(value));
   }
 
-  Matcher<? super I> all();
+  Matcher<? super IN> all();
 
-  Matcher<? super I> any();
+  Matcher<? super IN> any();
 
   /**
    * Synonym for {@code all()}.
@@ -64,7 +65,15 @@ public interface MatcherBuilder<I, O, S extends MatcherBuilder<I, O, S>> {
    * @return A matcher built by this object
    * @see MatcherBuilder#all
    */
-  default Matcher<? super I> matcher() {
+  default Matcher<? super IN> matcher() {
     return all();
+  }
+
+  /**
+   * Synonym for {$code matcher()}. You can use this method to make your code look
+   * more 'natural' (as an English sentence).
+   */
+  default Matcher<? super IN> $() {
+    return matcher();
   }
 }

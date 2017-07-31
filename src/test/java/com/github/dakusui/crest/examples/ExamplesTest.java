@@ -1,5 +1,6 @@
 package com.github.dakusui.crest.examples;
 
+import com.github.dakusui.crest.ComparablesExample;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -16,12 +17,58 @@ import static org.junit.Assert.assertEquals;
 
 public class ExamplesTest {
   @Test
-  public void runExample2() {
+  public void simpleExample() {
+    Class<?> exampleClass = SimpleExamples.class;
+    verifyExample(exampleClass);
+  }
+
+  @Test
+  public void inThincrest() {
+    Class<?> exampleClass = InThincrest.class;
+    verifyExample(exampleClass);
+  }
+
+  @Test
+  public void comparableExample$Byte() {
+    verifyExample(ComparablesExample.ByteExample.class);
+  }
+
+  @Test
+  public void comparableExample$Char() {
+    verifyExample(ComparablesExample.CharExample.class);
+  }
+
+  @Test
+  public void comparableExample$Short() {
+    verifyExample(ComparablesExample.ShortExample.class);
+  }
+
+  @Test
+  public void comparableExample$Integer() {
+    verifyExample(ComparablesExample.IntegerExample.class);
+  }
+
+  @Test
+  public void comparableExample$Long() {
+    verifyExample(ComparablesExample.LongExample.class);
+  }
+
+  @Test
+  public void comparableExample$Float() {
+    verifyExample(ComparablesExample.FloatExample.class);
+  }
+
+  @Test
+  public void comparableExample$Double() {
+    verifyExample(ComparablesExample.DoubleExample.class);
+  }
+
+  private void verifyExample(Class<?> javaTestClass) {
     List<String> expectation = new LinkedList<>();
     List<String> actualResult = new LinkedList<>();
 
     JUnitCore jUnitCore = new JUnitCore();
-    TestClass testClass = new TestClass(SimpleExamples.class);
+    TestClass testClass = new TestClass(javaTestClass);
     for (FrameworkMethod m : testClass.getAnnotatedMethods(Test.class).stream().sorted(Comparator.comparing(FrameworkMethod::getName)).collect(Collectors.toList())) {
       Request request = Request.method(testClass.getJavaClass(), m.getName());
       Result result = jUnitCore.run(request);
