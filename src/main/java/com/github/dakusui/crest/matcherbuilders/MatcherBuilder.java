@@ -1,6 +1,5 @@
 package com.github.dakusui.crest.matcherbuilders;
 
-import com.github.dakusui.crest.core.InternalUtils;
 import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.functions.CrestPredicates;
 
@@ -18,14 +17,14 @@ public interface MatcherBuilder<IN, OUT, SELF extends MatcherBuilder<IN, OUT, SE
       @SuppressWarnings("unchecked")
       @Override
       <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers) {
-        return Crest.allOf((Matcher<? super I>) matchers);
+        return Matcher.Conjunctive.create((List<Matcher<? super I>>) matchers);
       }
     },
     OR {
       @SuppressWarnings("unchecked")
       @Override
       <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers) {
-        return Crest.anyOf((Matcher<? super I>) matchers);
+        return Matcher.Disjunctive.create((List<Matcher<? super I>>) matchers);
       }
     };
 
@@ -34,7 +33,7 @@ public interface MatcherBuilder<IN, OUT, SELF extends MatcherBuilder<IN, OUT, SE
       return create(
           predicates.stream(
           ).map(
-              predicate -> (Matcher<Object>) InternalUtils.createLeafMatcher(predicate, function)
+              predicate -> (Matcher<Object>) Matcher.Leaf.create(predicate, function)
           ).collect(
               toList()
           )

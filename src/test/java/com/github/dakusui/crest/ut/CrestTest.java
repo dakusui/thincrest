@@ -1,5 +1,6 @@
 package com.github.dakusui.crest.ut;
 
+import com.github.dakusui.crest.core.Assertion;
 import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.core.Printable;
 import com.github.dakusui.crest.matcherbuilders.Crest;
@@ -24,12 +25,15 @@ import static org.junit.Assert.*;
 @RunWith(Enclosed.class)
 public class CrestTest {
   static class Description {
-    Description appendText(String s) {
-      return this;
+    private final String content;
+
+    public Description(String s) {
+      this.content = s;
     }
 
-    <T> Description appendDescriptionOf(Matcher<? super T> matcher) {
-      return this;
+    @Override
+    public String toString() {
+      return this.content;
     }
   }
 
@@ -381,18 +385,15 @@ public class CrestTest {
   }
 
   private static <T> Optional<Description> describeFailure(T actual, Matcher<? super T> matcher) {
-    /*
-    if (!matcher.matches(actual)) {
-      Description description = new Description();
-      description
-          .appendText("\nExpected: ")
-          .appendDescriptionOf(matcher)
-          .appendText("\n     but: ");
-      matcher.describeMismatch(actual, description);
+    Assertion<T> assertion = Assertion.create(null, matcher);
+    if (!matcher.matches(actual, assertion)) {
+      String description = "\nExpected: " +
+          String.join("\n", matcher.describeExpectation(assertion)) +
+          "\n     but: " +
+          String.join("\n", matcher.describeMismatch(actual, assertion));
 
-      return Optional.of(description);
+      return Optional.of(new Description(description));
     }
-    */
     return Optional.empty();
   }
 
