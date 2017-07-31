@@ -1,8 +1,6 @@
 package com.github.dakusui.crest.core;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -12,42 +10,12 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 public enum InternalUtils {
   ;
-
-  public static void requireState(boolean stateCondition) {
-    if (!stateCondition)
-      throw new IllegalStateException();
-  }
-
-  public static <I, O> BaseMatcher<? super I> toMatcher(Predicate<? super O> p, Function<? super I, ? extends O> function) {
-    return new BaseMatcher<I>() {
-      @SuppressWarnings("unchecked")
-      @Override
-      public boolean matches(Object item) {
-        return p.test(function.apply((I) item));
-      }
-
-      @SuppressWarnings("unchecked")
-      @Override
-      public void describeMismatch(Object item, Description description) {
-        description
-            .appendDescriptionOf(this).appendText(" ")
-            .appendText("was false because " + function.toString() + "(x)=")
-            .appendValue(function.apply((I) item))
-            .appendText(" does not satisfy it")
-        ;
-      }
-
-      @Override
-      public void describeTo(Description description) {
-        description.appendText(String.format("%s(%s(x))", p.toString(), function.toString()));
-      }
-    };
-  }
 
   @SuppressWarnings("unchecked")
   public static boolean areArgsCompatible(Class[] formalParameters, Object[] args) {
@@ -55,17 +23,46 @@ public enum InternalUtils {
       return false;
     for (int i = 0; i < args.length; i++) {
       if (args[i] == null)
-        continue;
-      if (!formalParameters[i].isAssignableFrom(args[i].getClass()))
+        if (formalParameters[i].isPrimitive())
+          return false;
+        else
+          continue;
+      if (!formalParameters[i].isAssignableFrom(toPrimitiveIfWrapper(args[i].getClass())))
         return false;
     }
     return true;
   }
 
-  public static <T> Optional<T> getIfOnlyOneElseThrow(List<T> in) {
-    if (in.size() == 1)
-      return Optional.of(in.get(0));
-    return Optional.empty();
+  private static Class<?> toPrimitiveIfWrapper(Class<?> in) {
+    for (Class<?>[] pair : new Class<?>[][] {
+        { boolean.class, Boolean.class },
+        { byte.class, Byte.class },
+        { char.class, Character.class },
+        { short.class, Short.class },
+        { int.class, Integer.class },
+        { long.class, Long.class },
+        { float.class, Float.class },
+        { double.class, Double.class },
+    }) {
+      if (Objects.equals(in, pair[1]))
+        return pair[0];
+    }
+    return in;
+  }
+
+
+  private static <T> Optional<T> getIfOnlyOneElseThrow(List<T> foundMethods, Class<?> aClass, String methodName, Object[] args) {
+    if (foundMethods.isEmpty())
+      return Optional.empty();
+    if (foundMethods.size() == 1)
+      return Optional.of(foundMethods.get(0));
+    throw new RuntimeException(String.format(
+        "Methods matching '%s%s' were found more than one in %s.: %s",
+        methodName,
+        asList(args),
+        aClass.getCanonicalName(),
+        foundMethods
+    ));
   }
 
   public static Method findMethod(Class<?> aClass, String methodName, Object[] args) {
@@ -78,12 +75,15 @@ public enum InternalUtils {
             (Method m) -> areArgsCompatible(m.getParameterTypes(), args)
         ).collect(
             toList()
-        )
+        ),
+        aClass,
+        methodName,
+        args
     ).orElseThrow(
         () -> new RuntimeException(String.format(
-            "Method matching '%s%s' was not found or more than one were mathing in %s.",
+            "Method matching '%s%s' was not found in %s.(CAUTION: This method doesn't try to cast or unbox arguments to find a method)",
             methodName,
-            asList(args),
+            Arrays.asList(args),
             aClass.getCanonicalName()
         ))
     );
@@ -96,5 +96,74 @@ public enum InternalUtils {
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  static String formatExpectation(Predicate p, Function function) {
+    return format("%s(%s)", p.toString(), formatFunction(function, "x"));
+  }
+
+  static String formatFunction(Function<?, ?> function, @SuppressWarnings("SameParameterValue") String variableName) {
+    return format("%s(%s)", function.toString(), variableName);
+  }
+
+  /*
+     * Based on BaseDescription#appendValue() of Hamcrest
+     *
+     * http://hamcrest.org/JavaHamcrest/
+     */
+  static String formatValue(Object value) {
+    if (value == null)
+      return "null";
+    if (value instanceof String)
+      return String.format("\"%s\"", toJavaSyntax((String) value));
+    if (value instanceof Character)
+      return String.format("\"%s\"", toJavaSyntax(((Character) value).charValue()));
+    if (value instanceof Short)
+      return String.format("<%ss>", value);
+    if (value instanceof Long)
+      return String.format("<%sL>", value);
+    if (value instanceof Float)
+      return String.format("<%sF>", value);
+    if (value.getClass().isArray())
+      return arrayToString(value);
+    return format("<%s>", value);
+  }
+
+  private static String toJavaSyntax(String unformatted) {
+    StringBuilder b = new StringBuilder();
+    for (int i = 0; i < unformatted.length(); i++) {
+      b.append(toJavaSyntax(unformatted.charAt(i)));
+    }
+    return b.toString();
+  }
+
+  private static String toJavaSyntax(char ch) {
+    switch (ch) {
+    case '"':
+      return "\\\"";
+    case '\n':
+      return ("\\n");
+    case '\r':
+      return ("\\r");
+    case '\t':
+      return ("\\t");
+    default:
+      return Character.toString(ch);
+    }
+  }
+
+  private static String arrayToString(Object arr) {
+    StringBuilder b = new StringBuilder();
+    b.append("[");
+    int length = Array.getLength(arr);
+    if (length > 0) {
+      for (int i = 0; i < length - 1; i++) {
+        b.append(Array.get(arr, i));
+        b.append(",");
+      }
+      b.append(Array.get(arr, length - 1));
+    }
+    b.append("]");
+    return b.toString();
   }
 }

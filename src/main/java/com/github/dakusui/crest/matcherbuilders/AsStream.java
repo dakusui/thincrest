@@ -6,20 +6,20 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class AsStream<I, E> extends AsObject<I, Stream<? extends E>, AsStream<I, E>> {
-  public AsStream(Function<? super I, Stream<? extends E>> function) {
+public class AsStream<IN, ENTRY> extends AsObject<IN, Stream<? extends ENTRY>, AsStream<IN, ENTRY>> {
+  public AsStream(Function<? super IN, Stream<? extends ENTRY>> function) {
     super(function);
   }
 
-  public AsStream<? super I, ? extends E> allMatch(Predicate<? super E> predicate) {
+  public AsStream<? super IN, ? extends ENTRY> allMatch(Predicate<? super ENTRY> predicate) {
     return this.check(CrestPredicates.allMatch(predicate));
   }
 
-  public AsStream<? super I, ? extends E> noneMatch(Predicate<? super E> predicate) {
+  public AsStream<? super IN, ? extends ENTRY> noneMatch(Predicate<? super ENTRY> predicate) {
     return this.check(CrestPredicates.noneMatch(predicate));
   }
 
-  public AsStream<? super I, ? extends E> anyMatch(Predicate<? super E> predicate) {
+  public AsStream<? super IN, ? extends ENTRY> anyMatch(Predicate<? super ENTRY> predicate) {
     return this.check(CrestPredicates.anyMatch(predicate));
   }
 }
