@@ -111,8 +111,9 @@ public class CrestTest {
               "Expected: and:[\n"
               + "  equalTo[3](size(x))\n"
               + "  equalTo[hello](elementAt[0](x))\n"
-              + "]->true\n"
+              + "]\n"
               + "     but: when x=<[Hello, world, !]>; then and:[\n"
+              + "  equalTo[3](size(x))\n"
               + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
@@ -144,9 +145,10 @@ public class CrestTest {
                   "Expected: and:[\n"
                   + "  failingCheck(size(x))\n"
                   + "  equalTo[Hello](elementAt[0](x))\n"
-                  + "]->true\n"
+                  + "]\n"
                   + "     but: when x=<[Hello, world, !]>; then and:[\n"
                   + "  failingCheck(size(x)) failed with java.lang.RuntimeException(FAILED)\n"
+                  + "  equalTo[Hello](elementAt[0](x))\n"
                   + "]->false\n"
                   + "FAILED"
           ));
@@ -175,7 +177,7 @@ public class CrestTest {
               "Expected: and:[\n"
               + "  equalTo[2](size(x))\n"
               + "  equalTo[hello](elementAt[0](x))\n"
-              + "]->true\n"
+              + "]\n"
               + "     but: when x=<[Hello, world, !]>; then and:[\n"
               + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
               + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
@@ -245,6 +247,7 @@ public class CrestTest {
      *   Disj
      *   (3): E -> P      : error
      * </pre>
+     * In case an error is thrown, the assertion should fail even if all the other matchers are passing.
      */
     @Test
     public void whenErrorAndThenPassing$thenErrorThrownAndMessageAppropriate() {
@@ -264,9 +267,10 @@ public class CrestTest {
               "Expected: or:[\n"
               + "  failingCheck(size(x))\n"
               + "  equalTo[Hello](elementAt[0](x))\n"
-              + "]->true\n"
+              + "]\n"
               + "     but: when x=<[Hello, world, !]>; then or:[\n"
               + "  failingCheck(size(x)) failed with java.lang.RuntimeException(FAILED)\n"
+              + "  equalTo[Hello](elementAt[0](x))\n"
               + "]->false\n"
               + "FAILED"
           )
@@ -296,7 +300,7 @@ public class CrestTest {
               "Expected: or:[\n"
               + "  equalTo[2](size(x))\n"
               + "  equalTo[hello](elementAt[0](x))\n"
-              + "]->true\n"
+              + "]\n"
               + "     but: when x=<[Hello, world, !]>; then or:[\n"
               + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
               + "  equalTo[hello](elementAt[0](x)) was false because elementAt[0](x)=\"Hello\" does not satisfy it\n"
@@ -333,7 +337,7 @@ public class CrestTest {
               + "    equalTo[hello](elementAt[0](x))\n"
               + "    equalTo[HELLO](elementAt[0](x))\n"
               + "  ]\n"
-              + "]->true\n"
+              + "]\n"
               + "     but: when x=<[Hello, world, !]>; then or:[\n"
               + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
               + "  and:[\n"
@@ -371,7 +375,7 @@ public class CrestTest {
               + "    equalTo[hello](elementAt[0](x))\n"
               + "    equalTo[HELLO](elementAt[0](x))\n"
               + "  ]\n"
-              + "]->true\n"
+              + "]\n"
               + "     but: when x=<[Hello, world, !]>; then and:[\n"
               + "  equalTo[2](size(x)) was false because size(x)=<3> does not satisfy it\n"
               + "  or:[\n"

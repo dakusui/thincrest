@@ -22,11 +22,11 @@ public class MatcherTest {
     );
   }
 
-  @Test//(expected = ComparisonFailure.class)
+  @Test(expected = ComparisonFailure.class)
   public void givenFailingNestedMatcher$whenAssertThat$thenFail() {
     assertThat(
         "Hello",
-        Matcher.Conjunctive.create(Arrays.<Matcher<Object>>asList(
+        Matcher.Conjunctive.create(true, Arrays.<Matcher<? super Object>>asList(
             Matcher.Leaf.create(wrap(CrestPredicates.equalTo("hello")), wrap(CrestFunctions.identity())),
             Matcher.Leaf.create(wrap(CrestPredicates.equalTo("hello")), wrap(CrestFunctions.identity()))
         )));

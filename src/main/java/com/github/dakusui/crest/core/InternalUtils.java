@@ -1,8 +1,5 @@
 package com.github.dakusui.crest.core;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -19,47 +16,6 @@ import static java.util.stream.Collectors.toList;
 
 public enum InternalUtils {
   ;
-
-  public static <I, O> BaseMatcher<? super I> createLeafMatcher(Predicate<? super O> p, Function<? super I, ? extends O> function) {
-    return new BaseMatcher<I>() {
-      boolean matchesDone = false;
-      O value = null;
-
-      @SuppressWarnings("unchecked")
-      @Override
-      public boolean matches(Object item) {
-        try {
-          return p.test(this.value = function.apply((I) item));
-        } finally {
-          matchesDone = true;
-        }
-      }
-
-      @SuppressWarnings("unchecked")
-      @Override
-      public void describeMismatch(Object item, Description description) {
-        description
-            .appendDescriptionOf(this).appendText(" ")
-            .appendText(String.format("was false because %s=", formatFunction(function, "x")))
-            .appendValue(value)
-            .appendText(" does not satisfy it")
-        ;
-      }
-
-      @Override
-      public void describeTo(Description description) {
-        description.appendText(String.format(
-            "%s(%s)",
-            p.toString(),
-            formatFunction(function, "x")
-        ));
-      }
-
-      private String formatFunction(Function<?, ?> function, @SuppressWarnings("SameParameterValue") String variableName) {
-        return String.format("%s(%s)", function.toString(), variableName);
-      }
-    };
-  }
 
   @SuppressWarnings("unchecked")
   public static boolean areArgsCompatible(Class[] formalParameters, Object[] args) {

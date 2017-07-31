@@ -30,7 +30,7 @@ public enum Crest {
   @SuppressWarnings("unchecked")
   @SafeVarargs
   public static <T> Matcher<T> allOf(Matcher<? super T>... matchers) {
-    return Matcher.Conjunctive.create(asList(matchers));
+    return Matcher.Conjunctive.create(true, asList(matchers));
   }
 
   /**
@@ -41,7 +41,7 @@ public enum Crest {
   @SuppressWarnings("unchecked")
   @SafeVarargs
   public static <T> Matcher<T> anyOf(Matcher<? super T>... matchers) {
-    return Matcher.Disjunctive.create(asList(matchers));
+    return Matcher.Disjunctive.create(true, asList(matchers));
   }
 
   public static <I, S extends AsObject<I, I, S>> AsObject<I, I, S> asObject() {

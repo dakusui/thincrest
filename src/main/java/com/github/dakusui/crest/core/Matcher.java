@@ -1,8 +1,6 @@
 package com.github.dakusui.crest.core;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -20,10 +18,12 @@ public interface Matcher<T> {
   interface Composite<T> extends Matcher<T> {
     abstract class Base<T> implements Composite<T> {
       private final List<Matcher<T>> children;
+      private final boolean          topLevel;
 
       @SuppressWarnings("unchecked")
-      Base(List<Matcher<? super T>> children) {
+      Base(boolean topLevel, List<Matcher<? super T>> children) {
         this.children = (List<Matcher<T>>) Collections.<T>unmodifiableList((List<? extends T>) requireNonNull(children));
+        this.topLevel = topLevel;
       }
 
       @Override
@@ -31,7 +31,7 @@ public interface Matcher<T> {
         boolean ret = first();
         for (Matcher<T> eachChild : children())
           ret = op(ret, eachChild.matches(value, session));
-        return ret;
+        return ret && session.exceptions().isEmpty();
       }
 
       @Override
@@ -46,9 +46,7 @@ public interface Matcher<T> {
                 if (formattedExpectation.size() == 1)
                   add(String.format("  %s", eachChild.describeExpectation(session).get(0)));
                 else {
-                  add(
-                      String.format("  %s", eachChild.describeExpectation(session))
-                  );
+                  addAll(indent(eachChild.describeExpectation(session)));
                 }
               }
           );
@@ -59,7 +57,10 @@ public interface Matcher<T> {
       @Override
       public List<String> describeMismatch(T value, Assertion<? extends T> session) {
         return new LinkedList<String>() {{
-          add(String.format("when x=%s; then %s:[", InternalUtils.formatValue(value), name()));
+          if (topLevel)
+            add(String.format("when x=%s; then %s:[", InternalUtils.formatValue(value), name()));
+          else
+            add(String.format("%s:[", name()));
           for (Matcher<T> eachChild : children()) {
             if (eachChild.matches(value, session))
               addAll(indent(eachChild.describeExpectation(session)));
@@ -67,6 +68,15 @@ public interface Matcher<T> {
               addAll(indent(eachChild.describeMismatch(value, session)));
           }
           add(String.format("]->%s", matches(value, session)));
+          session.exceptions().forEach(
+              e -> {
+                add(e.getMessage());
+                addAll(
+                    indent(Arrays.stream(e.getStackTrace()).map(
+                        StackTraceElement::toString
+                    ).collect(toList())));
+              }
+          );
         }};
       }
 
@@ -88,8 +98,8 @@ public interface Matcher<T> {
 
   interface Conjunctive<T> extends Composite<T> {
     @SuppressWarnings("unchecked")
-    static <T> Matcher<T> create(List<Matcher<? super T>> matchers) {
-      return new Conjunctive.Base<T>(matchers) {
+    static <T> Matcher<T> create(boolean topLevel, List<Matcher<? super T>> matchers) {
+      return new Conjunctive.Base<T>(topLevel, matchers) {
         @Override
         protected String name() {
           return "and";
@@ -110,8 +120,8 @@ public interface Matcher<T> {
 
   interface Disjunctive<T> extends Composite<T> {
     @SuppressWarnings("unchecked")
-    static <T> Matcher<T> create(List<Matcher<? super T>> matchers) {
-      return new Composite.Base<T>(matchers) {
+    static <T> Matcher<T> create(boolean topLevel, List<Matcher<? super T>> matchers) {
+      return new Composite.Base<T>(topLevel, matchers) {
 
         @Override
         protected String name() {
@@ -134,9 +144,10 @@ public interface Matcher<T> {
   interface Leaf<T> extends Matcher<T> {
     static <I, O> Matcher<I> create(Predicate<? super O> p, Function<? super I, ? extends O> function) {
       return new Matcher<I>() {
+        @SuppressWarnings("unchecked")
         @Override
         public boolean matches(I value, Assertion<? extends I> session) {
-          return session.test(p, session.apply(function, value));
+          return session.test((Predicate<Object>) p, session.apply(function, value));
         }
 
         @Override
@@ -146,13 +157,18 @@ public interface Matcher<T> {
 
         @Override
         public List<String> describeMismatch(I value, Assertion<? extends I> session) {
-          return singletonList(String.format(
+          @SuppressWarnings("unchecked") Optional<Throwable> exception = session.thrownExceptionFor((Predicate<? super I>) p, (I) session.apply(function, value));
+          return exception.map(throwable -> singletonList(String.format(
+              "%s failed with %s(%s)",
+              InternalUtils.formatExpectation(p, function),
+              throwable.getClass().getCanonicalName(),
+              throwable.getMessage()
+          ))).orElseGet(() -> singletonList(String.format(
               "%s was false because %s=%s does not satisfy it",
               InternalUtils.formatExpectation(p, function),
               InternalUtils.formatFunction(function, "x"),
               InternalUtils.formatValue(session.apply(function, value))
-              )
-          );
+          )));
         }
       };
     }

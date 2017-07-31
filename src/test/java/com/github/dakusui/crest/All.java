@@ -12,6 +12,7 @@ import org.junit.runners.Suite;
     CrestPredicatesTest.class,
     PrintableTest.class,
     InternalUtilsTest.class,
+    MatcherTest.class,
     ExamplesTest.class
 })
 public class All {
