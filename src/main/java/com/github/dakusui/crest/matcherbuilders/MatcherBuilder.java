@@ -1,9 +1,8 @@
 package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.core.InternalUtils;
+import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.functions.CrestPredicates;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Matcher;
 
 import java.util.List;
 import java.util.function.Function;
@@ -16,15 +15,17 @@ import static java.util.stream.Collectors.toList;
 public interface MatcherBuilder<IN, OUT, SELF extends MatcherBuilder<IN, OUT, SELF>> {
   enum Op {
     AND {
+      @SuppressWarnings("unchecked")
       @Override
       <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers) {
-        return new Crest.AllOf<>(false, matchers);
+        return Crest.allOf((Matcher<? super I>) matchers);
       }
     },
     OR {
+      @SuppressWarnings("unchecked")
       @Override
       <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers) {
-        return new Crest.AnyOf<>(false, matchers);
+        return Crest.anyOf((Matcher<? super I>) matchers);
       }
     };
 
@@ -33,7 +34,7 @@ public interface MatcherBuilder<IN, OUT, SELF extends MatcherBuilder<IN, OUT, SE
       return create(
           predicates.stream(
           ).map(
-              predicate -> (BaseMatcher<Object>) InternalUtils.createLeafMatcher(predicate, function)
+              predicate -> (Matcher<Object>) InternalUtils.createLeafMatcher(predicate, function)
           ).collect(
               toList()
           )

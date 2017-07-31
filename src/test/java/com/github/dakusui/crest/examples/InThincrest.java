@@ -5,7 +5,6 @@ import com.github.dakusui.crest.functions.CrestFunctions;
 import com.github.dakusui.crest.functions.CrestPredicates;
 import com.github.dakusui.crest.matcherbuilders.Crest;
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matchers;
 import org.hamcrest.core.StringContains;
 import org.junit.Test;
 
@@ -424,17 +423,4 @@ public class InThincrest {
         Crest.asListOf(String.class).contains("hello").matcher()
     );
   }
-
-  @Test
-  public void hamcrestSandbox$thenFail() {
-    assertThat("Hello, world", Matchers.stringContainsInOrder("Hello", "world"));
-    assertThat("Hello, world", Matchers.stringContainsInOrder("world", "Hello"));
-    Matchers.equalToIgnoringWhiteSpace("");
-
-    Matchers.stringContainsInOrder();
-
-    Matchers.empty();
-    Matchers.hasProperty("");
-  }
-
 }

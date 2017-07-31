@@ -21,8 +21,9 @@ public interface Matcher<T> {
     abstract class Base<T> implements Composite<T> {
       private final List<Matcher<T>> children;
 
-      Base(List<Matcher<T>> children) {
-        this.children = Collections.unmodifiableList(requireNonNull(children));
+      @SuppressWarnings("unchecked")
+      Base(List<Matcher<? super T>> children) {
+        this.children = (List<Matcher<T>>) Collections.<T>unmodifiableList((List<? extends T>) requireNonNull(children));
       }
 
       @Override
@@ -87,14 +88,8 @@ public interface Matcher<T> {
 
   interface Conjunctive<T> extends Composite<T> {
     @SuppressWarnings("unchecked")
-    static <T> Matcher<T> create(List<? extends Matcher<T>> matchers) {
-      return new Conjunctive.Base<T>((List<Matcher<T>>) matchers) {
-
-        @Override
-        public boolean matches(T value, Assertion<? extends T> session) {
-          return false;
-        }
-
+    static <T> Matcher<T> create(List<Matcher<? super T>> matchers) {
+      return new Conjunctive.Base<T>(matchers) {
         @Override
         protected String name() {
           return "and";
@@ -115,8 +110,8 @@ public interface Matcher<T> {
 
   interface Disjunctive<T> extends Composite<T> {
     @SuppressWarnings("unchecked")
-    static <T> Matcher<T> create(List<? extends Matcher<T>> matchers) {
-      return new Composite.Base<T>((List<Matcher<T>>) matchers) {
+    static <T> Matcher<T> create(List<Matcher<? super T>> matchers) {
+      return new Composite.Base<T>(matchers) {
 
         @Override
         protected String name() {
