@@ -3,6 +3,7 @@ package com.github.dakusui.crest.core;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
@@ -140,4 +142,72 @@ public enum InternalUtils {
     }
   }
 
+  static String formatExpectation(Predicate p, Function function) {
+    return format("%s(%s)", p.toString(), formatFunction(function, "x"));
+  }
+
+  static String formatFunction(Function<?, ?> function, @SuppressWarnings("SameParameterValue") String variableName) {
+    return format("%s(%s)", function.toString(), variableName);
+  }
+
+  /*
+     * Based on BaseDescription#appendValue() of Hamcrest
+     *
+     * http://hamcrest.org/JavaHamcrest/
+     */
+  static String formatValue(Object value) {
+    if (value == null)
+      return "null";
+    if (value instanceof String)
+      return String.format("\"%s\"", toJavaSyntax((String) value));
+    if (value instanceof Character)
+      return String.format("\"%s\"", toJavaSyntax(((Character) value).charValue()));
+    if (value instanceof Short)
+      return String.format("<%ss>", value);
+    if (value instanceof Long)
+      return String.format("<%sL>", value);
+    if (value instanceof Float)
+      return String.format("<%sF>", value);
+    if (value.getClass().isArray())
+      return arrayToString(value);
+    return format("<%s>", value);
+  }
+
+  private static String toJavaSyntax(String unformatted) {
+    StringBuilder b = new StringBuilder();
+    for (int i = 0; i < unformatted.length(); i++) {
+      b.append(toJavaSyntax(unformatted.charAt(i)));
+    }
+    return b.toString();
+  }
+
+  private static String toJavaSyntax(char ch) {
+    switch (ch) {
+    case '"':
+      return "\\\"";
+    case '\n':
+      return ("\\n");
+    case '\r':
+      return ("\\r");
+    case '\t':
+      return ("\\t");
+    default:
+      return Character.toString(ch);
+    }
+  }
+
+  private static String arrayToString(Object arr) {
+    StringBuilder b = new StringBuilder();
+    b.append("[");
+    int length = Array.getLength(arr);
+    if (length > 0) {
+      for (int i = 0; i < length - 1; i++) {
+        b.append(Array.get(arr, i));
+        b.append(",");
+      }
+      b.append(Array.get(arr, length - 1));
+    }
+    b.append("]");
+    return b.toString();
+  }
 }

@@ -1,7 +1,6 @@
 package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.core.InternalUtils;
-import com.github.dakusui.crest.core.Variable;
 import com.github.dakusui.crest.functions.CrestPredicates;
 import com.github.dakusui.crest.functions.TransformingPredicate;
 import org.hamcrest.Matcher;

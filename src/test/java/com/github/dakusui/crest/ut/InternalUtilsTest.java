@@ -1,7 +1,6 @@
 package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.core.InternalUtils;
-import com.github.dakusui.crest.core.Variable;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
