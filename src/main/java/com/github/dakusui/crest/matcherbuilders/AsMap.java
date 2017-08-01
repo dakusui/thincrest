@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class AsMap<I, K, V, SELF extends AsMap<I, K, V, SELF>> extends AsObject<I, Map<K, V>, SELF> {
+public class AsMap<I, K, V, SELF extends AsMap<I, K, V, SELF>> extends ObjectMatcherBuilder<I, Map<K, V>, SELF> {
   public AsMap(Function<? super I, ? extends Map<K, V>> function) {
     super(function);
   }

@@ -2,13 +2,13 @@ package com.github.dakusui.crest.examples;
 
 import com.github.dakusui.crest.core.Printable;
 import com.github.dakusui.crest.functions.CrestFunctions;
-import com.github.dakusui.crest.matcherbuilders.Crest;
+import com.github.dakusui.crest.Crest;
 import org.junit.Test;
 
 import java.util.*;
 import java.util.function.Function;
 
-import static com.github.dakusui.crest.matcherbuilders.Crest.*;
+import static com.github.dakusui.crest.Crest.*;
 
 public class SimpleExamples {
   @Test
@@ -100,54 +100,6 @@ public class SimpleExamples {
     assertThat(
         "abc",
         asComparableOf(String.class).eq("ABC").matcher()
-    );
-  }
-
-  @Test
-  public void givenList_Hello_world_$whenAsStreamAndPassingConditionComposedBy_allOf_method$thenPass() {
-    assertThat(
-        Arrays.asList("Hello", "world"),
-        allOf(
-            asStream().allMatch(Printable.predicate("==bye", "bye"::equals).negate()).matcher(),
-            asStream().noneMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
-            asStream().anyMatch(Printable.predicate("==bye", "bye"::equals).negate()).matcher()
-        )
-    );
-  }
-
-  @Test
-  public void givenList_Hello_world_$whenAsStreamAndFailingConditionComposedBy_allOf_method$thenFail() {
-    assertThat(
-        Arrays.asList("Hello", "world"),
-        allOf(
-            asStream().allMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
-            asStream().noneMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
-            asStream().anyMatch(Printable.predicate("==bye", "bye"::equals)).matcher()
-        )
-    );
-  }
-
-  @Test
-  public void givenList_Hello_world_$whenAsStreamAndPassingConditionComposedBy_anyOf_method$thenPass() {
-    assertThat(
-        Arrays.asList("Hello", "world"),
-        anyOf(
-            asStream().allMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
-            asStream().noneMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
-            asStream().anyMatch(Printable.predicate("==bye", "bye"::equals)).matcher()
-        )
-    );
-  }
-
-  @Test
-  public void givenList_Hello_world_$whenAsStreamAndFailingConditionComposedBy_anyOf_method$thenFail() {
-    assertThat(
-        Arrays.asList("Hello", "world"),
-        anyOf(
-            asStream().allMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
-            asStream().noneMatch(Printable.predicate("==bye", "bye"::equals).negate()).matcher(),
-            asStream().anyMatch(Printable.predicate("==bye", "bye"::equals)).matcher()
-        )
     );
   }
 
@@ -342,7 +294,7 @@ public class SimpleExamples {
     );
     assertThat(
         in,
-        Crest.asMap(arrToMap).hasKey("").hasKey(200).matcher()
+        Crest.asObjectMap(arrToMap).hasKey("").hasKey(200).matcher()
     );
   }
 
@@ -364,7 +316,7 @@ public class SimpleExamples {
     );
     assertThat(
         in,
-        Crest.asMap(arrToMap).hasKey("hello").hasKey("world").matcher()
+        Crest.asObjectMap(arrToMap).hasKey("hello").hasKey("world").matcher()
     );
   }
 
@@ -378,7 +330,7 @@ public class SimpleExamples {
     assertThat(
         map,
         allOf(
-            Crest.asMap().hasKey("").hasKey(200).matcher()
+            Crest.asObjectMap().hasKey("").hasKey(200).matcher()
         )
     );
   }

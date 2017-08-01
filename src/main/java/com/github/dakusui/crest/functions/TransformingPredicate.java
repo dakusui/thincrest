@@ -17,8 +17,16 @@ public class TransformingPredicate<P, O> implements Predicate<O> {
     return predicate.test(function.apply(v));
   }
 
+  public Predicate<? super P> predicate() {
+    return this.predicate;
+  }
+
+  public Function<? super O, ? extends P> function() {
+    return this.function;
+  }
+
   @Override
   public String toString() {
-    return String.format("%s%s", predicate, function);
+    return String.format("%s(x) %s", function, predicate);
   }
 }

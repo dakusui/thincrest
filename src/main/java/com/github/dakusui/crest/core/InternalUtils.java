@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -98,10 +97,6 @@ public enum InternalUtils {
     }
   }
 
-  static String formatExpectation(Predicate p, Function function) {
-    return format("%s(%s)", p.toString(), formatFunction(function, "x"));
-  }
-
   static String formatFunction(Function<?, ?> function, @SuppressWarnings("SameParameterValue") String variableName) {
     return format("%s(%s)", function.toString(), variableName);
   }
@@ -117,7 +112,7 @@ public enum InternalUtils {
     if (value instanceof String)
       return String.format("\"%s\"", toJavaSyntax((String) value));
     if (value instanceof Character)
-      return String.format("\"%s\"", toJavaSyntax(((Character) value).charValue()));
+      return String.format("\"%s\"", toJavaSyntax((Character) value));
     if (value instanceof Short)
       return String.format("<%ss>", value);
     if (value instanceof Long)

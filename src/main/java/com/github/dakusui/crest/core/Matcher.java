@@ -1,5 +1,7 @@
 package com.github.dakusui.crest.core;
 
+import com.github.dakusui.crest.functions.TransformingPredicate;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -147,28 +149,57 @@ public interface Matcher<T> {
         @SuppressWarnings("unchecked")
         @Override
         public boolean matches(I value, Assertion<? extends I> session) {
+          if (p instanceof TransformingPredicate) {
+            TransformingPredicate pp = (TransformingPredicate) p;
+            return session.test(
+                (Predicate<Object>) pp,
+                session.apply(pp.function(),
+                    session.apply(function, value)
+                )
+            );
+          }
           return session.test((Predicate<Object>) p, session.apply(function, value));
         }
 
         @Override
         public List<String> describeExpectation(Assertion<? extends I> session) {
-          return singletonList(InternalUtils.formatExpectation(p, function));
+          return singletonList(formatExpectation(p, function));
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public List<String> describeMismatch(I value, Assertion<? extends I> session) {
           @SuppressWarnings("unchecked") Optional<Throwable> exception = session.thrownExceptionFor((Predicate<? super I>) p, (I) session.apply(function, value));
           return exception.map(throwable -> singletonList(String.format(
               "%s failed with %s(%s)",
-              InternalUtils.formatExpectation(p, function),
+              formatExpectation(p, function),
               throwable.getClass().getCanonicalName(),
               throwable.getMessage()
-          ))).orElseGet(() -> singletonList(String.format(
-              "%s was false because %s=%s does not satisfy it",
-              InternalUtils.formatExpectation(p, function),
-              InternalUtils.formatFunction(function, "x"),
-              InternalUtils.formatValue(session.apply(function, value))
-          )));
+          ))).orElseGet(() -> {
+            if (p instanceof TransformingPredicate) {
+              TransformingPredicate pp = (TransformingPredicate) p;
+              return singletonList(String.format(
+                  "%s was false because %s=%s; %s=%s",
+                  formatExpectation(p, function),
+                  InternalUtils.formatFunction(pp.function(), InternalUtils.formatFunction(function, "x")),
+                  InternalUtils.formatValue(session.apply(pp.function(), session.apply(function, value))),
+                  InternalUtils.formatFunction(function, "x"),
+                  InternalUtils.formatValue(session.apply(function, value))
+              ));
+            }
+            return singletonList(String.format(
+                "%s was false because %s=%s",
+                formatExpectation(p, function),
+                InternalUtils.formatFunction(function, "x"),
+                InternalUtils.formatValue(session.apply(function, value))));
+          });
+        }
+
+        String formatExpectation(Predicate p, Function function) {
+          if (p instanceof TransformingPredicate)
+            return String.format("%s %s", InternalUtils.formatFunction(((TransformingPredicate) p).function(), InternalUtils.formatFunction(function, "x")), ((TransformingPredicate) p).predicate());
+          else
+            return String.format("%s %s", InternalUtils.formatFunction(function, "x"), p.toString());
         }
       };
     }
