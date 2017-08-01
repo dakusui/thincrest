@@ -1,9 +1,10 @@
-package com.github.dakusui.crest.matcherbuilders;
+package com.github.dakusui.crest;
 
 import com.github.dakusui.crest.core.Assertion;
 import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.core.Printable;
 import com.github.dakusui.crest.functions.CrestFunctions;
+import com.github.dakusui.crest.matcherbuilders.*;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
 
 import java.util.Collection;
@@ -44,15 +45,15 @@ public enum Crest {
     return Matcher.Disjunctive.create(true, asList(matchers));
   }
 
-  public static <I, S extends AsObject<I, I, S>> AsObject<I, I, S> asObject() {
+  public static <I> AsObject<I, I> asObject() {
     return new AsObject<>(CrestFunctions.identity());
   }
 
-  public static <I, O, S extends AsObject<I, O, S>> AsObject<I, O, S> asObject(String methodName, Object... args) {
+  public static <I, O> AsObject<I, O> asObject(String methodName, Object... args) {
     return new AsObject<>(CrestFunctions.<I, O>invoke(methodName, args));
   }
 
-  public static <I, O, S extends AsObject<I, O, S>> AsObject<I, O, S> asObject(Function<? super I, ? extends O> function) {
+  public static <I, O> AsObject<I, O> asObject(Function<? super I, ? extends O> function) {
     return new AsObject<>(function);
   }
 
@@ -190,10 +191,6 @@ public enum Crest {
     return asString((Function<? super I, ? extends String>) CrestFunctions.invoke(methodName, args));
   }
 
-  public static <I extends Collection<? extends E>, E> AsStream<I, E> asStream() {
-    return new AsStream<>(CrestFunctions.stream());
-  }
-
   public static <I extends Collection<?>> AsList<? super I, ?> asObjectList() {
     return asListOf(Object.class, CrestFunctions.collectionToList());
   }
@@ -210,11 +207,11 @@ public enum Crest {
     return new AsList<>(function);
   }
 
-  public static <I extends Map, SELF extends AsMap<I, Object, Object, SELF>> SELF asMap() {
+  public static <I extends Map, SELF extends AsMap<I, Object, Object, SELF>> SELF asObjectMap() {
     return asMapOf(Object.class, Object.class, Printable.function("mapToMap", o -> new HashMap<>()));
   }
 
-  public static <I, SELF extends AsMap<I, Object, Object, SELF>> SELF asMap(Function<? super I, ? extends Map<Object, Object>> function) {
+  public static <I, SELF extends AsMap<I, Object, Object, SELF>> SELF asObjectMap(Function<? super I, ? extends Map<Object, Object>> function) {
     return asMapOf(Object.class, Object.class, function);
   }
 

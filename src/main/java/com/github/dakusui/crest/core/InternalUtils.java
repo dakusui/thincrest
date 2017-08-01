@@ -122,7 +122,7 @@ public enum InternalUtils {
     if (value instanceof String)
       return String.format("\"%s\"", toJavaSyntax((String) value));
     if (value instanceof Character)
-      return String.format("\"%s\"", toJavaSyntax(((Character) value).charValue()));
+      return String.format("\"%s\"", toJavaSyntax((Character) value));
     if (value instanceof Short)
       return String.format("<%ss>", value);
     if (value instanceof Long)

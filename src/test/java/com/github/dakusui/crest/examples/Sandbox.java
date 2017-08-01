@@ -1,14 +1,19 @@
 package com.github.dakusui.crest.examples;
 
-import java.util.Arrays;
+import com.github.dakusui.crest.core.Printable;
+import org.junit.Test;
+
 import java.util.Objects;
 import java.util.function.Predicate;
 
+import static com.github.dakusui.crest.Crest.allOf;
+import static com.github.dakusui.crest.Crest.asListOf;
+import static com.github.dakusui.crest.core.Assertion.assertThat;
+import static java.util.Arrays.asList;
+
 public class Sandbox {
   public static void main(String[] args) {
-    // Avoid getting error from IntelliJ
-    String[] value = require(args, (Predicate<? super String[]>) isNotNull());
-    System.out.println(Arrays.toString(value));
+    new Sandbox().helloAllOfTheWorldThincrest();
   }
 
   private static <T> T require(T value, Predicate<? super T> predicate) {
@@ -19,5 +24,18 @@ public class Sandbox {
 
   private static <T> Predicate<? super T> isNotNull() {
     return (Predicate<T>) Objects::nonNull;
+  }
+
+
+  @Test
+  public void helloAllOfTheWorldThincrest() {
+    assertThat(
+        asList("Hello", "world"),
+        allOf(
+            asListOf(String.class).allMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
+            asListOf(String.class).noneMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
+            asListOf(String.class).anyMatch(Printable.predicate("==bye", "bye"::equals)).matcher()
+        )
+    );
   }
 }

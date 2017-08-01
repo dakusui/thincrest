@@ -3,7 +3,7 @@
     <groupId>com.github.dakusui</groupId>
     <artifactId>thincrest</artifactId>
     <packaging>jar</packaging>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>3.1.0-SNAPSHOT</version>
     <description>A thin wrapper library for hamcrest/junit to make assertion
         output descriptive.
     </description>
@@ -24,7 +24,7 @@
         <developerConnection>scm:git:git@github.com:dakusui/thincrest.git
         </developerConnection>
         <url>http://dakusui.github.io/thincrest</url>
-        <tag>thincrest-3.0.x</tag>
+        <tag>thincrest-3.1.x</tag>
     </scm>
 
     <developers>

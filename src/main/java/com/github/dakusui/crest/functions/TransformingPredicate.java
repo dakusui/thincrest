@@ -27,6 +27,6 @@ public class TransformingPredicate<P, O> implements Predicate<O> {
 
   @Override
   public String toString() {
-    return String.format("%s%s", predicate, function);
+    return String.format("%s(x) %s", function, predicate);
   }
 }
