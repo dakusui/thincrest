@@ -12,7 +12,7 @@ import java.util.List;
 
 import static com.github.dakusui.crest.functions.CrestFunctions.*;
 import static com.github.dakusui.crest.functions.CrestPredicates.alwaysTrue;
-import static com.github.dakusui.crest.matcherbuilders.Crest.*;
+import static com.github.dakusui.crest.Crest.*;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;

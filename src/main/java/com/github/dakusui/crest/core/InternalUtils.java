@@ -100,13 +100,6 @@ public enum InternalUtils {
     }
   }
 
-  static String formatExpectation(Predicate p, Function function) {
-    if (p instanceof TransformingPredicate)
-      return format("%s%s", formatFunction(((TransformingPredicate) p).function(), formatFunction(function, "x")), ((TransformingPredicate) p).predicate());
-    else
-      return format("%s(%s)", p.toString(), formatFunction(function, "x"));
-  }
-
   static String formatFunction(Function<?, ?> function, @SuppressWarnings("SameParameterValue") String variableName) {
     return format("%s(%s)", function.toString(), variableName);
   }

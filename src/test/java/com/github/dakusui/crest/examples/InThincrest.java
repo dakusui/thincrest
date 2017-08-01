@@ -3,7 +3,7 @@ package com.github.dakusui.crest.examples;
 import com.github.dakusui.crest.core.Printable;
 import com.github.dakusui.crest.functions.CrestFunctions;
 import com.github.dakusui.crest.functions.CrestPredicates;
-import com.github.dakusui.crest.matcherbuilders.Crest;
+import com.github.dakusui.crest.Crest;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.StringContains;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import java.util.function.Predicate;
 import static com.github.dakusui.crest.functions.CrestFunctions.*;
 import static com.github.dakusui.crest.functions.CrestPredicates.eq;
 import static com.github.dakusui.crest.functions.CrestPredicates.isEmpty;
-import static com.github.dakusui.crest.matcherbuilders.Crest.*;
+import static com.github.dakusui.crest.Crest.*;
 
 /**
  * http://qiita.com/disc99/items/31fa7abb724f63602dc9
@@ -394,12 +394,15 @@ public class InThincrest {
   }
 
   @Test
-  public void qiita_41$thenFail() {
+  public void qiita_41a$thenFail() {
     Crest.assertThat(
         anArray,
         asObjectList(CrestFunctions.arrayToList()).check(CrestFunctions.size(), CrestPredicates.eq(3)).matcher()
     );
+  }
 
+  @Test
+  public void qiita_42a$thenFail() {
     Crest.assertThat(
         anArray,
         asObjectList(arrayToList()).check(size(), eq(3)).matcher()

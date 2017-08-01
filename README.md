@@ -103,7 +103,7 @@ Once you install the dependency, lets static import **thincrest**'s facade ```Cr
 to use it from your test class.
 
 ```java
-import static com.github.dakusui.crest.matcherbuilders.Crest.*;
+import static com.github.dakusui.crest.Crest.*;
 ```
 
 This enables you to use following static methods without typing the class name.
