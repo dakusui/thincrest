@@ -149,15 +149,6 @@ public interface Matcher<T> {
         @SuppressWarnings("unchecked")
         @Override
         public boolean matches(I value, Assertion<? extends I> session) {
-          if (p instanceof TransformingPredicate) {
-            TransformingPredicate pp = (TransformingPredicate) p;
-            return session.test(
-                (Predicate<Object>) pp,
-                session.apply(pp.function(),
-                    session.apply(function, value)
-                )
-            );
-          }
           return session.test((Predicate<Object>) p, session.apply(function, value));
         }
 

@@ -60,7 +60,6 @@ public enum Printable {
         try {
           return predicate.test(t);
         } catch (ClassCastException e) {
-          e.printStackTrace();
           throw e;
         }
       }

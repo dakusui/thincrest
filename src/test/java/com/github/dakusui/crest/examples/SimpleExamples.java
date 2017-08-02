@@ -1,20 +1,27 @@
 package com.github.dakusui.crest.examples;
 
+import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.core.Printable;
 import com.github.dakusui.crest.functions.CrestFunctions;
-import com.github.dakusui.crest.Crest;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.Crest.*;
+import static com.github.dakusui.crest.functions.CrestFunctions.size;
+import static com.github.dakusui.crest.functions.CrestPredicates.eq;
+import static java.util.Arrays.asList;
 
 public class SimpleExamples {
   @Test
   public void givenListOf_Hello_World_$whenAsStringAndCheckIfMatchesRegex_HELLO_$thenFail() {
     assertThat(
-        Arrays.asList("Hello", "world"),
+        asList("Hello", "world"),
         asString().matchesRegex("HELLO").any()
     );
   }
@@ -22,7 +29,7 @@ public class SimpleExamples {
   @Test
   public void givenListOf_Hello_World_$whenAsStringAndCheckIfMatchesRegexWithMathingOne$thenPass() {
     assertThat(
-        Arrays.asList("Hello", "world").toString(),
+        asList("Hello", "world").toString(),
         asString().matchesRegex(".*Hello.*").all()
     );
   }
@@ -30,7 +37,7 @@ public class SimpleExamples {
   @Test
   public void givenListOf_Hello_World_$whenAsStringAndCheckIfContainsString_BYE_$thenFail() {
     assertThat(
-        Arrays.asList("Hello", "world"),
+        asList("Hello", "world"),
         asString().containsString("BYE").matcher()
     );
   }
@@ -38,7 +45,7 @@ public class SimpleExamples {
   @Test
   public void givenListOf_Hello_World_$whenAsStringAndCheckIfContainsString_Hello_$thenPass() {
     assertThat(
-        Arrays.asList("Hello", "world"),
+        asList("Hello", "world"),
         ////
         // You can use '$()' instead of 'matcher()' to build a matcher and make
         // the building process look more 'natural English sentence' like.
@@ -49,7 +56,7 @@ public class SimpleExamples {
   @Test
   public void givenListOf_Hello_World_$whenAsStringWithDynamic_toUpperCase_andContainsString_hello$thenFail() {
     assertThat(
-        Arrays.asList("Hello", "world").toString(),
+        asList("Hello", "world").toString(),
         asString("toUpperCase").containsString("hello!").$()
     );
   }
@@ -57,7 +64,7 @@ public class SimpleExamples {
   @Test
   public void givenListOf_Hello_World_$whenAsStringWithDynamic_toUpperCase_andContainsString_HELLO_$thenPass() {
     assertThat(
-        Arrays.asList("Hello", "world").toString(),
+        asList("Hello", "world").toString(),
         asString("toUpperCase").containsString("HELLO").matcher()
     );
   }
@@ -65,7 +72,7 @@ public class SimpleExamples {
   @Test
   public void givenListOf_Hello_World_$whenAsListAndCheckIfContainsOnlyString_Hello_$thenFail() {
     assertThat(
-        Arrays.asList("Hello", "world"),
+        asList("Hello", "world"),
         asObjectList().containsOnly(Collections.singletonList("Hello")).matcher()
     );
   }
@@ -73,16 +80,16 @@ public class SimpleExamples {
   @Test
   public void givenListOf_Hello_World_$whenAsListAndCheckIfContainsOnlyString_Hello_World_$thenPass() {
     assertThat(
-        Arrays.asList("Hello", "world"),
-        asObjectList().containsOnly(Arrays.asList("Hello", "world")).matcher()
+        asList("Hello", "world"),
+        asObjectList().containsOnly(asList("Hello", "world")).matcher()
     );
   }
 
   @Test
   public void givenListOf_Hello_World_$whenAsListAndCheckIfContainsOnly_Hello_world_everyone_$thenPass() {
     assertThat(
-        Arrays.asList("Hello", "world"),
-        asObjectList().containsOnly(Arrays.asList("Hello", "world", "everyone")).matcher()
+        asList("Hello", "world"),
+        asObjectList().containsOnly(asList("Hello", "world", "everyone")).matcher()
     );
   }
 
@@ -213,7 +220,7 @@ public class SimpleExamples {
   @Test
   public void givenList$$whenContains101$thenFail() {
     assertThat(
-        Arrays.asList(100, 200, 300, 400, 500),
+        asList(100, 200, 300, 400, 500),
         Crest.asObjectList().contains(101).matcher()
     );
   }
@@ -221,7 +228,7 @@ public class SimpleExamples {
   @Test
   public void givenList$$whenContains100$thenPass() {
     assertThat(
-        Arrays.asList(100, 200, 300, 400, 500),
+        asList(100, 200, 300, 400, 500),
         Crest.asObjectList().contains(100).matcher()
     );
   }
@@ -230,30 +237,30 @@ public class SimpleExamples {
   @Test
   public void givenList$$whenContainsAll101$thenFail() {
     assertThat(
-        Arrays.asList(100, 200, 300, 400, 500),
-        Crest.asObjectList().containsAll(Arrays.asList(100, 101)).matcher()
+        asList(100, 200, 300, 400, 500),
+        Crest.asObjectList().containsAll(asList(100, 101)).matcher()
     );
   }
 
   @Test
   public void givenList$$whenContainsAll100and200$thenPass() {
     assertThat(
-        Arrays.asList(100, 200, 300, 400, 500),
-        Crest.asObjectList().containsAll(Arrays.asList(100, 200)).matcher()
+        asList(100, 200, 300, 400, 500),
+        Crest.asObjectList().containsAll(asList(100, 200)).matcher()
     );
   }
 
   @Test
   public void givenList$$whenIsEmpty$thenFail() {
     assertThat(
-        Arrays.asList(100, 200, 300, 400, 500),
+        asList(100, 200, 300, 400, 500),
         Crest.asObjectList().contains("100").isEmpty().matcher()
     );
   }
 
   @Test
   public void givenTypedList$$whenIsEmpty$thenFail() {
-    List<Integer> aList = Arrays.asList(100, 200, 300, 400, 500);
+    List<Integer> aList = asList(100, 200, 300, 400, 500);
     assertThat(
         aList,
         Crest.asObjectList().contains("100").isEmpty().matcher()
@@ -423,4 +430,45 @@ public class SimpleExamples {
         asBoolean("equals", "true").isTrue().matcher()
     );
   }
+
+
+  @Test
+  public void listSize$thenPass() {
+    assertThat(
+        asList("Hello", "world"),
+        allOf(
+            asListOf(String.class).check(size(), eq(2)).$()
+        )
+    );
+  }
+
+  @Test
+  public void listSize$thenFail() {
+    Predicate<? super Integer> failingPredicate = Printable.predicate(
+        "failing predicate",
+        i -> {
+          throw new RuntimeException("FAILED");
+        }
+    );
+    assertThat(
+        asList("Hello", "world"),
+        allOf(
+            asListOf(String.class).check(size(), failingPredicate).$()
+        )
+    );
+  }
+
+  @Test
+  public void listSizeWithFailingFunction$thenFail() {
+    Function<List<String>, Integer> failingFunction = Printable.function("failingFunction", strings -> {
+      throw new RuntimeException("FAILED");
+    });
+    assertThat(
+        asList("Hello", "world"),
+        allOf(
+            asListOf(String.class).check(failingFunction, eq(2)).$()
+        )
+    );
+  }
+
 }

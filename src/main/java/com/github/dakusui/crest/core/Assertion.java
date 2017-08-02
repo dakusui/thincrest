@@ -1,5 +1,6 @@
 package com.github.dakusui.crest.core;
 
+import com.github.dakusui.crest.functions.TransformingPredicate;
 import org.junit.ComparisonFailure;
 
 import java.util.*;
@@ -93,6 +94,10 @@ public interface Assertion<T> {
 
     private <I> Object tryToTest(Predicate<? super I> predicate, I value) {
       try {
+        if (predicate instanceof TransformingPredicate) {
+          TransformingPredicate pp = (TransformingPredicate) predicate;
+          return tryToTest(pp.predicate(), apply(pp.function(), value));
+        }
         return predicate.test(value);
       } catch (Exception e) {
         exceptions.add(e);
