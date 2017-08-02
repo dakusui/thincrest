@@ -7,8 +7,6 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.stream.Stream;
 
 import static junit.framework.TestCase.assertTrue;
@@ -128,25 +126,6 @@ public class CrestPredicatesTest {
     @Test
     public void whenToString$thenLooksGood() {
       assertEquals("<=[123]", CrestPredicates.le(123).toString());
-    }
-  }
-
-  public static class ContainsOnlyTest extends TestBase {
-    @Test
-    public void whenMet$thenTrue() {
-      assertTrue(
-          CrestPredicates.containsOnly(Arrays.asList("a", "b")).test(Collections.singletonList("a"))
-      );
-      assertTrue(
-          CrestPredicates.containsOnly(Arrays.asList("a", "b")).test(Arrays.asList("a", "b"))
-      );
-    }
-
-    @Test
-    public void whenNotMet$thenFalse() {
-      assertFalse(
-          CrestPredicates.containsOnly(Arrays.asList("a", "b")).test(Arrays.asList("a", "b", "c"))
-      );
     }
   }
 
