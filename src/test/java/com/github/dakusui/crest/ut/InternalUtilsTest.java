@@ -39,6 +39,30 @@ public class InternalUtilsTest {
     );
   }
 
+  @Test
+  public void givenStringContainingControlSequences$formatValue$thenCorrectlyFormatted() {
+    assertEquals(
+        "\" \\n\\t\\\"\"",
+        InternalUtils.formatValue(" \n\t\"")
+    );
+  }
+
+  @Test
+  public void givenChar_$r_$formatValue$thenCorrectlyFormatted() {
+    assertEquals(
+        "\"\\r\"",
+        InternalUtils.formatValue('\r')
+    );
+  }
+
+  @Test
+  public void givenNull$formatValue$thenCorrectlyFormatted() {
+    assertEquals(
+        "null",
+        InternalUtils.formatValue(null)
+    );
+  }
+
   /*
    * This method is used by 'tryToFindMethod$whenMultipleMethodsFound$thenExceptionThrown'
    * reflectively.

@@ -11,7 +11,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.crest.core.Assertion.assertThat;
+import static com.github.dakusui.crest.Crest.assertThat;
+
 
 public class MatcherTest {
   @Test(expected = ComparisonFailure.class)

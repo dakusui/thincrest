@@ -69,6 +69,23 @@ public class ListMatcherBuilder<IN, ENTRY, SELF extends ListMatcherBuilder<IN, E
     );
   }
 
+  public SELF containsNone(Collection<?> collection) {
+    return this.check(
+        new TransformingPredicate<Collection<?>, Collection<?>>(
+            String.format("containsNone%s", collection),
+            CrestPredicates.isEmpty(),
+            Printable.function(
+                String.format("contained%s", collection),
+                objects -> objects.stream(
+                ).filter(
+                    collection::contains
+                ).collect(
+                    toList()
+                ))
+        )
+    );
+  }
+
   public SELF contains(Object entry) {
     return this.check(CrestPredicates.contains(entry));
   }

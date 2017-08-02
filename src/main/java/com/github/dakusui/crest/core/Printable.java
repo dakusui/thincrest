@@ -57,11 +57,7 @@ public enum Printable {
     return new Predicate<T>() {
       @Override
       public boolean test(T t) {
-        try {
-          return predicate.test(t);
-        } catch (ClassCastException e) {
-          throw e;
-        }
+        return predicate.test(t);
       }
 
       @Override

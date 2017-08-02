@@ -43,12 +43,10 @@ public interface Matcher<T> {
           children().forEach(
               (Matcher<T> eachChild) -> {
                 List<String> formattedExpectation = eachChild.describeExpectation(session);
-                if (formattedExpectation.isEmpty())
-                  return;
                 if (formattedExpectation.size() == 1)
-                  add(String.format("  %s", eachChild.describeExpectation(session).get(0)));
+                  add(String.format("  %s", formattedExpectation.get(0)));
                 else {
-                  addAll(indent(eachChild.describeExpectation(session)));
+                  addAll(indent(formattedExpectation));
                 }
               }
           );

@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.Crest.allOf;
 import static com.github.dakusui.crest.Crest.asListOf;
-import static com.github.dakusui.crest.core.Assertion.assertThat;
+import static com.github.dakusui.crest.Crest.assertThat;
 import static java.util.Arrays.asList;
 
 public class Sandbox {

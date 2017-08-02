@@ -81,7 +81,18 @@ public class InThincrest {
         aList,
         allOf(
             asInteger(size()).eq(3).matcher(),
-            asComparableOf(String.class, "toString").eq("toString").matcher()
+            asComparableOf(String.class, "toString").eq("HelloHelloHello").matcher()
+        )
+    );
+  }
+
+  @Test
+  public void qiita_8$thenPass() {
+    Crest.assertThat(
+        aList,
+        allOf(
+            asInteger(size()).eq(3).matcher(),
+            asComparableOf(String.class, "toString").eq("[hoge, fuga, piyo]").matcher()
         )
     );
   }
@@ -273,6 +284,39 @@ public class InThincrest {
         aList,
         asObjectList().containsExactly(Arrays.asList(
             "hoge", "fuga"
+        )).matcher()
+    );
+  }
+
+  @Test
+  public void containsNone$thenPass() {
+    System.out.println(aList);
+    Crest.assertThat(
+        aList,
+        asObjectList().containsNone(Arrays.asList(
+            "HOGE", "FUGA", "PIYO"
+        )).matcher()
+    );
+  }
+
+  @Test
+  public void containsNone$thenFail() {
+    System.out.println(aList);
+    Crest.assertThat(
+        aList,
+        asObjectList().containsNone(Arrays.asList(
+            "hoge", "fuga", "piyo", "hi"
+        )).matcher()
+    );
+  }
+
+  @Test
+  public void containsNone$missing$thenFail() {
+    System.out.println(aList);
+    Crest.assertThat(
+        aList,
+        asObjectList().containsNone(Arrays.asList(
+            "HOGE", "fuga"
         )).matcher()
     );
   }

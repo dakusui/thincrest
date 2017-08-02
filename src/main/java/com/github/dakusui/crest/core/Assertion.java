@@ -28,10 +28,6 @@ public interface Assertion<T> {
     create(message, matcher).perform(value);
   }
 
-  static <T> void assertThat(T value, Matcher<? super T> matcher) {
-    assertThat(null, value, matcher);
-  }
-
   static <T> Assertion<T> create(String messageOnFailure, Matcher<? super T> matcher) {
     return new Impl<T>(messageOnFailure, matcher);
   }

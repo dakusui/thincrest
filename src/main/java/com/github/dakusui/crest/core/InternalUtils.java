@@ -1,7 +1,5 @@
 package com.github.dakusui.crest.core;
 
-import com.github.dakusui.crest.functions.TransformingPredicate;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -10,7 +8,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -70,7 +67,7 @@ public enum InternalUtils {
   public static Method findMethod(Class<?> aClass, String methodName, Object[] args) {
     return getIfOnlyOneElseThrow(
         Arrays.stream(
-            aClass.getMethods()
+            getMethods(aClass)
         ).filter(
             (Method m) -> m.getName().equals(methodName)
         ).filter(
@@ -91,20 +88,24 @@ public enum InternalUtils {
     );
   }
 
+  private static Method[] getMethods(Class<?> aClass) {
+    return aClass.getMethods();
+  }
+
   @SuppressWarnings("unchecked")
   public static <R> R invokeMethod(Object target, String methodName, Object[] args) {
     try {
-      return (R) findMethod(Objects.requireNonNull(target).getClass(), methodName, args).invoke(target, args);
+      Method m = findMethod(Objects.requireNonNull(target).getClass(), methodName, args);
+      boolean accessible = m.isAccessible();
+      try {
+        m.setAccessible(true);
+        return (R) m.invoke(target, args);
+      } finally {
+        m.setAccessible(accessible);
+      }
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  static String formatExpectation(Predicate p, Function function) {
-    if (p instanceof TransformingPredicate)
-      return format("%s%s", formatFunction(((TransformingPredicate) p).function(), formatFunction(function, "x")), ((TransformingPredicate) p).predicate());
-    else
-      return format("%s(%s)", p.toString(), formatFunction(function, "x"));
   }
 
   static String formatFunction(Function<?, ?> function, @SuppressWarnings("SameParameterValue") String variableName) {
@@ -116,7 +117,7 @@ public enum InternalUtils {
      *
      * http://hamcrest.org/JavaHamcrest/
      */
-  static String formatValue(Object value) {
+  public static String formatValue(Object value) {
     if (value == null)
       return "null";
     if (value instanceof String)
