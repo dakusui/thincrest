@@ -3,10 +3,7 @@ package com.github.dakusui.crest.core;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 import static java.lang.String.format;
@@ -132,7 +129,7 @@ public enum InternalUtils {
       return String.format("<%sF>", value);
     if (value.getClass().isArray())
       return arrayToString(value);
-    return format("<%s>", value);
+    return format("<%s>", summarize(value));
   }
 
   private static String toJavaSyntax(String unformatted) {
@@ -171,5 +168,23 @@ public enum InternalUtils {
     }
     b.append("]");
     return b.toString();
+  }
+
+  public static String summarize(Object value) {
+    if (value == null)
+      return "null";
+    if (value instanceof Collection) {
+      Collection collection = (Collection) value;
+      if (collection.size() < 4)
+        return collection.toString();
+      Iterator<?> i = collection.iterator();
+      return format("[%s,%s,%s...;%s]",
+          i.next(),
+          i.next(),
+          i.next(),
+          collection.size()
+      );
+    }
+    return value.toString();
   }
 }

@@ -471,4 +471,9 @@ public class SimpleExamples {
     );
   }
 
+  public static void main(String... args) {
+    System.out.println("empty.contrainsAll(empty):" +  Collections.emptyList().containsAll(Collections.emptyList()));
+    System.out.println("nonEmpty.contrainsAll(empty):" +  Collections.singletonList("a").containsAll(Collections.emptyList()));
+    System.out.println("empty.contrainsAll(nonEmpty):" +  Collections.emptyList().containsAll(Collections.singleton("a")));
+  }
 }
