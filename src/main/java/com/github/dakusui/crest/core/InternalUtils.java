@@ -1,7 +1,6 @@
 package com.github.dakusui.crest.core;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
@@ -87,22 +86,6 @@ public enum InternalUtils {
 
   private static Method[] getMethods(Class<?> aClass) {
     return aClass.getMethods();
-  }
-
-  @SuppressWarnings("unchecked")
-  public static <R> R invokeMethod(Object target, String methodName, Object[] args) {
-    try {
-      Method m = findMethod(Objects.requireNonNull(target).getClass(), methodName, args);
-      boolean accessible = m.isAccessible();
-      try {
-        m.setAccessible(true);
-        return (R) m.invoke(target, args);
-      } finally {
-        m.setAccessible(accessible);
-      }
-    } catch (IllegalAccessException | InvocationTargetException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   static String formatFunction(Function<?, ?> function, @SuppressWarnings("SameParameterValue") String variableName) {

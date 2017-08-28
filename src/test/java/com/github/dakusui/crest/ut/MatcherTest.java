@@ -1,8 +1,8 @@
 package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.core.Matcher;
-import com.github.dakusui.crest.functions.CrestFunctions;
-import com.github.dakusui.crest.functions.CrestPredicates;
+import com.github.dakusui.faultsource.printable.Functions;
+import com.github.dakusui.faultsource.printable.Predicates;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 
@@ -19,7 +19,7 @@ public class MatcherTest {
   public void givenFailingMatcher$whenAssertThat$thenFail() {
     assertThat(
         "Hello",
-        Matcher.Leaf.<Object, Object>create(wrap(CrestPredicates.equalTo("hello")), wrap(CrestFunctions.identity()))
+        Matcher.Leaf.<Object, Object>create(wrap(Predicates.equalTo("hello")), wrap(Functions.identity()))
     );
   }
 
@@ -28,8 +28,8 @@ public class MatcherTest {
     assertThat(
         "Hello",
         Matcher.Conjunctive.create(true, Arrays.<Matcher<? super Object>>asList(
-            Matcher.Leaf.create(wrap(CrestPredicates.equalTo("hello")), wrap(CrestFunctions.identity())),
-            Matcher.Leaf.create(wrap(CrestPredicates.equalTo("hello")), wrap(CrestFunctions.identity()))
+            Matcher.Leaf.create(wrap(Predicates.equalTo("hello")), wrap(Functions.identity())),
+            Matcher.Leaf.create(wrap(Predicates.equalTo("hello")), wrap(Functions.identity()))
         )));
   }
 

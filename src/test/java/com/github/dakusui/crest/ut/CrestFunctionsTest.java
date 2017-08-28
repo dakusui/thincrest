@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.ut;
 
-import com.github.dakusui.crest.functions.CrestFunctions;
 import com.github.dakusui.crest.utils.TestBase;
+import com.github.dakusui.faultsource.printable.Functions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -10,9 +10,9 @@ import org.junit.runner.RunWith;
 import java.util.Collections;
 import java.util.List;
 
-import static com.github.dakusui.crest.functions.CrestFunctions.*;
-import static com.github.dakusui.crest.functions.CrestPredicates.alwaysTrue;
 import static com.github.dakusui.crest.Crest.*;
+import static com.github.dakusui.faultsource.printable.Functions.*;
+import static com.github.dakusui.faultsource.printable.Predicates.alwaysTrue;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
@@ -43,7 +43,7 @@ public class CrestFunctionsTest {
     public void whenApplied$thenLooksGood() {
       Assert.assertEquals(
           200,
-          CrestFunctions.elementAt(1).apply(asList(100, 200, 300))
+          Functions.elementAt(1).apply(asList(100, 200, 300))
       );
     }
 
@@ -51,7 +51,7 @@ public class CrestFunctionsTest {
     public void whenToString$thenLooksGood() {
       assertEquals(
           "elementAt[123]",
-          CrestFunctions.elementAt(123).toString()
+          Functions.elementAt(123).toString()
       );
     }
   }
@@ -61,7 +61,7 @@ public class CrestFunctionsTest {
     public void whenApplied$thenLooksGood() {
       assertEquals(
           (Integer) 3,
-          CrestFunctions.size().apply(asList(100, 200, 300))
+          Functions.size().apply(asList(100, 200, 300))
       );
     }
 
@@ -69,7 +69,7 @@ public class CrestFunctionsTest {
     public void whenToString$thenLooksGood() {
       assertEquals(
           "size",
-          CrestFunctions.size().toString()
+          Functions.size().toString()
       );
     }
   }

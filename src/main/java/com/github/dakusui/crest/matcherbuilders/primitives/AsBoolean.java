@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.matcherbuilders.primitives;
 
-import com.github.dakusui.crest.functions.CrestPredicates;
 import com.github.dakusui.crest.matcherbuilders.ObjectMatcherBuilder;
+import com.github.dakusui.faultsource.printable.Predicates;
 
 import java.util.function.Function;
 
@@ -11,12 +11,12 @@ public class AsBoolean<IN> extends ObjectMatcherBuilder<IN, Boolean, AsBoolean<I
   }
 
   public AsBoolean<? super IN> isTrue() {
-    this.check(CrestPredicates.isTrue());
+    this.check(Predicates.isTrue());
     return this;
   }
 
   public AsBoolean<? super IN> isFalse() {
-    this.check(CrestPredicates.isFalse());
+    this.check(Predicates.isFalse());
     return this;
   }
 }

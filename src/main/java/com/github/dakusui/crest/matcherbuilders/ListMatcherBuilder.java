@@ -2,8 +2,8 @@ package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.core.InternalUtils;
 import com.github.dakusui.crest.core.Printable;
-import com.github.dakusui.crest.functions.CrestPredicates;
 import com.github.dakusui.crest.functions.TransformingPredicate;
+import com.github.dakusui.faultsource.printable.Predicates;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +22,7 @@ public class ListMatcherBuilder<IN, ENTRY, SELF extends ListMatcherBuilder<IN, E
     return this.check(
         new TransformingPredicate<Collection<?>, Collection<?>>(
             String.format("containsAll%s", InternalUtils.summarize(collection)),
-            CrestPredicates.isEmpty(),
+            Predicates.isEmpty(),
             Printable.function(
                 String.format("notCovered%s", InternalUtils.summarize(collection)),
                 objects -> collection.stream(
@@ -39,7 +39,7 @@ public class ListMatcherBuilder<IN, ENTRY, SELF extends ListMatcherBuilder<IN, E
     return this.check(
         new TransformingPredicate<Collection<?>, Collection<?>>(
             String.format("containsOnly%s", InternalUtils.summarize(collection)),
-            CrestPredicates.isEmpty(),
+            Predicates.isEmpty(),
             Printable.function(
                 String.format("extra%s", InternalUtils.summarize(collection)),
                 objects -> objects.stream(
@@ -56,7 +56,7 @@ public class ListMatcherBuilder<IN, ENTRY, SELF extends ListMatcherBuilder<IN, E
     return this.check(
         new TransformingPredicate<Collection<?>, Collection<?>>(
             String.format("containsExactly%s", InternalUtils.summarize(collection)),
-            CrestPredicates.isEmpty(),
+            Predicates.isEmpty(),
             Printable.function(
                 String.format("difference%s", InternalUtils.summarize(collection)),
                 objects -> Stream.concat(
@@ -74,7 +74,7 @@ public class ListMatcherBuilder<IN, ENTRY, SELF extends ListMatcherBuilder<IN, E
     return this.check(
         new TransformingPredicate<Collection<?>, Collection<?>>(
             String.format("containsNone%s", InternalUtils.summarize(collection)),
-            CrestPredicates.isEmpty(),
+            Predicates.isEmpty(),
             Printable.function(
                 String.format("contained%s", InternalUtils.summarize(collection)),
                 objects -> objects.stream(
@@ -88,11 +88,11 @@ public class ListMatcherBuilder<IN, ENTRY, SELF extends ListMatcherBuilder<IN, E
   }
 
   public SELF contains(Object entry) {
-    return this.check(CrestPredicates.contains(entry));
+    return this.check(Predicates.contains(entry));
   }
 
   public SELF isEmpty() {
-    return this.check(CrestPredicates.isEmpty());
+    return this.check(Predicates.isEmpty());
   }
 
   public SELF allMatch(Predicate<? super ENTRY> predicate) {

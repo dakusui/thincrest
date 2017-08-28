@@ -1,8 +1,8 @@
 package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.core.Matcher;
-import com.github.dakusui.crest.functions.CrestPredicates;
 import com.github.dakusui.crest.functions.TransformingPredicate;
+import com.github.dakusui.faultsource.printable.Predicates;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -32,19 +32,19 @@ public abstract class ObjectMatcherBuilder<IN, OUT, SELF extends ObjectMatcherBu
   }
 
   public SELF isNull() {
-    return this.check(CrestPredicates.isNull());
+    return this.check(Predicates.isNull());
   }
 
   public SELF isNotNull() {
-    return this.check(CrestPredicates.isNotNull());
+    return this.check(Predicates.isNotNull());
   }
 
   public SELF isSameAs(OUT value) {
-    return this.check(CrestPredicates.isSameAs(value));
+    return this.check(Predicates.isSameAs(value));
   }
 
   public SELF isInstanceOf(Class<?> value) {
-    return this.check(CrestPredicates.isInstanceOf(value));
+    return this.check(Predicates.isInstanceOf(value));
   }
 
   @Override

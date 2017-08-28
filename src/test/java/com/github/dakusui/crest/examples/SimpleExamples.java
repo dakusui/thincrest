@@ -2,7 +2,7 @@ package com.github.dakusui.crest.examples;
 
 import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.core.Printable;
-import com.github.dakusui.crest.functions.CrestFunctions;
+import com.github.dakusui.faultsource.printable.Functions;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -13,8 +13,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.crest.functions.CrestFunctions.size;
-import static com.github.dakusui.crest.functions.CrestPredicates.eq;
+import static com.github.dakusui.faultsource.printable.Functions.size;
+import static com.github.dakusui.faultsource.printable.Predicates.eq;
 import static java.util.Arrays.asList;
 
 public class SimpleExamples {
@@ -196,7 +196,7 @@ public class SimpleExamples {
     assertThat(
         "Hello, world",
         "12345678901234567890",
-        asComparable(CrestFunctions.length()).ge(5).lt(50).matcher()
+        asComparable(Functions.length()).ge(5).lt(50).matcher()
     );
   }
 
@@ -204,7 +204,7 @@ public class SimpleExamples {
   public void given_Hello_world_$whenAsComparableAndDoPassingCheck$thenPass() {
     assertThat(
         "Hello, world",
-        asComparable(CrestFunctions.length()).ge(5).lt(50).matcher()
+        asComparable(Functions.length()).ge(5).lt(50).matcher()
     );
   }
 
