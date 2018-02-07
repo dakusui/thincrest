@@ -45,6 +45,10 @@ public enum Crest {
     return Matcher.Disjunctive.create(true, asList(matchers));
   }
 
+  public static <T> Matcher<T> not(Matcher<? super T> matcher) {
+    return Matcher.Negative.create(matcher);
+  }
+
   public static <I> AsObject<I, I> asObject() {
     return new AsObject<>(Functions.identity());
   }

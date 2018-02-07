@@ -141,6 +141,27 @@ public interface Matcher<T> {
     }
   }
 
+  interface Negative<T> extends Composite<T> {
+    static <T> Matcher<T> create(Matcher<? super T> matcher) {
+      return new Composite.Base<T>(true, Collections.singletonList(matcher)) {
+        @Override
+        protected String name() {
+          return "not";
+        }
+
+        @Override
+        protected boolean first() {
+          return true;
+        }
+
+        @Override
+        protected boolean op(boolean current, boolean next) {
+          return current && !next;
+        }
+      };
+    }
+  }
+
   interface Leaf<T> extends Matcher<T> {
     static <I, O> Matcher<I> create(Predicate<? super O> p, Function<? super I, ? extends O> function) {
       return new Matcher<I>() {
