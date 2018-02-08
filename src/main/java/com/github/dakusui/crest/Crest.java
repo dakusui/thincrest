@@ -7,10 +7,7 @@ import com.github.dakusui.crest.matcherbuilders.*;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
 import com.github.dakusui.faultsource.printable.Functions;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -47,6 +44,27 @@ public enum Crest {
 
   public static <T> Matcher<T> not(Matcher<? super T> matcher) {
     return Matcher.Negative.create(matcher);
+  }
+
+
+  @SuppressWarnings("unchecked")
+  public static <T> Matcher<T> noneOf(Matcher... matcher) {
+    return new Matcher.Composite.Base<T>(true, Arrays.asList(matcher)) {
+      @Override
+      protected String name() {
+        return "noneOf";
+      }
+
+      @Override
+      protected boolean first() {
+        return true;
+      }
+
+      @Override
+      protected boolean op(boolean current, boolean next) {
+        return current && !next;
+      }
+    };
   }
 
   public static <I> AsObject<I, I> asObject() {
@@ -167,7 +185,7 @@ public enum Crest {
    */
   public static <I extends Comparable<? super I>, S extends AsComparable<I, I, S>>
   S asComparableOf(Class<I> type) {
-    return asComparable(Functions.cast(type));
+    return asComparable((Function<? super I, ? extends I>) Functions.cast(type));
   }
 
   @SuppressWarnings("unchecked")

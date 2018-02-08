@@ -6,6 +6,7 @@ import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.core.Printable;
 import com.github.dakusui.crest.utils.TestBase;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -407,5 +408,67 @@ public class CrestTest {
       add("world");
       add("!");
     }};
+  }
+
+  public static class NegativesTest extends TestBase {
+    @Test
+    public void given_NotMatcher_$whenFailingTestPerformed$thenMessageCorrect() {
+      Optional<Description> description = describeFailure(
+          "HELLO",
+          Crest.not(
+              Crest.asString().containsString("HELLO").$()
+          )
+      );
+      System.out.println(description.orElseThrow(RuntimeException::new));
+      assertThat(
+          description.<String>get().content,
+          Matchers.<String>containsString("not:[\n"
+              + "  toString(x) containsString[HELLO]\n"
+              + "]->false")
+      );
+    }
+
+
+    @Test
+    public void given_NotMatcher_$whenPassingTestPerformed$thenPassed() {
+      Optional<Description> description = describeFailure(
+          "HELLO",
+          Crest.not(
+              Crest.asString().containsString("WORLD").$()
+          )
+      );
+      description.ifPresent(desc -> fail("Should have been passed but failed with a following message:" + desc.content));
+    }
+
+
+    @Test
+    public void given_NoneOfMatcher_$whenFailingTestPerformed$thenMessageCorrect() {
+      Optional<Description> description = describeFailure(
+          "HELLO",
+          Crest.noneOf(
+              Crest.asString().eq("WORLD").$(),
+              Crest.asString().containsString("HELLO").$()
+          )
+      );
+      System.out.println(description.orElseThrow(RuntimeException::new));
+      assertThat(
+          description.<String>get().content,
+          Matchers.<String>containsString("toString(x) =[WORLD] was false because toString(x)=\"HELLO\"")
+      );
+    }
+
+    @Test
+    public void given_NoneOfMatcher_$whenPassingTestPerformed$thenPasses() {
+      Optional<Description> description = describeFailure(
+          "HELLO",
+          Crest.noneOf(
+              Crest.asString().eq("WORLD").$(),
+              Crest.asString().containsString("hellox").$()
+          )
+      );
+
+      description.ifPresent(desc -> fail("Should have been passed but failed with a following message:" + desc.content));
+    }
+
   }
 }

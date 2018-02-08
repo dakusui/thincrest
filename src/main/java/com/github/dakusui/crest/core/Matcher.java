@@ -23,7 +23,7 @@ public interface Matcher<T> {
       private final boolean          topLevel;
 
       @SuppressWarnings("unchecked")
-      Base(boolean topLevel, List<Matcher<? super T>> children) {
+      public Base(boolean topLevel, List<Matcher<? super T>> children) {
         this.children = (List<Matcher<T>>) Collections.<T>unmodifiableList((List<? extends T>) requireNonNull(children));
         this.topLevel = topLevel;
       }
