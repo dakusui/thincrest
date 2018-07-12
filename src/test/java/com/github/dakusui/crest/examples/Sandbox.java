@@ -1,14 +1,13 @@
 package com.github.dakusui.crest.examples;
 
+import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.core.Printable;
 import org.junit.Test;
 
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.crest.Crest.allOf;
-import static com.github.dakusui.crest.Crest.asListOf;
-import static com.github.dakusui.crest.Crest.assertThat;
+import static com.github.dakusui.crest.Crest.*;
 import static java.util.Arrays.asList;
 
 public class Sandbox {
@@ -35,6 +34,17 @@ public class Sandbox {
             asListOf(String.class).allMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
             asListOf(String.class).noneMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
             asListOf(String.class).anyMatch(Printable.predicate("==bye", "bye"::equals)).matcher()
+        )
+    );
+  }
+
+  @Test
+  public void helloAllOfTheWorldThincrestWithCallChain() {
+    assertThat(
+        asList("Hello", "world", "everyone"),
+        allOf(
+            asString(call("get", 0).$()).equalTo("Hello").$(),
+            asInteger(call("get", 0).andThen("length").$()).equalTo(5).$()
         )
     );
   }
