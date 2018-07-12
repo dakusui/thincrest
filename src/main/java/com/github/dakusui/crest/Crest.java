@@ -1,6 +1,7 @@
 package com.github.dakusui.crest;
 
 import com.github.dakusui.crest.core.Assertion;
+import com.github.dakusui.crest.core.Call;
 import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.core.Printable;
 import com.github.dakusui.crest.matcherbuilders.*;
@@ -246,6 +247,10 @@ public enum Crest {
     requireNonNull(keyType);
     requireNonNull(valueType);
     return (SELF) new AsMap<I, K, V, SELF>(function);
+  }
+
+  public static Call call(String methodName, Object... args) {
+    return Call.create(methodName, args);
   }
 
   public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
