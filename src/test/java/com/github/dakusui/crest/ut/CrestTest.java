@@ -28,7 +28,7 @@ public class CrestTest {
   static class Description {
     private final String content;
 
-    public Description(String s) {
+    Description(String s) {
       this.content = s;
     }
 
@@ -115,7 +115,7 @@ public class CrestTest {
               + "]\n"
               + "     but: when x=<[Hello, world, !]>; then and:[\n"
               + "  size(x) equalTo[3]\n"
-              + "  elementAt[0](x) equalTo[hello] was false because elementAt[0](x)=\"Hello\"\n"
+              + "  elementAt[0](x) equalTo[hello] was not met because elementAt[0](x)=\"Hello\"\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
       );
@@ -180,8 +180,8 @@ public class CrestTest {
               + "  elementAt[0](x) equalTo[hello]\n"
               + "]\n"
               + "     but: when x=<[Hello, world, !]>; then and:[\n"
-              + "  size(x) equalTo[2] was false because size(x)=<3>\n"
-              + "  elementAt[0](x) equalTo[hello] was false because elementAt[0](x)=\"Hello\"\n"
+              + "  size(x) equalTo[2] was not met because size(x)=<3>\n"
+              + "  elementAt[0](x) equalTo[hello] was not met because elementAt[0](x)=\"Hello\"\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
       );
@@ -303,8 +303,8 @@ public class CrestTest {
               + "  elementAt[0](x) equalTo[hello]\n"
               + "]\n"
               + "     but: when x=<[Hello, world, !]>; then or:[\n"
-              + "  size(x) equalTo[2] was false because size(x)=<3>\n"
-              + "  elementAt[0](x) equalTo[hello] was false because elementAt[0](x)=\"Hello\"\n"
+              + "  size(x) equalTo[2] was not met because size(x)=<3>\n"
+              + "  elementAt[0](x) equalTo[hello] was not met because elementAt[0](x)=\"Hello\"\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
       );
@@ -340,10 +340,10 @@ public class CrestTest {
               + "  ]\n"
               + "]\n"
               + "     but: when x=<[Hello, world, !]>; then or:[\n"
-              + "  size(x) equalTo[2] was false because size(x)=<3>\n"
+              + "  size(x) equalTo[2] was not met because size(x)=<3>\n"
               + "  and:[\n"
-              + "    elementAt[0](x) equalTo[hello] was false because elementAt[0](x)=\"Hello\"\n"
-              + "    elementAt[0](x) equalTo[HELLO] was false because elementAt[0](x)=\"Hello\"\n"
+              + "    elementAt[0](x) equalTo[hello] was not met because elementAt[0](x)=\"Hello\"\n"
+              + "    elementAt[0](x) equalTo[HELLO] was not met because elementAt[0](x)=\"Hello\"\n"
               + "  ]->false\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
@@ -378,10 +378,10 @@ public class CrestTest {
               + "  ]\n"
               + "]\n"
               + "     but: when x=<[Hello, world, !]>; then and:[\n"
-              + "  size(x) equalTo[2] was false because size(x)=<3>\n"
+              + "  size(x) equalTo[2] was not met because size(x)=<3>\n"
               + "  or:[\n"
-              + "    elementAt[0](x) equalTo[hello] was false because elementAt[0](x)=\"Hello\"\n"
-              + "    elementAt[0](x) equalTo[HELLO] was false because elementAt[0](x)=\"Hello\"\n"
+              + "    elementAt[0](x) equalTo[hello] was not met because elementAt[0](x)=\"Hello\"\n"
+              + "    elementAt[0](x) equalTo[HELLO] was not met because elementAt[0](x)=\"Hello\"\n"
               + "  ]->false\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
@@ -453,7 +453,7 @@ public class CrestTest {
       System.out.println(description.orElseThrow(RuntimeException::new));
       assertThat(
           description.<String>get().content,
-          Matchers.<String>containsString("toString(x) =[WORLD] was false because toString(x)=\"HELLO\"")
+          Matchers.<String>containsString("toString(x) =[WORLD] was not met because toString(x)=\"HELLO\"")
       );
     }
 
