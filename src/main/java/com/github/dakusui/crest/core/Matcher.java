@@ -189,7 +189,7 @@ public interface Matcher<T> {
             if (p instanceof TransformingPredicate) {
               TransformingPredicate pp = (TransformingPredicate) p;
               return singletonList(String.format(
-                  "%s%s was false because %s=%s; %s=%s",
+                  "%s%s was not met because %s=%s; %s=%s",
                   formatExpectation(p, function),
                   pp.name().isPresent() ? "," : "",
                   InternalUtils.formatFunction(pp.function(), InternalUtils.formatFunction(function, "x")),
@@ -199,7 +199,7 @@ public interface Matcher<T> {
               ));
             }
             return singletonList(String.format(
-                "%s was false because %s=%s",
+                "%s was not met because %s=%s",
                 formatExpectation(p, function),
                 InternalUtils.formatFunction(function, "x"),
                 InternalUtils.formatValue(session.apply(function, value))));
