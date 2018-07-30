@@ -1,8 +1,8 @@
 package com.github.dakusui.crest.examples;
 
 import com.github.dakusui.crest.Crest;
-import com.github.dakusui.crest.core.Printable;
-import com.github.dakusui.faultsource.printable.Functions;
+import com.github.dakusui.crest.core.InternalUtils;
+import com.github.dakusui.crest.utils.printable.Functions;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.StringContains;
 import org.junit.Test;
@@ -10,9 +10,9 @@ import org.junit.Test;
 import java.util.*;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.faultsource.printable.Functions.*;
-import static com.github.dakusui.faultsource.printable.Predicates.eq;
-import static com.github.dakusui.faultsource.printable.Predicates.isEmpty;
+import static com.github.dakusui.crest.utils.printable.Functions.*;
+import static com.github.dakusui.crest.utils.printable.Predicates.eq;
+import static com.github.dakusui.crest.utils.printable.Predicates.isEmpty;
 
 /**
  * http://qiita.com/disc99/items/31fa7abb724f63602dc9
@@ -151,7 +151,7 @@ public class InThincrest {
     Crest.assertThat(
         aString,
         asString(
-            Printable.function("trimSpace", (String s) -> s.replaceAll("\\s", ""))
+            InternalUtils.function("trimSpace", (String s) -> s.replaceAll("\\s", ""))
         ).equalsIgnoreCase("HELLO,WORLD!").matcher()
     );
   }
@@ -176,7 +176,7 @@ public class InThincrest {
   public void qiita_20_another$thenFail() {
     Crest.assertThat(
         aString,
-        asString().check(Printable.predicate("containsOnlyDigits", s -> s.matches("[0-9]+"))).matcher()
+        asString().check(InternalUtils.predicate("containsOnlyDigits", s -> s.matches("[0-9]+"))).matcher()
     );
   }
 

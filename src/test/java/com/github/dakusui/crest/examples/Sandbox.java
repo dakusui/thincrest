@@ -1,7 +1,6 @@
 package com.github.dakusui.crest.examples;
 
-import com.github.dakusui.crest.Crest;
-import com.github.dakusui.crest.core.Printable;
+import com.github.dakusui.crest.core.InternalUtils;
 import org.junit.Test;
 
 import java.util.Objects;
@@ -31,9 +30,9 @@ public class Sandbox {
     assertThat(
         asList("Hello", "world"),
         allOf(
-            asListOf(String.class).allMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
-            asListOf(String.class).noneMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
-            asListOf(String.class).anyMatch(Printable.predicate("==bye", "bye"::equals)).matcher()
+            asListOf(String.class).allMatch(InternalUtils.predicate("==bye", "bye"::equals)).matcher(),
+            asListOf(String.class).noneMatch(InternalUtils.predicate("==bye", "bye"::equals)).matcher(),
+            asListOf(String.class).anyMatch(InternalUtils.predicate("==bye", "bye"::equals)).matcher()
         )
     );
   }

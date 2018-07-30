@@ -1,8 +1,8 @@
 package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.core.Matcher;
-import com.github.dakusui.faultsource.printable.Functions;
-import com.github.dakusui.faultsource.printable.Predicates;
+import com.github.dakusui.crest.utils.printable.Functions;
+import com.github.dakusui.crest.utils.printable.Predicates;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 

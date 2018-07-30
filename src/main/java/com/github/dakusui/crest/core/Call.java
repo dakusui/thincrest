@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.core;
 
-import com.github.dakusui.faultsource.printable.Functions;
+import com.github.dakusui.crest.utils.printable.Functions;
 
 import java.util.function.Function;
 

@@ -3,7 +3,7 @@
     <groupId>com.github.dakusui</groupId>
     <artifactId>thincrest</artifactId>
     <packaging>jar</packaging>
-    <version>3.1.9-SNAPSHOT</version>
+    <version>3.1.10-SNAPSHOT</version>
     <description>A thin wrapper library for hamcrest/junit to make assertion
         output descriptive.
     </description>
@@ -50,11 +50,6 @@
             <artifactId>hamcrest-junit</artifactId>
             <version>2.0.0.0</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.dakusui</groupId>
-            <artifactId>faultsource</artifactId>
-            <version>1.0.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.assertj/assertj-core -->
         <dependency>

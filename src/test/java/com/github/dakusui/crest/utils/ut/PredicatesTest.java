@@ -1,20 +1,17 @@
-package com.github.dakusui.crest.ut;
+package com.github.dakusui.crest.utils.ut;
 
-import com.github.dakusui.crest.utils.TestBase;
 import com.github.dakusui.crest.utils.printable.Predicates;
-import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import java.util.stream.Stream;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 @RunWith(Enclosed.class)
-public class CrestPredicatesTest {
+public class PredicatesTest {
+
   public static class IsNullTest extends TestBase {
     @Test
     public void whenMet$thenTrue() {
@@ -42,7 +39,7 @@ public class CrestPredicatesTest {
   public static class EqTest extends TestBase {
     @Test
     public void whenMet$thenTrue() {
-      TestCase.assertTrue(Predicates.eq(100).test(100));
+      assertTrue(Predicates.eq(100).test(100));
     }
 
     @Test

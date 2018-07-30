@@ -1,12 +1,9 @@
 package com.github.dakusui.crest;
 
-import com.github.dakusui.crest.core.Assertion;
-import com.github.dakusui.crest.core.Call;
-import com.github.dakusui.crest.core.Matcher;
-import com.github.dakusui.crest.core.Printable;
+import com.github.dakusui.crest.core.*;
 import com.github.dakusui.crest.matcherbuilders.*;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
-import com.github.dakusui.faultsource.printable.Functions;
+import com.github.dakusui.crest.utils.printable.Functions;
 
 import java.util.*;
 import java.util.function.Function;
@@ -90,7 +87,7 @@ public enum Crest {
 
   public static <I> AsBoolean<I> asBoolean(Predicate<? super I> predicate) {
     requireNonNull(predicate);
-    return asBoolean(Printable.function(predicate.toString(), predicate::test));
+    return asBoolean(InternalUtils.function(predicate.toString(), predicate::test));
   }
 
   public static <I> AsBoolean<I> asBoolean(Function<? super I, Boolean> function) {
@@ -231,7 +228,7 @@ public enum Crest {
   }
 
   public static <I extends Map, SELF extends AsMap<I, Object, Object, SELF>> SELF asObjectMap() {
-    return asMapOf(Object.class, Object.class, Printable.function("mapToMap", o -> new HashMap<>()));
+    return asMapOf(Object.class, Object.class, InternalUtils.function("mapToMap", o -> new HashMap<>()));
   }
 
   public static <I, SELF extends AsMap<I, Object, Object, SELF>> SELF asObjectMap(Function<? super I, ? extends Map<Object, Object>> function) {
