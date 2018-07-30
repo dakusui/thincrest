@@ -3,7 +3,9 @@ package com.github.dakusui.crest.ut;
 import com.github.dakusui.crest.core.InternalUtils;
 import org.junit.Test;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
 
@@ -36,6 +38,23 @@ public class InternalUtilsTest {
     assertEquals(
         "wait/1",
         methodInfo
+    );
+  }
+
+  public static class TestList extends LinkedList {
+    @Override
+    public String get(int i) {
+      return "hello";
+    }
+  }
+
+  @Test
+  public void tryToFindMethod$whenOverridden$thenLooksGood() throws InvocationTargetException, IllegalAccessException {
+    Method m = InternalUtils.findMethod(TestList.class, "get", new Object[] { 0 });
+
+    assertEquals(
+        "hello",
+        m.invoke(new TestList(), 100)
     );
   }
 
