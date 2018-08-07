@@ -90,6 +90,58 @@ public class CrestTest {
       assertFalse(description.isPresent());
     }
 
+    @Test
+    public void makeSureCalledOnlyOnce() {
+      List<String> aList = composeTestData();
+
+      Optional<Description> description = CrestTest.describeFailure(
+          aList,
+          allOf(
+              Crest.asObject(
+                  new Function<List<?>, String>() {
+                    boolean firstTime = true;
+
+                    @Override
+                    public String apply(List<?> objects) {
+                      try {
+                        if (firstTime)
+                          return (String) elementAt(0).apply(objects);
+                        else
+                          throw new Error();
+                      } finally {
+                        firstTime = false;
+                      }
+                    }
+                  }
+              ).check(
+                  new Predicate<String>() {
+                    boolean firstTime = true;
+
+                    @Override
+                    public boolean test(String s) {
+                      try {
+                        if (firstTime)
+                          return equalTo("Hello").test(s);
+                        else
+                          throw new Error();
+                      } finally {
+                        firstTime = false;
+                      }
+                    }
+                  }
+              ).all()
+              ,
+              Crest.asObject(
+                  size()
+              ).check(
+                  equalTo(3)
+              ).all()
+          ));
+
+      System.out.println(description.orElse(null));
+      assertFalse(description.isPresent());
+    }
+
 
     /**
      * <pre>
