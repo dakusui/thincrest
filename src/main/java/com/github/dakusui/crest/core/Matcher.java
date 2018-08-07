@@ -165,10 +165,12 @@ public interface Matcher<T> {
   interface Leaf<T> extends Matcher<T> {
     static <I, O> Matcher<I> create(Predicate<? super O> p, Function<? super I, ? extends O> function) {
       return new Matcher<I>() {
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({ "unchecked", "SimplifiableConditionalExpression" })
         @Override
         public boolean matches(I value, Assertion<? extends I> session) {
-          return session.test((Predicate<Object>) p, session.apply(function, value));
+          return session.thrownExceptionFor(function, value).isPresent()
+              ? false
+              : session.test((Predicate<Object>) p, session.apply(function, value));
         }
 
         @Override
@@ -179,7 +181,10 @@ public interface Matcher<T> {
         @SuppressWarnings("unchecked")
         @Override
         public List<String> describeMismatch(I value, Assertion<? extends I> session) {
-          @SuppressWarnings("unchecked") Optional<Throwable> exception = session.thrownExceptionFor((Predicate<? super I>) p, (I) session.apply(function, value));
+          @SuppressWarnings("unchecked") Optional<Throwable> exception = session.thrownExceptionFor(function, value);
+          exception = exception.isPresent()
+              ? exception
+              : session.thrownExceptionFor((Predicate<? super I>) p, (I) session.apply(function, value));
           return exception.map(throwable -> singletonList(String.format(
               "%s failed with %s(%s)",
               formatExpectation(p, function),

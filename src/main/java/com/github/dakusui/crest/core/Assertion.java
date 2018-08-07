@@ -24,6 +24,8 @@ public interface Assertion<T> {
 
   <I> Optional<Throwable> thrownExceptionFor(Predicate<? super I> predicate, I value);
 
+  <I, O> Optional<Throwable> thrownExceptionFor(Function<? super I, ? extends O> function, I value);
+
   static <T> void assertThat(String message, T value, Matcher<? super T> matcher) {
     create(message, matcher).perform(value);
   }
@@ -35,11 +37,11 @@ public interface Assertion<T> {
   List<Throwable> exceptions();
 
   class Impl<T> implements Assertion<T> {
-    private final Matcher<? super T> matcher;
+    private final Matcher<? super T>       matcher;
     private final Map<Predicate, Function> predicates = new HashMap<>();
     private final Map<Function, Function>  functions  = new HashMap<>();
-    private final String messageOnFailure;
-    private final List<Throwable> exceptions = new LinkedList<>();
+    private final String                   messageOnFailure;
+    private final List<Throwable>          exceptions = new LinkedList<>();
 
     Impl(String messageOnFailure, Matcher<? super T> matcher) {
       this.messageOnFailure = messageOnFailure; // this can be null
@@ -61,7 +63,7 @@ public interface Assertion<T> {
     @SuppressWarnings("unchecked")
     @Override
     public <I, O> O apply(Function<? super I, ? extends O> function, I value) {
-      return ((Function<I, O>) functions.computeIfAbsent(function, this::memoize)).apply(value);
+      return applyFunction(function, value);
     }
 
     @Override
@@ -73,8 +75,21 @@ public interface Assertion<T> {
     }
 
     @Override
+    public <I, O> Optional<Throwable> thrownExceptionFor(Function<? super I, ? extends O> function, I value) {
+      Object ret = applyFunction(function, value);
+      if (ret instanceof ExceptionHolder)
+        return Optional.of(((ExceptionHolder) ret).get());
+      return Optional.empty();
+    }
+
+    @Override
     public List<Throwable> exceptions() {
       return this.exceptions;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <I, O> O applyFunction(Function<? super I, ? extends O> function, I value) {
+      return ((Function<I, O>) functions.computeIfAbsent(function, this::memoize)).apply(value);
     }
 
     @SuppressWarnings("unchecked")
@@ -82,10 +97,13 @@ public interface Assertion<T> {
       return predicates.computeIfAbsent(predicate, this::memoize).apply(value);
     }
 
-    @SuppressWarnings("SimplifiableConditionalExpression")
-    private <I> Function<? super I, Object> memoize(Predicate<? super I> predicate) {
-      Map<I, Object> memo = new HashMap<>();
-      return (I i) -> memo.computeIfAbsent(i, v -> tryToTest(predicate, v));
+    private <I, O> Object tryToApply(Function<? super I, ? extends O> function, I value) {
+      try {
+        return function.apply(value);
+      } catch (Exception e) {
+        exceptions.add(e);
+        return ExceptionHolder.create(e);
+      }
     }
 
     private <I> Object tryToTest(Predicate<? super I> predicate, I value) {
@@ -101,9 +119,15 @@ public interface Assertion<T> {
       }
     }
 
+    @SuppressWarnings("SimplifiableConditionalExpression")
+    private <I> Function<? super I, Object> memoize(Predicate<? super I> predicate) {
+      Map<I, Object> memo = new HashMap<>();
+      return (I i) -> memo.computeIfAbsent(i, v -> tryToTest(predicate, v));
+    }
+
     private <I, O> Function<I, O> memoize(Function<I, O> function) {
       Map<I, O> memo = new HashMap<>();
-      return (I i) -> memo.computeIfAbsent(i, function);
+      return (I i) -> memo.computeIfAbsent(i, v -> (O) tryToApply(function, v));
     }
 
     private void throwComparisonFailure(String messageOnFailure, T value, Matcher<? super T> matcher) {

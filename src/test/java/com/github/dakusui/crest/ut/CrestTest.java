@@ -5,6 +5,7 @@ import com.github.dakusui.crest.core.Assertion;
 import com.github.dakusui.crest.core.InternalUtils;
 import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.utils.TestBase;
+import com.github.dakusui.crest.utils.printable.Predicates;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import org.junit.runner.RunWith;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.Crest.allOf;
@@ -39,6 +41,10 @@ public class CrestTest {
   }
 
   private static final Predicate<Integer> FAILING_CHECK = InternalUtils.predicate("failingCheck", v -> {
+    throw new RuntimeException("FAILED");
+  });
+
+  private static final Function<List<String>, Integer> FAILING_TRANSFORM = InternalUtils.function("failingTransform", v -> {
     throw new RuntimeException("FAILED");
   });
 
@@ -128,7 +134,7 @@ public class CrestTest {
      * </pre>
      */
     @Test
-    public void whenErrorAndThenPassing$thenErrorThrownAndMessageAppropriate() {
+    public void whenErrorOnCheckAndThenPassing$thenErrorThrownAndMessageAppropriate() {
       List<String> aList = composeTestData();
 
       Optional<Description> description = describeFailure(
@@ -149,6 +155,40 @@ public class CrestTest {
                   + "]\n"
                   + "     but: when x=<[Hello, world, !]>; then and:[\n"
                   + "  size(x) failingCheck failed with java.lang.RuntimeException(FAILED)\n"
+                  + "  elementAt[0](x) equalTo[Hello]\n"
+                  + "]->false\n"
+                  + "FAILED"
+          ));
+    }
+
+    /**
+     * <pre>
+     *   Conj
+     *   (3): E -> P      : error
+     * </pre>
+     */
+    @Test
+    public void whenErrorOnTransformAndThenPassing$thenErrorThrownAndMessageAppropriate() {
+      List<String> aList = composeTestData();
+
+      Optional<Description> description = describeFailure(
+          aList,
+          allOf(
+              Crest.asObject(FAILING_TRANSFORM).check(Predicates.alwaysTrue()).all(),
+              Crest.asObject(elementAt(0)).check(equalTo("Hello")).all()
+          ));
+
+      System.out.println(description.orElse(null));
+      assertThat(
+          description.orElseThrow(AssertionError::new).toString(),
+          CoreMatchers.startsWith(
+              "\n" +
+                  "Expected: and:[\n"
+                  + "  failingTransform(x) alwaysTrue\n"
+                  + "  elementAt[0](x) equalTo[Hello]\n"
+                  + "]\n"
+                  + "     but: when x=<[Hello, world, !]>; then and:[\n"
+                  + "  failingTransform(x) alwaysTrue failed with java.lang.RuntimeException(FAILED)\n"
                   + "  elementAt[0](x) equalTo[Hello]\n"
                   + "]->false\n"
                   + "FAILED"
