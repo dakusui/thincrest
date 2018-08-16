@@ -4,11 +4,11 @@
  such as **Hamcrest**[[1]] and **Assert J**[[2]]. It is designed to be able to
   balance following values
   
- * Easy to implement user custom matchers.
  * Avoid fail->fix->run->fail->fix->run loop.
  * Readable messages on failures.
  * Readable test codes.
  * IDE friendliness.
+ * Easy to implement user custom matchers.
  
 It used to be a thin wrapper for **Hamcrest** ant it is the reason why this library
 was initially named so, but it is not anymore.
@@ -22,7 +22,7 @@ was initially named so, but it is not anymore.
     <dependency>
       <groupId>com.github.dakusui</groupId>
       <artifactId>thincrest</artifactId>
-      <version>[3.1.0,)</version>
+      <version>[3.2.0,)</version>
       <scope>test</scope>
     </dependency>
 ```

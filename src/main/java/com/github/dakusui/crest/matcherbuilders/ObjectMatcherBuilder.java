@@ -2,7 +2,7 @@ package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.functions.TransformingPredicate;
-import com.github.dakusui.faultsource.printable.Predicates;
+import com.github.dakusui.crest.utils.printable.Predicates;
 
 import java.util.LinkedList;
 import java.util.List;

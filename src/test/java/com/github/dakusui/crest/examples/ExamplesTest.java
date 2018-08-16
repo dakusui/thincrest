@@ -1,6 +1,7 @@
 package com.github.dakusui.crest.examples;
 
 import com.github.dakusui.crest.ComparablesExample;
+import com.github.dakusui.crest.utils.TestBase;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
-public class ExamplesTest {
+public class ExamplesTest extends TestBase {
   @Test
   public void simpleExample() {
     Class<?> exampleClass = SimpleExamples.class;

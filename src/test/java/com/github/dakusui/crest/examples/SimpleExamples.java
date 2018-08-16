@@ -1,8 +1,8 @@
 package com.github.dakusui.crest.examples;
 
 import com.github.dakusui.crest.Crest;
-import com.github.dakusui.crest.core.Printable;
-import com.github.dakusui.faultsource.printable.Functions;
+import com.github.dakusui.crest.core.InternalUtils;
+import com.github.dakusui.crest.utils.printable.Functions;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -13,8 +13,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.faultsource.printable.Functions.size;
-import static com.github.dakusui.faultsource.printable.Predicates.eq;
+import static com.github.dakusui.crest.utils.printable.Functions.size;
+import static com.github.dakusui.crest.utils.printable.Predicates.eq;
 import static java.util.Arrays.asList;
 
 public class SimpleExamples {
@@ -160,7 +160,7 @@ public class SimpleExamples {
             + "alium Aquitani, tertium linua ipsorum Celtae, nostra Galli appelantur",
         allOf(
             asString().containsString("Caesar").check("contains", "est").containsString("Caesar").matcher(),
-            asObject("length").check(Printable.predicate(">1024", o -> ((Integer) o) > 1024)).matcher()
+            asObject("length").check(InternalUtils.predicate(">1024", o -> ((Integer) o) > 1024)).matcher()
         )
     );
   }
@@ -290,7 +290,7 @@ public class SimpleExamples {
         { "world", 5 },
         { "everyone", 8 },
     };
-    Function<Object[][], HashMap<Object, Object>> arrToMap = Printable.function(
+    Function<Object[][], HashMap<Object, Object>> arrToMap = InternalUtils.function(
         "arrToMap",
         (Object[][] arr) -> new HashMap<Object, Object>() {
           {
@@ -312,7 +312,7 @@ public class SimpleExamples {
         { "world", 5 },
         { "everyone", 8 },
     };
-    Function<Object[][], HashMap<Object, Object>> arrToMap = Printable.function(
+    Function<Object[][], HashMap<Object, Object>> arrToMap = InternalUtils.function(
         "arrToMap",
         (Object[][] arr) -> new HashMap<Object, Object>() {
           {
@@ -444,7 +444,7 @@ public class SimpleExamples {
 
   @Test
   public void listSize$thenFail() {
-    Predicate<? super Integer> failingPredicate = Printable.predicate(
+    Predicate<? super Integer> failingPredicate = InternalUtils.predicate(
         "failing predicate",
         i -> {
           throw new RuntimeException("FAILED");
@@ -460,7 +460,7 @@ public class SimpleExamples {
 
   @Test
   public void listSizeWithFailingFunction$thenFail() {
-    Function<List<String>, Integer> failingFunction = Printable.function("failingFunction", strings -> {
+    Function<List<String>, Integer> failingFunction = InternalUtils.function("failingFunction", strings -> {
       throw new RuntimeException("FAILED");
     });
     assertThat(

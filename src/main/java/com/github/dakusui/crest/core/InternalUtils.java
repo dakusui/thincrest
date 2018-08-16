@@ -1,13 +1,14 @@
 package com.github.dakusui.crest.core;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
 
 public enum InternalUtils {
   ;
@@ -69,7 +70,13 @@ public enum InternalUtils {
         ).filter(
             (Method m) -> areArgsCompatible(m.getParameterTypes(), args)
         ).collect(
-            toList()
+            LinkedList::new,
+            InternalUtils::addMethodIfNecessary,
+            (List<Method> methods, List<Method> methods2) -> methods2.forEach(
+                method -> {
+                  addMethodIfNecessary(methods, method);
+                }
+            )
         ),
         aClass,
         methodName,
@@ -84,6 +91,17 @@ public enum InternalUtils {
     );
   }
 
+  private static void addMethodIfNecessary(List<Method> methods, Method method) {
+    Optional<Method> found = methods.stream().filter(
+        each -> Arrays.equals(each.getParameterTypes(), method.getParameterTypes())
+    ).findAny();
+    if (found.isPresent()) {
+      if (found.get().getDeclaringClass().isAssignableFrom(method.getDeclaringClass()))
+        methods.remove(found.get());
+    }
+    methods.add(method);
+  }
+
   private static Method[] getMethods(Class<?> aClass) {
     return aClass.getMethods();
   }
@@ -93,10 +111,10 @@ public enum InternalUtils {
   }
 
   /*
-     * Based on BaseDescription#appendValue() of Hamcrest
-     *
-     * http://hamcrest.org/JavaHamcrest/
-     */
+   * Based on BaseDescription#appendValue() of Hamcrest
+   *
+   * http://hamcrest.org/JavaHamcrest/
+   */
   public static String formatValue(Object value) {
     if (value == null)
       return "null";
@@ -169,5 +187,128 @@ public enum InternalUtils {
       );
     }
     return value.toString();
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <R> R invokeMethod(Object target, String methodName, Object[] args) {
+    try {
+      Method m = findMethod(Objects.requireNonNull(target).getClass(), methodName, args);
+      boolean accessible = m.isAccessible();
+      try {
+        m.setAccessible(true);
+        return (R) m.invoke(target, args);
+      } finally {
+        m.setAccessible(accessible);
+      }
+    } catch (IllegalAccessException | InvocationTargetException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static <T, R> Function<T, R> function(String s, Function<? super T, ? extends R> function) {
+    Objects.requireNonNull(s);
+    Objects.requireNonNull(function);
+    return new Function<T, R>() {
+      @Override
+      public R apply(T t) {
+        return function.apply(t);
+      }
+
+      public <V> Function<V, R> compose(Function<? super V, ? extends T> before) {
+        Objects.requireNonNull(before);
+        return new Function<V, R>() {
+          @Override
+          public R apply(V v) {
+            return function.apply(before.apply(v));
+          }
+
+          @Override
+          public String toString() {
+            return format("%s->%s", before, s);
+          }
+        };
+      }
+
+      public <V> Function<T, V> andThen(Function<? super R, ? extends V> after) {
+        Objects.requireNonNull(after);
+        return new Function<T, V>() {
+          @Override
+          public V apply(T t) {
+            return after.apply(function.apply(t));
+          }
+
+          @Override
+          public String toString() {
+            return format("%s->%s", s, after);
+          }
+        };
+      }
+
+      @Override
+      public String toString() {
+        return s;
+      }
+    };
+  }
+
+  public static <T> Predicate<T> predicate(String s, Predicate<? super T> predicate) {
+    return new Predicate<T>() {
+      @Override
+      public boolean test(T t) {
+        return predicate.test(t);
+      }
+
+      @Override
+      public Predicate<T> and(Predicate<? super T> other) {
+        Objects.requireNonNull(other);
+        return new Predicate<T>() {
+          @Override
+          public boolean test(T t) {
+            return predicate.test(t) && other.test(t);
+          }
+
+          @Override
+          public String toString() {
+            return format("(%s&&%s)", s, other);
+          }
+        };
+      }
+
+      @Override
+      public Predicate<T> negate() {
+        return new Predicate<T>() {
+          @Override
+          public boolean test(T t) {
+            return !predicate.test(t);
+          }
+
+          @Override
+          public String toString() {
+            return format("!%s", s);
+          }
+        };
+      }
+
+      @Override
+      public Predicate<T> or(Predicate<? super T> other) {
+        Objects.requireNonNull(other);
+        return new Predicate<T>() {
+          @Override
+          public boolean test(T t) {
+            return predicate.test(t) || other.test(t);
+          }
+
+          @Override
+          public String toString() {
+            return format("(%s||%s)", s, other);
+          }
+        };
+      }
+
+      @Override
+      public String toString() {
+        return s;
+      }
+    };
   }
 }
