@@ -257,5 +257,22 @@ public enum Crest {
   public static <T> void assertThat(String message, T actual, Matcher<? super T> matcher) {
     Assertion.assertThat(message, actual, matcher);
   }
+
+  public static <T> void assumeThat(T actual, Matcher<? super T> matcher) {
+    Assertion.assumeThat("", actual, matcher);
+  }
+
+  public static <T> void assumeThat(String message, T actual, Matcher<? super T> matcher) {
+    Assertion.assumeThat(message, actual, matcher);
+  }
+
+  public static <T> void requireThat(T actual, Matcher<? super T> matcher) {
+    Assertion.requireThat("", actual, matcher);
+  }
+
+  public static <T> void requireThat(String message, T actual, Matcher<? super T> matcher) {
+    Assertion.requireThat(message, actual, matcher);
+  }
+
 }
 
