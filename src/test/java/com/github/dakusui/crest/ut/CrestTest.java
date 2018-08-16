@@ -2,24 +2,27 @@ package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.core.Assertion;
+import com.github.dakusui.crest.core.ExecutionFailure;
 import com.github.dakusui.crest.core.InternalUtils;
 import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.utils.TestBase;
 import com.github.dakusui.crest.utils.printable.Predicates;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
+import org.junit.AssumptionViolatedException;
+import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.crest.Crest.allOf;
-import static com.github.dakusui.crest.Crest.anyOf;
+import static com.github.dakusui.crest.Crest.*;
 import static com.github.dakusui.crest.utils.printable.Functions.elementAt;
 import static com.github.dakusui.crest.utils.printable.Functions.size;
 import static com.github.dakusui.crest.utils.printable.Predicates.equalTo;
@@ -27,6 +30,10 @@ import static org.junit.Assert.*;
 
 @RunWith(Enclosed.class)
 public class CrestTest {
+  public static <T> Assertion<T> create(String messageOnFailure, Matcher<? super T> matcher) {
+    return new Assertion.Impl<>(messageOnFailure, matcher);
+  }
+
   static class Description {
     private final String content;
 
@@ -482,7 +489,7 @@ public class CrestTest {
   }
 
   private static <T> Optional<Description> describeFailure(T actual, Matcher<? super T> matcher) {
-    Assertion<T> assertion = Assertion.create(null, matcher);
+    Assertion<T> assertion = create(null, matcher);
     if (!matcher.matches(actual, assertion)) {
       String description = "\nExpected: " +
           String.join("\n", matcher.describeExpectation(assertion)) +
@@ -508,7 +515,7 @@ public class CrestTest {
       Optional<Description> description = describeFailure(
           "HELLO",
           Crest.not(
-              Crest.asString().containsString("HELLO").$()
+              asString().containsString("HELLO").$()
           )
       );
       System.out.println(description.orElseThrow(RuntimeException::new));
@@ -526,7 +533,7 @@ public class CrestTest {
       Optional<Description> description = describeFailure(
           "HELLO",
           Crest.not(
-              Crest.asString().containsString("WORLD").$()
+              asString().containsString("WORLD").$()
           )
       );
       description.ifPresent(desc -> fail("Should have been passed but failed with a following message:" + desc.content));
@@ -538,8 +545,8 @@ public class CrestTest {
       Optional<Description> description = describeFailure(
           "HELLO",
           Crest.noneOf(
-              Crest.asString().eq("WORLD").$(),
-              Crest.asString().containsString("HELLO").$()
+              asString().eq("WORLD").$(),
+              asString().containsString("HELLO").$()
           )
       );
       System.out.println(description.orElseThrow(RuntimeException::new));
@@ -554,13 +561,99 @@ public class CrestTest {
       Optional<Description> description = describeFailure(
           "HELLO",
           Crest.noneOf(
-              Crest.asString().eq("WORLD").$(),
-              Crest.asString().containsString("hellox").$()
+              asString().eq("WORLD").$(),
+              asString().containsString("hellox").$()
           )
       );
 
       description.ifPresent(desc -> fail("Should have been passed but failed with a following message:" + desc.content));
     }
+  }
 
+  public static class AssertAssumeRequireTest {
+    @Test
+    public void givenAssertThat$whenPasses$thenOk() {
+      Crest.assertThat(
+          "hello",
+          asString().equalTo("hello").$()
+      );
+    }
+
+    @Test(expected = ComparisonFailure.class)
+    public void givenAssertThat$whenFailOnComparison$thenComparisonFailureThrown() {
+      Crest.assertThat(
+          "Check 'hello'",
+          "hello",
+          asString().equalTo("HELLO").$()
+      );
+    }
+
+    @Test(expected = ExecutionFailure.class)
+    public void givenAssertThat$whenFailOnExercise$thenExecutionFalureThrown() {
+      Crest.assertThat(
+          "Check 'hello'",
+          "hello",
+          asString("xyz").equalTo("HELLO").$()
+      );
+    }
+
+    @Test
+    public void givenRequireThat$whenPasses$thenOk() {
+      Crest.requireThat(
+          "hello",
+          asString().equalTo("hello").$()
+      );
+    }
+
+    @Test(expected = ExecutionFailure.class)
+    public void givenRequireThat$whenFailOnComparison$thenExecutionFalureThrown() {
+      Crest.requireThat(
+          "Check 'hello'",
+          "hello",
+          asString().equalTo("HELLO").$()
+      );
+    }
+
+    @Test(expected = ExecutionFailure.class)
+    public void givenRequireThat$whenFailOnExercise$thenExecutionFalureThrown() {
+      Crest.requireThat(
+          "Check 'hello'",
+          "hello",
+          asString("xyz").equalTo("HELLO").$()
+      );
+    }
+
+    @Test
+    public void givenAssumeThat$whenPasses$thenOk() {
+      Crest.assumeThat(
+          "hello",
+          asString().equalTo("hello").$()
+      );
+    }
+
+    @Test(expected = IOException.class)
+    public void givenAssumeThat$whenFailOnComparison$thenExecutionFalureThrown() throws IOException {
+      try {
+        Crest.assumeThat(
+            "Check 'hello'",
+            "hello",
+            asString().equalTo("HELLO").$()
+        );
+      } catch (AssumptionViolatedException e) {
+        // Wrap with IOException, which cannot happen in this test procedure to
+        // make sure intended exception (AssumptionViolatedException) is really
+        // thrown.
+        throw new IOException(e);
+      }
+    }
+
+    @Test(expected = ExecutionFailure.class)
+    public void givenAssumeThat$whenFailOnExercise$thenExecutionFalureThrown() {
+      Crest.assumeThat(
+          "Check 'hello'",
+          "hello",
+          asString("xyz").equalTo("HELLO").$()
+      );
+    }
   }
 }

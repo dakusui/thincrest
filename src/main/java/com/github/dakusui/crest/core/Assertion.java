@@ -1,6 +1,8 @@
 package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.functions.TransformingPredicate;
+import jdk.nashorn.internal.codegen.CompilationException;
+import org.junit.AssumptionViolatedException;
 import org.junit.ComparisonFailure;
 
 import java.util.*;
@@ -27,11 +29,26 @@ public interface Assertion<T> {
   <I, O> Optional<Throwable> thrownExceptionFor(Function<? super I, ? extends O> function, I value);
 
   static <T> void assertThat(String message, T value, Matcher<? super T> matcher) {
-    create(message, matcher).perform(value);
+    new Impl<>(message, matcher).perform(value);
   }
 
-  static <T> Assertion<T> create(String messageOnFailure, Matcher<? super T> matcher) {
-    return new Impl<T>(messageOnFailure, matcher);
+  static <T> void assumeThat(String message, T value, Matcher<? super T> matcher) {
+    new Impl<T>(message, matcher) {
+      @Override
+      void failedOnComparison(String message, String expected, String actual) {
+        Throwable t = new ComparisonFailure(message, expected, actual);
+        throw new AssumptionViolatedException(t.getMessage(), t);
+      }
+    }.perform(value);
+  }
+
+  static <T> void requireThat(String message, T value, Matcher<? super T> matcher) {
+    new Impl<T>(message, matcher) {
+      @Override
+      void failedOnComparison(String message, String expected, String actual) {
+        throw new ExecutionFailure(message, expected, actual);
+      }
+    }.perform(value);
   }
 
   List<Throwable> exceptions();
@@ -43,15 +60,19 @@ public interface Assertion<T> {
     private final String                   messageOnFailure;
     private final List<Throwable>          exceptions = new LinkedList<>();
 
-    Impl(String messageOnFailure, Matcher<? super T> matcher) {
+    public Impl(String messageOnFailure, Matcher<? super T> matcher) {
       this.messageOnFailure = messageOnFailure; // this can be null
       this.matcher = requireNonNull(matcher);
     }
 
     @Override
     public void perform(T value) {
-      if (!this.matcher.matches(value, this))
-        throwComparisonFailure(messageOnFailure, value, matcher);
+      if (!matches(value))
+        if (exceptions.isEmpty()) {
+          failedOnComparison(value);
+        } else {
+          failedOnExercise(value);
+        }
     }
 
     @Override
@@ -87,6 +108,30 @@ public interface Assertion<T> {
       return this.exceptions;
     }
 
+    void failedOnComparison(String message, String expected, String actual) {
+      throw new ComparisonFailure(message, expected, actual);
+    }
+
+    void failedOnExercise(String message, String expected, String actual) {
+      throw new ExecutionFailure(message, expected, actual);
+    }
+
+    private void failedOnComparison(T value) {
+      failedOnComparison(
+          messageOnFailure,
+          String.join("\n", matcher.describeExpectation(this)),
+          String.join("\n", matcher.describeMismatch(value, this))
+      );
+    }
+
+    private void failedOnExercise(T value) {
+      failedOnExercise(
+          messageOnFailure,
+          String.join("\n", matcher.describeExpectation(this)),
+          String.join("\n", matcher.describeMismatch(value, this))
+      );
+    }
+
     @SuppressWarnings("unchecked")
     private <I, O> O applyFunction(Function<? super I, ? extends O> function, I value) {
       return ((Function<I, O>) functions.computeIfAbsent(function, this::memoize)).apply(value);
@@ -106,6 +151,7 @@ public interface Assertion<T> {
       }
     }
 
+    @SuppressWarnings("unchecked")
     private <I> Object tryToTest(Predicate<? super I> predicate, I value) {
       try {
         if (predicate instanceof TransformingPredicate) {
@@ -125,18 +171,14 @@ public interface Assertion<T> {
       return (I i) -> memo.computeIfAbsent(i, v -> tryToTest(predicate, v));
     }
 
+    @SuppressWarnings("unchecked")
     private <I, O> Function<I, O> memoize(Function<I, O> function) {
       Map<I, O> memo = new HashMap<>();
       return (I i) -> memo.computeIfAbsent(i, v -> (O) tryToApply(function, v));
     }
 
-    private void throwComparisonFailure(String messageOnFailure, T value, Matcher<? super T> matcher) {
-      requireNonNull(matcher);
-      throw new ComparisonFailure(
-          messageOnFailure,
-          String.join("\n", matcher.describeExpectation(this)),
-          String.join("\n", matcher.describeMismatch(value, this))
-      );
+    private boolean matches(T value) {
+      return this.matcher.matches(value, this);
     }
 
     private interface ExceptionHolder extends Supplier<Exception> {
