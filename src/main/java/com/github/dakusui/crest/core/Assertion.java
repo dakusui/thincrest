@@ -31,7 +31,7 @@ public interface Assertion<T> {
   }
 
   static <T> Assertion<T> create(String messageOnFailure, Matcher<? super T> matcher) {
-    return new Impl<T>(messageOnFailure, matcher);
+    return new Impl<>(messageOnFailure, matcher);
   }
 
   List<Throwable> exceptions();
@@ -106,6 +106,7 @@ public interface Assertion<T> {
       }
     }
 
+    @SuppressWarnings("unchecked")
     private <I> Object tryToTest(Predicate<? super I> predicate, I value) {
       try {
         if (predicate instanceof TransformingPredicate) {
@@ -125,6 +126,7 @@ public interface Assertion<T> {
       return (I i) -> memo.computeIfAbsent(i, v -> tryToTest(predicate, v));
     }
 
+    @SuppressWarnings("unchecked")
     private <I, O> Function<I, O> memoize(Function<I, O> function) {
       Map<I, O> memo = new HashMap<>();
       return (I i) -> memo.computeIfAbsent(i, v -> (O) tryToApply(function, v));
