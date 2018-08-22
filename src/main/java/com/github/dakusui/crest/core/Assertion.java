@@ -1,11 +1,14 @@
 package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.functions.TransformingPredicate;
-import jdk.nashorn.internal.codegen.CompilationException;
 import org.junit.AssumptionViolatedException;
 import org.junit.ComparisonFailure;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -71,7 +74,7 @@ public interface Assertion<T> {
         if (exceptions.isEmpty()) {
           failedOnComparison(value);
         } else {
-          failedOnExercise(value);
+          failedOnMatching(value);
         }
     }
 
@@ -112,7 +115,7 @@ public interface Assertion<T> {
       throw new ComparisonFailure(message, expected, actual);
     }
 
-    void failedOnExercise(String message, String expected, String actual) {
+    void failedOnMatching(String message, String expected, String actual) {
       throw new ExecutionFailure(message, expected, actual);
     }
 
@@ -124,8 +127,8 @@ public interface Assertion<T> {
       );
     }
 
-    private void failedOnExercise(T value) {
-      failedOnExercise(
+    private void failedOnMatching(T value) {
+      failedOnMatching(
           messageOnFailure,
           String.join("\n", matcher.describeExpectation(this)),
           String.join("\n", matcher.describeMismatch(value, this))
@@ -147,7 +150,7 @@ public interface Assertion<T> {
         return function.apply(value);
       } catch (Exception e) {
         exceptions.add(e);
-        return ExceptionHolder.create(e);
+        return ExceptionHolder.create(exceptions);
       }
     }
 
@@ -161,7 +164,7 @@ public interface Assertion<T> {
         return predicate.test(value);
       } catch (Exception e) {
         exceptions.add(e);
-        return ExceptionHolder.create(e);
+        return ExceptionHolder.create(exceptions);
       }
     }
 
@@ -181,9 +184,14 @@ public interface Assertion<T> {
       return this.matcher.matches(value, this);
     }
 
-    private interface ExceptionHolder extends Supplier<Exception> {
-      static ExceptionHolder create(Exception t) {
-        return () -> requireNonNull(t);
+    private interface ExceptionHolder extends Supplier<Throwable> {
+      static ExceptionHolder create(List<Throwable> t) {
+        requireNonNull(t);
+        if (t.isEmpty())
+          throw new RuntimeException();
+        if (t.size() == 1)
+          return () -> requireNonNull(t.get(0));
+        return () -> new Error(t.get(0));
       }
     }
   }
