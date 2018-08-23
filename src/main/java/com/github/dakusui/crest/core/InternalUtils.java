@@ -130,7 +130,7 @@ public enum InternalUtils {
       return String.format("<%sF>", value);
     if (value.getClass().isArray())
       return arrayToString(value);
-    return format("<%s>", summarize(value));
+    return format("[%s]", summarize(value));
   }
 
   private static String toJavaSyntax(String unformatted) {

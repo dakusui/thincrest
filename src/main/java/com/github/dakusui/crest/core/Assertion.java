@@ -49,7 +49,7 @@ public interface Assertion<T> {
     new Impl<T>(message, matcher) {
       @Override
       void failedOnComparison(String message, String expected, String actual) {
-        throw new ExecutionFailure(message, expected, actual);
+        throw new ExecutionFailure(message, expected, actual, this.exceptions());
       }
     }.perform(value);
   }
@@ -116,7 +116,7 @@ public interface Assertion<T> {
     }
 
     void failedOnMatching(String message, String expected, String actual) {
-      throw new ExecutionFailure(message, expected, actual);
+      throw new ExecutionFailure(message, expected, actual, this.exceptions);
     }
 
     private void failedOnComparison(T value) {
