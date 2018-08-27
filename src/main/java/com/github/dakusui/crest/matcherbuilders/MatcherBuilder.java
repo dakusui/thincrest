@@ -72,6 +72,8 @@ public interface MatcherBuilder<IN, OUT, SELF extends MatcherBuilder<IN, OUT, SE
   /**
    * Synonym for {$code matcher()}. You can use this method to make your code look
    * more 'natural' (as an English sentence).
+   *
+   * @return A built matcher.
    */
   default Matcher<? super IN> $() {
     return matcher();

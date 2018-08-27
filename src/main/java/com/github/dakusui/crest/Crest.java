@@ -1,6 +1,9 @@
 package com.github.dakusui.crest;
 
-import com.github.dakusui.crest.core.*;
+import com.github.dakusui.crest.core.Assertion;
+import com.github.dakusui.crest.core.Call;
+import com.github.dakusui.crest.core.InternalUtils;
+import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.matcherbuilders.*;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
 import com.github.dakusui.crest.utils.printable.Functions;
@@ -22,6 +25,10 @@ public enum Crest {
    * A bit better version of CoreMatchers.allOf.
    * For example:
    * <pre>assertThat("myValue", allOf(startsWith("my"), containsString("Val")))</pre>
+   *
+   * @param matchers Child matchers.
+   * @param <T> Type of the value to be matched with the returned matcher.
+   * @return A matcher that matches when all of given {@code matchers} match.
    */
   @SuppressWarnings("unchecked")
   @SafeVarargs
@@ -33,6 +40,10 @@ public enum Crest {
    * A bit better version of CoreMatchers.anyOf.
    * For example:
    * <pre>assertThat("myValue", anyOf(startsWith("my"), containsString("Val")))</pre>
+   *
+   * @param matchers Child matchers.
+   * @param <T> Type of the value to be matched with the returned matcher.
+   * @return A matcher that matches when any of given {@code matchers} matches.
    */
   @SuppressWarnings("unchecked")
   @SafeVarargs
@@ -248,6 +259,14 @@ public enum Crest {
 
   public static Call call(String methodName, Object... args) {
     return Call.create(methodName, args);
+  }
+
+  public static Call call(Class klass, String methodName, Object... args) {
+    return callOn(klass, methodName, args);
+  }
+
+  public static Call callOn(Object object, String methodName, Object... args) {
+    return Call.createOn(object, methodName, args);
   }
 
   public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
