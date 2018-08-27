@@ -658,9 +658,29 @@ public class CrestTest {
   }
 
   public static class CallMechanismTest extends TestBase {
-    @Ignore
     @Test
     public void givenStaticCall$whenToString$thenWorksRight() {
+      Function<Object, String> func = call(String.class, "format", "<me=%s, %s>", varargs(THIS, "hello")).$();
+
+      System.out.println(func.toString());
+      System.out.println(func.apply("world"));
+      Crest.assertThat(
+          func,
+          allOf(
+              Crest.asString("toString").equalTo("@String.format[<me=%s, %s>, Object:varargs[(THIS), hello]]").$(),
+              Crest.asString(call("apply", "world").$()).equalTo("<me=world, hello>").$()
+          )
+      );
+    }
+
+    /**
+     * This will not be passing until Issue #23 is addressed.
+     *
+     * @see "https://github.com/dakusui/thincrest/issues/23"
+     */
+    @Ignore
+    @Test
+    public void givenStaticCallOnOverloadedMethod$whenToString$thenWorksRight() {
       Object func = call(Stream.class, "of", varargsOf(Integer.class, 1, 2, 3)).andThen("collect", Collectors.toList()).$();
       System.out.println(func.toString());
       try {
@@ -678,16 +698,16 @@ public class CrestTest {
     }
 
     @Test
-    public void givenStaticCall2$whenToString$thenWorksRight() {
-      Function<Object, String> func = call(String.class, "format", "<me=%s, %s>", varargs(THIS, "hello")).$();
+    public void givenInstanceCall$whenToString$thenWorksRight() {
+      Function<Object, String> func = callOn("Hello world", "indexOf", THIS).andThen("toString").$();
 
       System.out.println(func.toString());
       System.out.println(func.apply("world"));
       Crest.assertThat(
           func,
           allOf(
-              Crest.asString("toString").equalTo("@String.format[<me=%s, %s>, Object:varargs[(THIS), hello]]").$(),
-              Crest.asString(call("apply", "world").$()).equalTo("<me=world, hello>").$()
+              Crest.asString("toString").equalTo("Hello world@indexOf[(THIS)]->@toString[]").$(),
+              Crest.asString(call("apply", "world").$()).equalTo("6").$()
           )
       );
     }
@@ -699,6 +719,5 @@ public class CrestTest {
       Function<StringBuilder, String> func2 = (StringBuilder b) -> b.append("hello").append(1).append("world").append("everyone").toString();
       System.out.println(func2.toString());
     }
-
   }
 }

@@ -13,25 +13,25 @@ import static java.util.Objects.requireNonNull;
  * <p>
  * That is, you can build a function that does following if a StringBuilder is given as
  * its input,
- * <pre lang="java">
- * (StringBuilder b) -> b.append("hello").append(1).append("world").append("everyone").toString()
- * </pre>
+ * {@code
+ *   (StringBuilder b) -> b.append("hello").append(1).append("world").append("everyone").toString()
+ * }
  * By following code,
- * <pre lang="java">
+ * {@code
  * Function func = Call.create("append", "hello")
  * .andThen("append", 1)
  * .andThen("append", "everyone")
  * .andThen("toString")
  * .$()
- * </pre>
+ * }
  * <p>
  * The benefit of using this class is to be able to print what you are going to do
  * in a pretty format in "Crest" library's output. If you call {@code toString}
  * method on the {@code func} object, you will get,
  *
- * <pre>
+ * {@code
  *   "@append[hello]->@append[1]->@append[everyone]->@toString[]"
- * </pre>
+ * }
  * <p>
  * , which is far more understandable than a string that you will get for a function
  * built in a normal way mentioned above such as
