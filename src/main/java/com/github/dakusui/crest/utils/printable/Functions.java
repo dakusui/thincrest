@@ -2,18 +2,52 @@ package com.github.dakusui.crest.utils.printable;
 
 import com.github.dakusui.crest.core.InternalUtils;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.github.dakusui.crest.core.InternalUtils.summarize;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
 public enum Functions {
   ;
+
+  public static VarArgs varargs(Object... args) {
+    return varargsOf(Object.class, args);
+  }
+
+  @SafeVarargs
+  public static <T> VarArgs<T> varargsOf(Class<T> type, T... args) {
+    return VarArgs.of(type, args);
+  }
+
+  public interface VarArgs<T> {
+    T[] values();
+
+    @SafeVarargs
+    static <T> VarArgs<T> of(Class<T> type, T... args) {
+      requireNonNull(type);
+      return new VarArgs<T>() {
+        @Override
+        public T[] values() {
+          return args;
+        }
+
+        @Override
+        public String toString() {
+          return String.format("%s:varargs%s", summarize(type.getSimpleName()), summarize(args));
+        }
+      };
+    }
+  }
+
+  public static final Object THIS = new Object() {
+    public String toString() {
+      return "(THIS)";
+    }
+  };
 
   public static <E> Function<E, E> identity() {
     return Printable.function(
@@ -82,9 +116,52 @@ public enum Functions {
 
   @SuppressWarnings("unchecked")
   public static <I, E> Function<? super I, ? extends E> invoke(String methodName, Object... args) {
+    return invokeOn(THIS, methodName, args);
+  }
+
+  public static <I, E> Function<? super I, ? extends E> invokeOn(Object on, String methodName, Object... args) {
     return Printable.function(
-        () -> String.format("@%s%s", methodName, asList(args)),
-        (I target) -> (E) InternalUtils.invokeMethod(target, methodName, args)
+        on == THIS
+            ? () -> String.format("@%s%s", methodName, summarize(args))
+            : () -> String.format("%s@%s%s", on, methodName, summarize(args)),
+        (I target) -> InternalUtils.invokeMethod(replaceTarget(on, target), methodName, replaceTargetInArray(target, expandVarArgsInArray(args)))
     );
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <I, E> Function<? super I, ? extends E> invokeStatic(Class klass, String methodName, Object... args) {
+    return Printable.function(
+        () -> String.format("@%s.%s%s", klass.getSimpleName(), methodName, summarize(args)),
+        (I target) -> InternalUtils.invokeStaticMethod(klass, methodName, replaceTargetInArray(target, expandVarArgsInArray(args)))
+    );
+  }
+
+  private static Object[] expandVarArgsInArray(Object[] args) {
+    if (args.length > 0) {
+      if (args[args.length - 1] instanceof VarArgs) {
+        if (IntStream.range(0, args.length - 1).anyMatch(i -> args[i] instanceof VarArgs))
+          throw new RuntimeException("VarArgs can only come at the last of values");
+        return new ArrayList<Object>() {{
+          this.addAll(asList(Arrays.copyOf(args, args.length - 1)));
+          this.add(((VarArgs) args[args.length - 1]).values());
+        }}.toArray();
+      } else {
+        return args;
+      }
+    }
+    return args;
+  }
+
+  private static Object[] replaceTargetInArray(Object target, Object[] args) {
+    return Arrays.stream(args)
+        .map(e -> replaceTarget(e, target)).toArray();
+  }
+
+  private static <I> Object replaceTarget(Object on, I target) {
+    return on == THIS ?
+        target :
+        on instanceof Object[] ?
+            replaceTargetInArray(target, (Object[]) on) :
+            on;
   }
 }

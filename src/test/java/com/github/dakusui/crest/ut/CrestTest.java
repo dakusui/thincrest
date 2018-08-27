@@ -1,16 +1,14 @@
 package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.Crest;
-import com.github.dakusui.crest.core.Assertion;
-import com.github.dakusui.crest.core.ExecutionFailure;
-import com.github.dakusui.crest.core.InternalUtils;
-import com.github.dakusui.crest.core.Matcher;
+import com.github.dakusui.crest.core.*;
 import com.github.dakusui.crest.utils.TestBase;
 import com.github.dakusui.crest.utils.printable.Predicates;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.AssumptionViolatedException;
 import org.junit.ComparisonFailure;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -21,12 +19,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.crest.utils.printable.Functions.elementAt;
-import static com.github.dakusui.crest.utils.printable.Functions.size;
+import static com.github.dakusui.crest.utils.printable.Functions.*;
 import static com.github.dakusui.crest.utils.printable.Predicates.equalTo;
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 @RunWith(Enclosed.class)
 public class CrestTest {
@@ -655,5 +655,50 @@ public class CrestTest {
           asString("xyz").equalTo("HELLO").$()
       );
     }
+  }
+
+  public static class CallMechanismTest extends TestBase {
+    @Ignore
+    @Test
+    public void givenStaticCall$whenToString$thenWorksRight() {
+      Object func = call(Stream.class, "of", varargsOf(Integer.class, 1, 2, 3)).andThen("collect", Collectors.toList()).$();
+      System.out.println(func.toString());
+      try {
+        Crest.assertThat(
+            func,
+            allOf(
+                Crest.asString("toString").startsWith("@Stream.of[Integer:varargs[1, 2, 3]]->@collect[CollectorImpl@").$(),
+                Crest.asInteger(call("apply", "NOTHING").andThen("size").$()).equalTo(1).$()
+            )
+        );
+      } catch (ExecutionFailure e) {
+        System.err.println(e.getMessage());
+        throw e;
+      }
+    }
+
+    @Test
+    public void givenStaticCall2$whenToString$thenWorksRight() {
+      Function<Object, String> func = call(String.class, "format", "<me=%s, %s>", varargs(THIS, "hello")).$();
+
+      System.out.println(func.toString());
+      System.out.println(func.apply("world"));
+      Crest.assertThat(
+          func,
+          allOf(
+              Crest.asString("toString").equalTo("@String.format[<me=%s, %s>, Object:varargs[(THIS), hello]]").$(),
+              Crest.asString(call("apply", "world").$()).equalTo("<me=world, hello>").$()
+          )
+      );
+    }
+
+    @Test
+    public void printExample() {
+      Function func = Call.create("append", "hello").andThen("append", 1).andThen("append", "everyone").andThen("toString").$();
+      System.out.println(func.toString());
+      Function<StringBuilder, String> func2 = (StringBuilder b) -> b.append("hello").append(1).append("world").append("everyone").toString();
+      System.out.println(func2.toString());
+    }
+
   }
 }

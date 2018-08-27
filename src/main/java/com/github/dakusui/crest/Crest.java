@@ -1,6 +1,9 @@
 package com.github.dakusui.crest;
 
-import com.github.dakusui.crest.core.*;
+import com.github.dakusui.crest.core.Assertion;
+import com.github.dakusui.crest.core.Call;
+import com.github.dakusui.crest.core.InternalUtils;
+import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.matcherbuilders.*;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
 import com.github.dakusui.crest.utils.printable.Functions;
@@ -248,6 +251,14 @@ public enum Crest {
 
   public static Call call(String methodName, Object... args) {
     return Call.create(methodName, args);
+  }
+
+  public static Call call(Class klass, String methodName, Object... args) {
+    return callOn(klass, methodName, args);
+  }
+
+  public static Call callOn(Object object, String methodName, Object... args) {
+    return Call.createOn(object, methodName, args);
   }
 
   public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
