@@ -25,6 +25,10 @@ public enum Crest {
    * A bit better version of CoreMatchers.allOf.
    * For example:
    * <pre>assertThat("myValue", allOf(startsWith("my"), containsString("Val")))</pre>
+   *
+   * @param matchers Child matchers.
+   * @param <T> Type of the value to be matched with the returned matcher.
+   * @return A matcher that matches when all of given {@code matchers} match.
    */
   @SuppressWarnings("unchecked")
   @SafeVarargs
@@ -36,6 +40,10 @@ public enum Crest {
    * A bit better version of CoreMatchers.anyOf.
    * For example:
    * <pre>assertThat("myValue", anyOf(startsWith("my"), containsString("Val")))</pre>
+   *
+   * @param matchers Child matchers.
+   * @param <T> Type of the value to be matched with the returned matcher.
+   * @return A matcher that matches when any of given {@code matchers} matches.
    */
   @SuppressWarnings("unchecked")
   @SafeVarargs
