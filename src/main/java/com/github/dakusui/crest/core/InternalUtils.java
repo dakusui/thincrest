@@ -34,11 +34,9 @@ public enum InternalUtils {
    * @param args       Arguments which should be given to the method
    * @return A method for given class {@code aClass}, {@code method}, and {@code args}.
    */
-  public static Method findMethod(Class<?> aClass, String methodName, Object[] args, MethodSelector... selectors) {
+  public static Method findMethod(Class<?> aClass, String methodName, Object[] args) {
     MethodSelector methodSelector =
         new MethodSelector.Default().andThen(new MethodSelector.Narrowest());
-    for (MethodSelector each : selectors)
-      methodSelector = methodSelector.andThen(each);
     return getIfOnlyOneElseThrow(
         methodSelector,
         methodSelector.select(
