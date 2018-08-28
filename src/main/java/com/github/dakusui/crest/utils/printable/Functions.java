@@ -2,14 +2,18 @@ package com.github.dakusui.crest.utils.printable;
 
 import com.github.dakusui.crest.core.InternalUtils;
 
+import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.github.dakusui.crest.core.InternalUtils.areArgsCompatible;
 import static com.github.dakusui.crest.core.InternalUtils.summarize;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 public enum Functions {
   ;
@@ -41,6 +45,78 @@ public enum Functions {
         }
       };
     }
+  }
+
+  public interface MethodSelector extends BiFunction<List<Method>, Object[], List<Method>>, Formattable {
+    default MethodSelector andThen(MethodSelector another) {
+      return new MethodSelector() {
+        @Override
+        public List<Method> select(List<Method> methods, Object[] args) {
+          return another.select(MethodSelector.this.apply(methods, args), args);
+        }
+
+        @Override
+        public String describe() {
+          return String.format("%s&&%s", MethodSelector.this.describe(), another.describe());
+        }
+      };
+    }
+
+    default List<Method> apply(List<Method> methods, Object[] args) {
+      return this.select(methods, args);
+    }
+
+    @Override
+    default void formatTo(Formatter formatter, int flags, int width, int precision) {
+      formatter.format("%s", this.describe());
+    }
+
+    List<Method> select(List<Method> methods, Object[] args);
+
+    String describe();
+
+    class Default implements MethodSelector {
+      @Override
+      public List<Method> select(List<Method> methods, Object[] args) {
+        return methods
+            .stream()
+            .filter(m -> areArgsCompatible(m.getParameterTypes(), args))
+            .collect(toList());
+      }
+
+      @Override
+      public String describe() {
+        return "default";
+      }
+    }
+
+    class Narrowest implements MethodSelector {
+
+      @Override
+      public List<Method> select(List<Method> methods, Object[] args) {
+        List<Method> ret = new LinkedList<>();
+        for (Method i : methods) {
+          if (methods.stream().filter(j -> j != i).noneMatch(j -> isWider(j, i)))
+            ret.add(i);
+        }
+        return ret;
+      }
+
+      @Override
+      public String describe() {
+        return "narrowest";
+      }
+
+      private static boolean isWider(Method a, Method b) {
+        if (Objects.equals(a, b))
+          return false;
+        for (int i = 0; i < a.getParameterCount(); i++)
+          if (!a.getParameterTypes()[i].isAssignableFrom(b.getParameterTypes()[i]))
+            return false;
+        return true;
+      }
+    }
+
   }
 
   public static final Object THIS = new Object() {

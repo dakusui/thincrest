@@ -8,7 +8,6 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.AssumptionViolatedException;
 import org.junit.ComparisonFailure;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -673,12 +672,6 @@ public class CrestTest {
       );
     }
 
-    /**
-     * This will not be passing until Issue #23 is addressed.
-     *
-     * @see "https://github.com/dakusui/thincrest/issues/23"
-     */
-    @Ignore
     @Test
     public void givenStaticCallOnOverloadedMethod$whenToString$thenWorksRight() {
       Object func = call(Stream.class, "of", varargsOf(Integer.class, 1, 2, 3)).andThen("collect", Collectors.toList()).$();

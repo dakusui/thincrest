@@ -1,6 +1,5 @@
 package com.github.dakusui.crest.utils;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -11,7 +10,7 @@ public enum TestUtils {
   static final        PrintStream STDERR = System.err;
   public static final PrintStream NOP    = new PrintStream(new OutputStream() {
     @Override
-    public void write(int b) throws IOException {
+    public void write(int b) {
     }
   });
 
@@ -30,7 +29,7 @@ public enum TestUtils {
    */
   public static void restoreStdOutErr() {
     System.setOut(STDOUT);
-    System.setOut(STDERR);
+    System.setErr(STDERR);
   }
 
   public static boolean isRunUnderSurefire() {
