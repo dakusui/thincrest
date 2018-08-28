@@ -1,6 +1,7 @@
 package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.core.InternalUtils;
+import com.github.dakusui.crest.utils.TestBase;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -11,7 +12,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class InternalUtilsTest {
+public class InternalUtilsTest extends TestBase {
   @Test(expected = RuntimeException.class)
   public void tryToFindMethod$whenNotFound$thenExceptionThrown() {
     InternalUtils.findMethod(Object.class, "undefined", new Object[] {});
