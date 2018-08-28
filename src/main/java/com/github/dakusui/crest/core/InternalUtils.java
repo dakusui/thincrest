@@ -376,24 +376,4 @@ public enum InternalUtils {
       return Character.toString(ch);
     }
   }
-
-  public static void main(String... args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-    printAssignability(int.class, Integer.class);
-    printAssignability(Integer.class, int.class);
-    printAssignability(Object[].class, String[].class);
-    InternalUtils.class.getMethod("primitiveMethod", int.class).invoke(null, 123);
-    InternalUtils.class.getMethod("wrapperMethod", Integer.class).invoke(null, 456);
-  }
-
-  private static void printAssignability(Class a, Class b) {
-    System.out.printf("%s.isAssignableFrom(%s)=%s%n", a.getCanonicalName(), b.getCanonicalName(), a.isAssignableFrom(b));
-  }
-
-  public static void primitiveMethod(int a) {
-    System.out.printf("primitiveMethod=%s%n", a);
-  }
-
-  public static void wrapperMethod(Integer a) {
-    System.out.printf("wrapperMethod=%s%n", a);
-  }
 }
