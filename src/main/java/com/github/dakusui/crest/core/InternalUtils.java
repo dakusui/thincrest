@@ -1,5 +1,7 @@
 package com.github.dakusui.crest.core;
 
+import com.github.dakusui.crest.utils.printable.Functions.MethodSelector;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -32,31 +34,30 @@ public enum InternalUtils {
    * @param args       Arguments which should be given to the method
    * @return A method for given class {@code aClass}, {@code method}, and {@code args}.
    */
-  public static Method findMethod(Class<?> aClass, String methodName, Object[] args) {
+  public static Method findMethod(Class<?> aClass, String methodName, Object[] args, MethodSelector... selectors) {
+    MethodSelector methodSelector =
+        new MethodSelector.Default().andThen(new MethodSelector.Narrowest());
+    for (MethodSelector each : selectors)
+      methodSelector = methodSelector.andThen(each);
     return getIfOnlyOneElseThrow(
-        Arrays.stream(
-            getMethods(aClass)
-        ).filter(
-            (Method m) -> m.getName().equals(methodName)
-        ).filter(
-            (Method m) -> areArgsCompatible(m.getParameterTypes(), args)
-        ).collect(
-            LinkedList::new,
-            InternalUtils::addMethodIfNecessary,
-            (List<Method> methods, List<Method> methods2) -> methods2.forEach(
-                method -> {
-                  addMethodIfNecessary(methods, method);
-                })),
+        methodSelector,
+        methodSelector.select(
+            Arrays.stream(
+                getMethods(aClass)
+            ).filter(
+                (Method m) -> m.getName().equals(methodName)
+            ).collect(
+                LinkedList::new,
+                InternalUtils::addMethodIfNecessary,
+                (List<Method> methods, List<Method> methods2) -> methods2.forEach(
+                    method -> {
+                      addMethodIfNecessary(methods, method);
+                    })),
+            args
+        ),
         aClass,
         methodName,
         args
-    ).orElseThrow(
-        () -> new RuntimeException(String.format(
-            "Method matching '%s%s' was not found in %s.(CAUTION: This doesn't try to cast or unbox arguments to find a method)",
-            methodName,
-            Arrays.asList(args),
-            aClass.getCanonicalName()
-        ))
     );
   }
 
@@ -255,7 +256,7 @@ public enum InternalUtils {
   }
 
   @SuppressWarnings("unchecked")
-  private static boolean areArgsCompatible(Class[] formalParameters, Object[] args) {
+  public static boolean areArgsCompatible(Class[] formalParameters, Object[] args) {
     if (formalParameters.length != args.length)
       return false;
     for (int i = 0; i < args.length; i++) {
@@ -264,7 +265,7 @@ public enum InternalUtils {
           return false;
         else
           continue;
-      if (!formalParameters[i].isAssignableFrom(toPrimitiveIfWrapper(toClass(args[i]))))
+      if (!toPrimitiveIfWrapper(formalParameters[i]).isAssignableFrom(toPrimitiveIfWrapper(toClass(args[i]))))
         return false;
     }
     return true;
@@ -308,18 +309,34 @@ public enum InternalUtils {
   }
 
 
-  private static <T> Optional<T> getIfOnlyOneElseThrow(List<T> foundMethods, Class<?> aClass, String methodName, Object[] args) {
+  private static Method getIfOnlyOneElseThrow(MethodSelector selector, List<Method> foundMethods, Class<?> aClass, String methodName, Object[] args) {
     if (foundMethods.isEmpty())
-      return Optional.empty();
+      throw new RuntimeException(String.format(
+          "Method matching '%s%s' was not found by selector=%s in %s.",
+          methodName,
+          Arrays.asList(args),
+          selector,
+          aClass.getCanonicalName()
+      ));
     if (foundMethods.size() == 1)
-      return Optional.of(foundMethods.get(0));
+      return foundMethods.get(0);
     throw new RuntimeException(String.format(
-        "Methods matching '%s%s' were found more than one in %s.: %s",
+        "Methods matching '%s%s' were found more than one in %s by selector=%s.: %s ",
         methodName,
         summarize(args),
         aClass.getCanonicalName(),
-        foundMethods
+        selector,
+        summarizeMethods(foundMethods)
     ));
+  }
+
+  private static List<String> summarizeMethods(List<Method> methods) {
+    return methods.stream().map(
+        method -> method.toString().replace(
+            method.getDeclaringClass().getCanonicalName() + "." + method.getName(),
+            method.getName()
+        )
+    ).collect(toList());
   }
 
   private static String arrayToString(Object arr) {
@@ -358,5 +375,25 @@ public enum InternalUtils {
     default:
       return Character.toString(ch);
     }
+  }
+
+  public static void main(String... args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    printAssignability(int.class, Integer.class);
+    printAssignability(Integer.class, int.class);
+    printAssignability(Object[].class, String[].class);
+    InternalUtils.class.getMethod("primitiveMethod", int.class).invoke(null, 123);
+    InternalUtils.class.getMethod("wrapperMethod", Integer.class).invoke(null, 456);
+  }
+
+  private static void printAssignability(Class a, Class b) {
+    System.out.printf("%s.isAssignableFrom(%s)=%s%n", a.getCanonicalName(), b.getCanonicalName(), a.isAssignableFrom(b));
+  }
+
+  public static void primitiveMethod(int a) {
+    System.out.printf("primitiveMethod=%s%n", a);
+  }
+
+  public static void wrapperMethod(Integer a) {
+    System.out.printf("wrapperMethod=%s%n", a);
   }
 }

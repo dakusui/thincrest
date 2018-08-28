@@ -7,7 +7,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class InternalUtilsTest {
   @Test(expected = RuntimeException.class)
@@ -25,9 +27,20 @@ public class InternalUtilsTest {
     System.out.println(InternalUtils.findMethod(Object.class, "wait", new Object[] { "hello" }));
   }
 
-  @Test(expected = RuntimeException.class)
-  public void tryToFindMethod$whenMultipleMethodsFound$thenExceptionThrown() {
+  @Test
+  public void tryToFindMethod$whenMultipleMethodsFoundButNarrowestCanBeDetermined$thenWorksFine() {
     System.out.println(InternalUtils.findMethod(InternalUtilsTest.class, "dummy", new Object[] { "hello" }));
+  }
+
+  @Test(expected = RuntimeException.class)
+  public void tryToFindMethod$whenMultipleMethodsFoundAndNarrowestCanNotBeDetermined$thenExceptionThrown() {
+    try {
+      System.out.println(InternalUtils.findMethod(InternalUtilsTest.class, "dummy2", new Object[] { 2 }));
+    } catch (RuntimeException e) {
+      e.printStackTrace();
+      assertThat(e.getMessage(), containsString("more than one"));
+      throw e;
+    }
   }
 
   @Test
@@ -83,18 +96,39 @@ public class InternalUtilsTest {
   }
 
   /*
-   * This method is used by 'tryToFindMethod$whenMultipleMethodsFound$thenExceptionThrown'
+   * This method is used by 'tryToFindMethod$whenMultipleMethodsFoundAndNarrowestCanBeDetermined$thenWorksFine'
    * reflectively.
    */
   @SuppressWarnings("unused")
-  public void dummy(Object arg) {
+  public Object dummy(Object arg) {
+    return "object";
   }
 
   /*
-   * This method is used by 'tryToFindMethod$whenMultipleMethodsFound$thenExceptionThrown'
+   * This method is used by 'tryToFindMethod$whenMultipleMethodsFoundAndNarrowestCanBeDetermined$thenWorksFine'
    * reflectively.
    */
   @SuppressWarnings("unused")
-  public void dummy(String arg) {
+  public Object dummy(String arg) {
+    return "string";
   }
+
+  /*
+   * This method is used by 'tryToFindMethod$whenMultipleMethodsFoundAndNarrowestCannotBeDetermined$thenExceptionThrown'
+   * reflectively.
+   */
+  @SuppressWarnings("unused")
+  public Object dummy2(int arg) {
+    return "int";
+  }
+
+  /*
+   * This method is used by 'tryToFindMethod$whenMultipleMethodsFoundAndNarrowestCannotBeDetermined$thenExceptionThrown'
+   * reflectively.
+   */
+  @SuppressWarnings("unused")
+  public Object dummy2(Integer arg) {
+    return "Integer";
+  }
+
 }
