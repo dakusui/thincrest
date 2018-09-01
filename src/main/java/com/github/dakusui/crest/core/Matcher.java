@@ -193,15 +193,25 @@ public interface Matcher<T> {
           ))).orElseGet(() -> {
             if (p instanceof TransformingPredicate) {
               TransformingPredicate pp = (TransformingPredicate) p;
-              return singletonList(String.format(
-                  "%s%s was not met because %s=%s; %s=%s",
+              List<String> ret = new LinkedList<>();
+              Function f = ((TransformingPredicate) p).function();
+              ret.add(String.format(
+                  "%s%s was not met because %s=%s",
                   formatExpectation(p, function),
                   pp.name().isPresent() ? "," : "",
-                  InternalUtils.formatFunction(pp.function(), InternalUtils.formatFunction(function, "x")),
-                  InternalUtils.formatValue(session.apply(pp.function(), session.apply(function, value))),
-                  InternalUtils.formatFunction(function, "x"),
-                  InternalUtils.formatValue(session.apply(function, value))
+                  InternalUtils.formatFunction(f, "x"),
+                  InternalUtils.formatValue(session.apply(f, value))
               ));
+              if (f instanceof Call.ChainedFunction) {
+                Call.ChainedFunction c = (Call.ChainedFunction) f;
+                while ((c = c.previous()) != null) {
+                  ret.add(String.format("  %s=%s",
+                      InternalUtils.formatFunction(c, "x"),
+                      InternalUtils.formatValue(session.apply(c, value))
+                  ));
+                }
+              }
+              return ret;
             }
             return singletonList(String.format(
                 "%s was not met because %s=%s",
