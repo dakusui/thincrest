@@ -8,21 +8,31 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.github.dakusui.crest.Crest.call;
+import static com.github.dakusui.crest.Crest.*;
+import static com.github.dakusui.crest.utils.printable.Predicates.equalTo;
 
 public class Issue27Test {
   @Test
   public void givenTransformingPredicateCreatedByCall$whenFails$thenPrintedPretty() {
-    Matcher matcher = Crest.asString().check(
-        call("toUpperCase").andThen("substring", 2).andThen("contains", "X").$(),
-        Predicates.equalTo("world")
-    ).$();
+    Matcher matcher = allOf(asString("toLowerCase").check(
+        call("toUpperCase").andThen("substring", 2).andThen("charAt", 1).$(),
+        equalTo('z')
+    ).$());
     Assertion<String> assertion = new Assertion.Impl<>("FAILED", matcher);
 
-    List<String> expectation = matcher.<String>describeExpectation(assertion);
-    List<String> mismatch = matcher.<String>describeMismatch("WORLD", assertion);
+    matcher.<String>describeExpectation(assertion).forEach(System.out::println);
+    matcher.<String>describeMismatch("WORLD", assertion).forEach(System.err::println);
+  }
 
-    expectation.forEach(System.out::println);
-    mismatch.forEach(System.err::println);
+  @Test
+  public void test() {
+    assertThat(
+        "WORLD",
+        allOf(
+        asString("toLowerCase").check(
+            call("toUpperCase").andThen("substring", 2).andThen("charAt", 1).$(),
+            equalTo('z')
+        ).$())
+    );
   }
 }

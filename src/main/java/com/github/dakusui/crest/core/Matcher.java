@@ -1,6 +1,7 @@
 package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.functions.TransformingPredicate;
+import com.github.dakusui.crest.utils.printable.PrintableFunction;
 
 import java.util.*;
 import java.util.function.Function;
@@ -199,18 +200,11 @@ public interface Matcher<T> {
                   "%s%s was not met because %s=%s",
                   formatExpectation(p, function),
                   pp.name().isPresent() ? "," : "",
-                  InternalUtils.formatFunction(f, "x"),
+                  InternalUtils.formatFunction(f, InternalUtils.formatFunction(function, "x")),
                   InternalUtils.formatValue(session.apply(f, value))
               ));
-              if (f instanceof Call.ChainedFunction) {
-                Call.ChainedFunction c = (Call.ChainedFunction) f;
-                while ((c = c.previous()) != null) {
-                  ret.add(String.format("  %s=%s",
-                      InternalUtils.formatFunction(c, "x"),
-                      InternalUtils.formatValue(session.apply(c, value))
-                  ));
-                }
-              }
+              renderFunction(value, session, ret, function);
+              renderFunction(value, session, ret, f);
               return ret;
             }
             return singletonList(String.format(
@@ -219,6 +213,31 @@ public interface Matcher<T> {
                 InternalUtils.formatFunction(function, "x"),
                 InternalUtils.formatValue(session.apply(function, value))));
           });
+        }
+
+        private void renderFunction(I value, Assertion<? extends I> session, List<String> ret, Function<? super I, ? extends O> function) {
+          if (function instanceof Call.ChainedFunction) {
+            Call.ChainedFunction c = (Call.ChainedFunction) function;
+            renderChainedFunction(value, session, ret, c);
+            return;
+          }
+          if (function instanceof PrintableFunction) {
+            ret.add("  LEFT:");
+            ret.add(String.format("    %s=%s",
+                InternalUtils.formatFunction(function, "x"),
+                function.apply(value)
+            ));
+          }
+        }
+
+        private void renderChainedFunction(I value, Assertion<? extends I> session, List<String> ret, Call.ChainedFunction c) {
+          ret.add("  RIGHT:");
+          while ((c = c.previous()) != null) {
+            ret.add(String.format("    %s=%s",
+                InternalUtils.formatFunction(c, "LEFT"),
+                InternalUtils.formatValue(session.apply(c, value))
+            ));
+          }
         }
 
         String formatExpectation(Predicate p, Function function) {
