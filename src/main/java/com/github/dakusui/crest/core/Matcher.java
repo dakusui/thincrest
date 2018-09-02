@@ -18,6 +18,17 @@ public interface Matcher<T> {
 
   List<String> describeMismatch(T value, Assertion<? extends T> session);
 
+  default boolean matches(T value, Session<T> session) {
+    return false;
+  }
+
+  default void describeExpectation(Session<T> session) {
+  }
+
+  default void describeMismatch(T value, Session<T> session) {
+  }
+
+
   interface Composite<T> extends Matcher<T> {
     abstract class Base<T> implements Composite<T> {
       private final List<Matcher<T>> children;
@@ -186,6 +197,8 @@ public interface Matcher<T> {
           exception = exception.isPresent()
               ? exception
               : session.thrownExceptionFor((Predicate<? super I>) p, (I) session.apply(function, value));
+          List<String> ret = new LinkedList<>();
+          renderFunction(value, session, ret, function);
           return exception.map(throwable -> singletonList(String.format(
               "%s failed with %s(%s)",
               formatExpectation(p, function),
@@ -194,7 +207,6 @@ public interface Matcher<T> {
           ))).orElseGet(() -> {
             if (p instanceof TransformingPredicate) {
               TransformingPredicate pp = (TransformingPredicate) p;
-              List<String> ret = new LinkedList<>();
               Function f = ((TransformingPredicate) p).function();
               ret.add(String.format(
                   "%s%s was not met because %s=%s",
@@ -203,7 +215,6 @@ public interface Matcher<T> {
                   InternalUtils.formatFunction(f, InternalUtils.formatFunction(function, "x")),
                   InternalUtils.formatValue(session.apply(f, value))
               ));
-              renderFunction(value, session, ret, function);
               renderFunction(value, session, ret, f);
               return ret;
             }
@@ -222,8 +233,7 @@ public interface Matcher<T> {
             return;
           }
           if (function instanceof PrintableFunction) {
-            ret.add("  LEFT:");
-            ret.add(String.format("    %s=%s",
+            ret.add(String.format("  %s=%s",
                 InternalUtils.formatFunction(function, "x"),
                 function.apply(value)
             ));
@@ -231,9 +241,8 @@ public interface Matcher<T> {
         }
 
         private void renderChainedFunction(I value, Assertion<? extends I> session, List<String> ret, Call.ChainedFunction c) {
-          ret.add("  RIGHT:");
           while ((c = c.previous()) != null) {
-            ret.add(String.format("    %s=%s",
+            ret.add(String.format("  %s=%s",
                 InternalUtils.formatFunction(c, "LEFT"),
                 InternalUtils.formatValue(session.apply(c, value))
             ));
