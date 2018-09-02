@@ -18,18 +18,23 @@ public interface Matcher<T> {
 
   List<String> describeMismatch(T value, Assertion<? extends T> session);
 
-  default boolean matches(T value, Session<T> session) {
-    return false;
-  }
+  boolean matches(T value, Report.Session<T> session);
 
-  default void describeExpectation(Session<T> session) {
-  }
+  void describeExpectation(Report.Session<T> session);
 
-  default void describeMismatch(T value, Session<T> session) {
-  }
-
+  void describeMismatch(T value, Report.Session<T> session);
 
   interface Composite<T> extends Matcher<T> {
+    default void describeExpectation(Report.Session<T> session) {
+      session.describeExpectation(this);
+    }
+
+    default void describeMismatch(T value, Report.Session<T> session) {
+      session.describeMismatch(value, this);
+    }
+
+    List<Matcher<T>> children();
+
     abstract class Base<T> implements Composite<T> {
       private final List<Matcher<T>> children;
       private final boolean          topLevel;
@@ -46,6 +51,15 @@ public interface Matcher<T> {
         for (Matcher<T> eachChild : children())
           ret = op(ret, eachChild.matches(value, session));
         return ret && session.exceptions().isEmpty();
+      }
+
+
+      @Override
+      public boolean matches(T value, Report.Session<T> session) {
+        boolean ret = first();
+        for (Matcher<T> eachChild : children())
+          ret = op(ret, eachChild.matches(value, session));
+        return ret;
       }
 
       @Override
@@ -96,7 +110,8 @@ public interface Matcher<T> {
         return in.stream().map(s -> "  " + s).collect(toList());
       }
 
-      List<Matcher<T>> children() {
+      @Override
+      public List<Matcher<T>> children() {
         return this.children;
       }
 
@@ -175,14 +190,42 @@ public interface Matcher<T> {
   }
 
   interface Leaf<T> extends Matcher<T> {
-    static <I, O> Matcher<I> create(Predicate<? super O> p, Function<? super I, ? extends O> function) {
-      return new Matcher<I>() {
+    default void describeExpectation(Report.Session<T> session) {
+      session.describeExpectation(this);
+    }
+
+    default void describeMismatch(T value, Report.Session<T> session) {
+      session.describeMismatch(value, this);
+    }
+
+    Predicate<?> p();
+
+    Function<T, ?> func();
+
+    static <I, O> Leaf<I> create(Predicate<? super O> p, Function<? super I, ? extends O> function) {
+      return new Leaf<I>() {
+        @Override
+        public Predicate<?> p() {
+          return p;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Function<I, ?> func() {
+          return (Function<I, ?>) function;
+        }
+
         @SuppressWarnings({ "unchecked", "SimplifiableConditionalExpression" })
         @Override
         public boolean matches(I value, Assertion<? extends I> session) {
           return session.thrownExceptionFor(function, value).isPresent()
               ? false
               : session.test((Predicate<Object>) p, session.apply(function, value));
+        }
+
+        @Override
+        public boolean matches(I value, Report.Session<I> session) {
+          return session.matches(this, value);
         }
 
         @Override
