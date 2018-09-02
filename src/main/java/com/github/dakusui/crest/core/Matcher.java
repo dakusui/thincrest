@@ -106,7 +106,7 @@ public interface Matcher<T> {
         }};
       }
 
-      List<String> indent(List<String> in) {
+      private static List<String> indent(List<String> in) {
         return in.stream().map(s -> "  " + s).collect(toList());
       }
 
