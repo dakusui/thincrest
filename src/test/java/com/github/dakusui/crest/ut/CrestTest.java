@@ -29,8 +29,9 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(Enclosed.class)
 public class CrestTest {
-  public static <T> Assertion<T> create(String messageOnFailure, Matcher<? super T> matcher) {
-    return new Assertion.Impl<>(messageOnFailure, matcher);
+  public static <T> Report reoport(String messageOnFailure, Matcher<? super T> matcher) {
+    //  return new Assertion.Impl<>(messageOnFailure, matcher);
+    return null;
   }
 
   static class Description {
@@ -177,7 +178,7 @@ public class CrestTest {
               + "  size(x) equalTo[3]\n"
               + "  elementAt[0](x) equalTo[hello]\n"
               + "]\n"
-              + "     but: when x=[[Hello, world, !]]; then and:[\n"
+              + "     but: when x=<[Hello, world, !]>; then and:[\n"
               + "  size(x) equalTo[3]\n"
               + "  elementAt[0](x) equalTo[hello] was not met because elementAt[0](x)=\"Hello\"\n"
               + "]->false",
@@ -211,7 +212,7 @@ public class CrestTest {
                   + "  size(x) failingCheck\n"
                   + "  elementAt[0](x) equalTo[Hello]\n"
                   + "]\n"
-                  + "     but: when x=[[Hello, world, !]]; then and:[\n"
+                  + "     but: when x=<[Hello, world, !]>; then and:[\n"
                   + "  size(x) failingCheck failed with java.lang.RuntimeException(FAILED)\n"
                   + "  elementAt[0](x) equalTo[Hello]\n"
                   + "]->false\n"
@@ -245,7 +246,7 @@ public class CrestTest {
                   + "  failingTransform(x) alwaysTrue\n"
                   + "  elementAt[0](x) equalTo[Hello]\n"
                   + "]\n"
-                  + "     but: when x=[[Hello, world, !]]; then and:[\n"
+                  + "     but: when x=<[Hello, world, !]>; then and:[\n"
                   + "  failingTransform(x) alwaysTrue failed with java.lang.RuntimeException(FAILED)\n"
                   + "  elementAt[0](x) equalTo[Hello]\n"
                   + "]->false\n"
@@ -277,8 +278,8 @@ public class CrestTest {
               + "  size(x) equalTo[2]\n"
               + "  elementAt[0](x) equalTo[hello]\n"
               + "]\n"
-              + "     but: when x=[[Hello, world, !]]; then and:[\n"
-              + "  size(x) equalTo[2] was not met because size(x)=[3]\n"
+              + "     but: when x=<[Hello, world, !]>; then and:[\n"
+              + "  size(x) equalTo[2] was not met because size(x)=<3>\n"
               + "  elementAt[0](x) equalTo[hello] was not met because elementAt[0](x)=\"Hello\"\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
@@ -367,7 +368,7 @@ public class CrestTest {
               + "  size(x) failingCheck\n"
               + "  elementAt[0](x) equalTo[Hello]\n"
               + "]\n"
-              + "     but: when x=[[Hello, world, !]]; then or:[\n"
+              + "     but: when x=<[Hello, world, !]>; then or:[\n"
               + "  size(x) failingCheck failed with java.lang.RuntimeException(FAILED)\n"
               + "  elementAt[0](x) equalTo[Hello]\n"
               + "]->false\n"
@@ -400,8 +401,8 @@ public class CrestTest {
               + "  size(x) equalTo[2]\n"
               + "  elementAt[0](x) equalTo[hello]\n"
               + "]\n"
-              + "     but: when x=[[Hello, world, !]]; then or:[\n"
-              + "  size(x) equalTo[2] was not met because size(x)=[3]\n"
+              + "     but: when x=<[Hello, world, !]>; then or:[\n"
+              + "  size(x) equalTo[2] was not met because size(x)=<3>\n"
               + "  elementAt[0](x) equalTo[hello] was not met because elementAt[0](x)=\"Hello\"\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
@@ -437,8 +438,8 @@ public class CrestTest {
               + "    elementAt[0](x) equalTo[HELLO]\n"
               + "  ]\n"
               + "]\n"
-              + "     but: when x=[[Hello, world, !]]; then or:[\n"
-              + "  size(x) equalTo[2] was not met because size(x)=[3]\n"
+              + "     but: when x=<[Hello, world, !]>; then or:[\n"
+              + "  size(x) equalTo[2] was not met because size(x)=<3>\n"
               + "  and:[\n"
               + "    elementAt[0](x) equalTo[hello] was not met because elementAt[0](x)=\"Hello\"\n"
               + "    elementAt[0](x) equalTo[HELLO] was not met because elementAt[0](x)=\"Hello\"\n"
@@ -475,8 +476,8 @@ public class CrestTest {
               + "    elementAt[0](x) equalTo[HELLO]\n"
               + "  ]\n"
               + "]\n"
-              + "     but: when x=[[Hello, world, !]]; then and:[\n"
-              + "  size(x) equalTo[2] was not met because size(x)=[3]\n"
+              + "     but: when x=<[Hello, world, !]>; then and:[\n"
+              + "  size(x) equalTo[2] was not met because size(x)=<3>\n"
               + "  or:[\n"
               + "    elementAt[0](x) equalTo[hello] was not met because elementAt[0](x)=\"Hello\"\n"
               + "    elementAt[0](x) equalTo[HELLO] was not met because elementAt[0](x)=\"Hello\"\n"
@@ -487,14 +488,24 @@ public class CrestTest {
     }
   }
 
-  private static <T> Optional<Description> describeFailure(T actual, Matcher<? super T> matcher) {
-    Assertion<T> assertion = create(null, matcher);
-    if (!matcher.matches(actual, assertion)) {
-      String description = "\nExpected: " +
-          String.join("\n", matcher.describeExpectation(assertion)) +
-          "\n     but: " +
-          String.join("\n", matcher.describeMismatch(actual, assertion));
+  private static <T> Optional<Description> describeFailure(T actual, Matcher<T> matcher) {
+    //    Assertion<T> assertion = create(null, matcher);
+    //    if (!matcher.matches(actual, assertion)) {
+    //      String description = "\nExpected: " +
+    //          String.join("\n", matcher.describeExpectation(assertion)) +
+    //          "\n     but: " +
+    //          String.join("\n", matcher.describeMismatch(actual, assertion));
+    //
+    //      return Optional.of(new Description(description));
+    //    }
 
+    Session<T> session = Session.create();
+    Report report = Session.perform(actual, matcher, session);
+    if (!report.isSuccessful()) {
+      String description = "\nExpected: " +
+          String.join("\n", report.expectation()) +
+          "\n     but: " +
+          String.join("\n", report.mismatch());
       return Optional.of(new Description(description));
     }
     return Optional.empty();
@@ -519,8 +530,8 @@ public class CrestTest {
       );
       System.out.println(description.orElseThrow(RuntimeException::new));
       assertThat(
-          description.<String>get().content,
-          Matchers.<String>containsString("not:[\n"
+          description.get().content,
+          Matchers.containsString("not:[\n"
               + "  toString(x) containsString[HELLO]\n"
               + "]->false")
       );
@@ -550,8 +561,8 @@ public class CrestTest {
       );
       System.out.println(description.orElseThrow(RuntimeException::new));
       assertThat(
-          description.<String>get().content,
-          Matchers.<String>containsString("toString(x) =[WORLD] was not met because toString(x)=\"HELLO\"")
+          description.get().content,
+          Matchers.containsString("toString(x) =[WORLD] was not met because toString(x)=\"HELLO\"")
       );
     }
 

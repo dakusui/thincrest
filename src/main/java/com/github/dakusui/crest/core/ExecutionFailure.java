@@ -2,6 +2,12 @@ package com.github.dakusui.crest.core;
 
 import org.junit.ComparisonFailure;
 
+import java.util.List;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
+
 /**
  * Thrown when a test programs detects that a certain runtime requirement to exercise
  * a test is not satisfied.
@@ -12,7 +18,7 @@ import org.junit.ComparisonFailure;
  * However in non-unit testing phases, where tests depend on external conditions
  * outside JVM, even if inputs are all valid, still preconditions for them can be
  * unsatisfied. This is an exception to be thrown in such cases.
- *
+ * <p>
  * For instance, suppose that an integration test code tries to build a test fixture
  * where a database table is created and data set is loaded into it and then exercises
  * a test case for business logic. And before the exercise, it also verifies such
@@ -24,7 +30,22 @@ import org.junit.ComparisonFailure;
  */
 public class ExecutionFailure extends Error {
   @SuppressWarnings("WeakerAccess")
-  public ExecutionFailure(String message, String expected, String actual) {
-    super(new ComparisonFailure(message, expected, actual).getMessage());
+  public ExecutionFailure(String message, String expected, String actual, Throwable t) {
+    this(message, expected, actual, singletonList(t));
   }
+
+  public ExecutionFailure(String message, String expected, String actual) {
+    this(message, expected, actual, emptyList());
+  }
+
+  public ExecutionFailure(String message, String expected, String actual, List<Throwable> throwables) {
+    super(
+        new ComparisonFailure(message, expected, actual).getMessage(),
+        requireNonNull(throwables).isEmpty()
+            ? null
+            : throwables.get(0)
+    );
+    throwables.stream().distinct().skip(1).forEach(this::addSuppressed);
+  }
+
 }

@@ -128,7 +128,9 @@ public interface Call {
     @Override
     <V> ChainedFunction<T, V> andThen(Function<? super R, ? extends V> after);
 
-    ChainedFunction<T, ?> previous();
+    ChainedFunction<?, ?> previous();
+
+    Function<?, R> chained();
 
     static <T, S, R> ChainedFunction<T, R> chain(ChainedFunction<? super T, ? extends S> function, Function<? super S, ? extends R> next) {
       return new Impl<T, S, R>(function, next);
@@ -146,14 +148,20 @@ public interface Call {
           return null;
         }
 
+        @SuppressWarnings("unchecked")
+        @Override
+        public Function<T, R> chained() {
+          return (Function<T, R>) func;
+        }
+
         @Override
         public R apply(T t) {
-          return func.apply(t);
+          return chained().apply(t);
         }
 
         @Override
         public String toString() {
-          return func.toString();
+          return chained().toString();
         }
       };
     }
@@ -171,7 +179,7 @@ public interface Call {
       @SuppressWarnings("unchecked")
       @Override
       public R apply(T t) {
-        return this.func.apply((S) this.previous().apply(t));
+        return this.chained().apply(this.previous().apply(t));
       }
 
       @Override
@@ -181,13 +189,19 @@ public interface Call {
 
       @SuppressWarnings("unchecked")
       @Override
-      public ChainedFunction<T, ?> previous() {
-        return (ChainedFunction<T, ?>) previous;
+      public ChainedFunction<T, S> previous() {
+        return (ChainedFunction<T, S>) previous;
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public Function<S, R> chained() {
+        return (Function<S, R>) func;
       }
 
       @Override
       public String toString() {
-        return previous.toString() + "->" + func.toString();
+        return previous().toString() + "->" + chained().toString();
       }
     }
   }
