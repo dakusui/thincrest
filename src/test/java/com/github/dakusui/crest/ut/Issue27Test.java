@@ -3,6 +3,7 @@ package com.github.dakusui.crest.ut;
 import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.core.ExecutionFailure;
 import com.github.dakusui.crest.core.Session;
+import com.github.dakusui.crest.utils.TestBase;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
@@ -14,7 +15,7 @@ import static com.github.dakusui.crest.Crest.*;
 import static com.github.dakusui.crest.utils.printable.Predicates.equalTo;
 import static com.github.dakusui.crest.utils.printable.Predicates.matchesRegex;
 
-public class Issue27Test {
+public class Issue27Test extends TestBase {
   @Test
   public void addException() {
     Assert.assertFalse(Session.create().addException(new Throwable()).report().exceptions().isEmpty());
