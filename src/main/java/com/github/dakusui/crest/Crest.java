@@ -4,11 +4,14 @@ import com.github.dakusui.crest.core.*;
 import com.github.dakusui.crest.matcherbuilders.*;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
 import com.github.dakusui.crest.utils.printable.Functions;
+import org.junit.AssumptionViolatedException;
+import org.junit.ComparisonFailure;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static com.github.dakusui.crest.core.InternalUtils.composeComparisonText;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -270,25 +273,34 @@ public enum Crest {
     assertThat("", actual, matcher);
   }
 
-  public static <T> void assertThat(String message, T actual, Matcher<? super T> matcher) {
-    Report.assertThat(message, actual, matcher);
-  }
-
   public static <T> void assumeThat(T actual, Matcher<? super T> matcher) {
     assumeThat("", actual, matcher);
   }
 
-  public static <T> void assumeThat(String message, T actual, Matcher<? super T> matcher) {
-    Report.assumeThat(message, actual, matcher);
-  }
 
   public static <T> void requireThat(T actual, Matcher<? super T> matcher) {
     requireThat("", actual, matcher);
   }
 
-  public static <T> void requireThat(String message, T actual, Matcher<? super T> matcher) {
-    Report.requireThat(message, actual, matcher);
+  public static <T> void assertThat(String message, T value, Matcher<? super T> matcher) {
+    Session.perform(
+        message, value, matcher,
+        (msg, r, causes) -> new ComparisonFailure(msg, r.expectation(), r.mismatch())
+    );
   }
 
+  public static <T> void assumeThat(String message, T value, Matcher<? super T> matcher) {
+    Session.perform(
+        message, value, matcher,
+        (msg, r, causes) -> new AssumptionViolatedException(composeComparisonText(msg, r))
+    );
+  }
+
+  public static <T> void requireThat(String message, T value, Matcher<? super T> matcher) {
+    Session.perform(
+        message, value, matcher,
+        (msg, r, causes) -> new ExecutionFailure(msg, r.expectation(), r.mismatch(), causes)
+    );
+  }
 }
 

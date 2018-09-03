@@ -8,7 +8,6 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.AssumptionViolatedException;
 import org.junit.ComparisonFailure;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -500,8 +499,8 @@ public class CrestTest {
     //      return Optional.of(new Description(description));
     //    }
 
-    Report.Session<T> session = Report.Session.create();
-    Report report = Report.<T>perform(actual, matcher, session);
+    Session<T> session = Session.create();
+    Report report = Session.perform(actual, matcher, session);
     if (!report.isSuccessful()) {
       String description = "\nExpected: " +
           String.join("\n", report.expectation()) +
@@ -562,8 +561,8 @@ public class CrestTest {
       );
       System.out.println(description.orElseThrow(RuntimeException::new));
       assertThat(
-          description.<String>get().content,
-          Matchers.<String>containsString("toString(x) =[WORLD] was not met because toString(x)=\"HELLO\"")
+          description.get().content,
+          Matchers.containsString("toString(x) =[WORLD] was not met because toString(x)=\"HELLO\"")
       );
     }
 

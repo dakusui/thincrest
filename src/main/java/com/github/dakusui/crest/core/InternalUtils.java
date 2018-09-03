@@ -65,9 +65,9 @@ public enum InternalUtils {
     );
   }
 
-  public static String getAndFormatValue(Supplier<Object> value) {
+  public static String getAndFormatValue(Supplier<Object> valueSupplier) {
     try {
-      return formatValue(value.get());
+      return formatValue(valueSupplier.get());
     } catch (RuntimeException | Error e) {
       return formatValue(e);
     }

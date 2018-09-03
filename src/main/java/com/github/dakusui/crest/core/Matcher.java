@@ -9,18 +9,18 @@ import java.util.function.Predicate;
 import static java.util.Objects.requireNonNull;
 
 public interface Matcher<T> {
-  boolean matches(T value, Report.Session<T> session, List<Throwable> exceptions);
+  boolean matches(T value, Session<T> session, List<Throwable> exceptions);
 
-  void describeExpectation(Report.Session<T> session);
+  void describeExpectation(Session<T> session);
 
-  void describeMismatch(T value, Report.Session<T> session);
+  void describeMismatch(T value, Session<T> session);
 
   interface Composite<T> extends Matcher<T> {
-    default void describeExpectation(Report.Session<T> session) {
+    default void describeExpectation(Session<T> session) {
       session.describeExpectation(this);
     }
 
-    default void describeMismatch(T value, Report.Session<T> session) {
+    default void describeMismatch(T value, Session<T> session) {
       session.describeMismatch(value, this);
     }
 
@@ -41,7 +41,7 @@ public interface Matcher<T> {
       }
 
       @Override
-      public boolean matches(T value, Report.Session<T> session, List<Throwable> exceptions) {
+      public boolean matches(T value, Session<T> session, List<Throwable> exceptions) {
         List<Throwable> work = new LinkedList<>();
         boolean ret = first();
         for (Matcher<T> eachChild : children())
@@ -134,11 +134,11 @@ public interface Matcher<T> {
   }
 
   interface Leaf<T> extends Matcher<T> {
-    default void describeExpectation(Report.Session<T> session) {
+    default void describeExpectation(Session<T> session) {
       session.describeExpectation(this);
     }
 
-    default void describeMismatch(T value, Report.Session<T> session) {
+    default void describeMismatch(T value, Session<T> session) {
       session.describeMismatch(value, this);
     }
 
@@ -160,7 +160,7 @@ public interface Matcher<T> {
         }
 
         @Override
-        public boolean matches(I value, Report.Session<I> session, List<Throwable> exceptions) {
+        public boolean matches(I value, Session<I> session, List<Throwable> exceptions) {
           try {
             return session.matches(this, value, exceptions::add) && exceptions.isEmpty();
           } catch (Throwable e) {

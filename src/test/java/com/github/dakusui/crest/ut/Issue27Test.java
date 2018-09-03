@@ -2,7 +2,6 @@ package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.core.ExecutionFailure;
-import com.github.dakusui.crest.core.Report;
 import org.junit.ComparisonFailure;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -14,8 +13,24 @@ import static com.github.dakusui.crest.utils.printable.Predicates.matchesRegex;
 @Ignore //WIP
 public class Issue27Test {
   @Test
+  public void stateful() {
+    Crest.assertThat(
+        new StringBuilder(),
+        asObject(
+            call("append", "hello")
+                .andThen("append", "world")
+                .$())
+            .check(
+                call("append", "!").$(),
+                equalTo("HELLOWORLD!")
+            )
+            .$()
+    );
+  }
+
+  @Test
   public void test() {
-    assertThat(
+    Crest.assertThat(
         "WORLD",
         allOf(
             asString("toLowerCase").check(
@@ -29,7 +44,7 @@ public class Issue27Test {
   @Test
   public void simple() {
     try {
-      Report.assertThat("hello",
+      Crest.assertThat("hello",
           "WORLD",
           allOf(
               asString("toLowerCase")
@@ -50,7 +65,7 @@ public class Issue27Test {
   @Test
   public void lessSimple() {
     try {
-      Report.assertThat("hello",
+      Crest.assertThat("hello",
           "WORLD",
           allOf(
               asString(call("toLowerCase").andThen("substring", 1).$())
@@ -71,7 +86,7 @@ public class Issue27Test {
   @Test
   public void error() {
     try {
-      Report.assertThat("hello",
+      Crest.assertThat("hello",
           "WORLD",
           allOf(
               asString(call("toLowerCase").andThen("substring", 1).$())
@@ -89,7 +104,7 @@ public class Issue27Test {
   @Test
   public void error2() {
     try {
-      Report.assertThat("hello",
+      Crest.assertThat("hello",
           "WORLD",
           allOf(
               asString(call("toLowerCase").andThen("substring", 1).$())
