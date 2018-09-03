@@ -83,8 +83,6 @@ public interface Session<T> {
   }
 
   class Impl<T> implements Session<T> {
-    private HashSet<List<Object>> explained = new HashSet<>();
-
     class Writer {
       private int          level  = 0;
       private List<String> buffer = new LinkedList<>();
@@ -117,10 +115,13 @@ public interface Session<T> {
       }
     }
 
-    private static final String VARIABLE_NAME             = "x";
-    private static final String TRANSFORMED_VARIABLE_NAME = "y";
-    Map<Function, Function>   memoizationMapForFunctions  = new HashMap<>();
-    Map<Predicate, Predicate> memoizationMapForPredicates = new HashMap<>();
+    private static final String                    VARIABLE_NAME               = "x";
+    private static final String                    TRANSFORMED_VARIABLE_NAME   = "y";
+    private              Map<Function, Function>   memoizationMapForFunctions  = new HashMap<>();
+    private              Map<Predicate, Predicate> memoizationMapForPredicates = new HashMap<>();
+    private              Map<List<Object>, String> snapshots                   = new HashMap<>();
+    private              HashSet<List<Object>>     explained                   = new HashSet<>();
+
 
     Impl.Writer expectationWriter = new Impl.Writer();
     Impl.Writer mismatchWriter    = new Impl.Writer();
@@ -204,29 +205,7 @@ public interface Session<T> {
       }
       Function<T, ?> func = matcher.func();
       Predicate<?> p = matcher.p();
-      String formattedExpectation = formatExpectation(p, func);
-      String formattedFunction = formatFunction(func, VARIABLE_NAME);
-      String formattedFunctionOutput = getAndFormatValue(() -> this.apply(func, value));
-      if (fails(func, value)) {
-        this.mismatchWriter.appendLine(
-            "%s failed with %s",
-            formattedExpectation,
-            formattedFunctionOutput
-        );
-      } else if (fails(p, value)) {
-        this.mismatchWriter.appendLine(
-            "%s failed with %s",
-            formattedExpectation,
-            getAndFormatValue(() -> this.test((Predicate) p, this.apply(func, value)))
-        );
-      } else {
-        this.mismatchWriter.appendLine(
-            "%s was not met because %s=%s",
-            formattedExpectation,
-            formattedFunction,
-            formattedFunctionOutput
-        );
-      }
+      appendMismatchSummary(value, func, p);
       if (func instanceof Call.ChainedFunction) {
         this.mismatchWriter
             .enter()
@@ -237,8 +216,37 @@ public interface Session<T> {
           this.mismatchWriter.leave();
         }
       }
-      if (p instanceof TransformingPredicate)
-        explainFunction((T) apply(func, value), ((TransformingPredicate) p).function(), TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
+      if (p instanceof TransformingPredicate && !fails(func, value))
+        explainFunction(
+            (T) apply(func, value),
+            ((TransformingPredicate) p).function(),
+            TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
+    }
+
+    private void appendMismatchSummary(T value, Function<T, ?> func, Predicate<?> p) {
+      String formattedExpectation = formatExpectation(p, func);
+      String formattedFunction = formatFunction(func, VARIABLE_NAME);
+      String formattedFunctionOutput = this.snapshots.get(asList(func, value));
+      if (fails(func, value)) {
+        this.mismatchWriter.appendLine(
+            "%s failed with %s",
+            formattedExpectation,
+            formattedFunctionOutput
+        );
+      } else if (fails(p, value)) {
+        this.mismatchWriter.appendLine(
+            "%s failed with %s",
+            formattedExpectation,
+            this.snapshots.get(asList(p, this.apply(func, value)))
+        );
+      } else {
+        this.mismatchWriter.appendLine(
+            "%s was not met because %s=%s",
+            formattedExpectation,
+            formattedFunction,
+            formattedFunctionOutput
+        );
+      }
     }
 
     void describeExpectationTo(Impl.Writer writer, Matcher.Leaf<T> matcher) {
@@ -298,12 +306,23 @@ public interface Session<T> {
     @SuppressWarnings("unchecked")
     @Override
     public <I, O> O apply(Function<I, O> func, I value) {
-      if (func instanceof Call.ChainedFunction) {
-        Call.ChainedFunction cf = (Call.ChainedFunction) func;
-        if (cf.previous() != null)
-          return (O) apply(cf.chained(), apply(cf.previous(), value));
+      Object ret = null;
+      try {
+        if (func instanceof Call.ChainedFunction) {
+          Call.ChainedFunction cf = (Call.ChainedFunction) func;
+          if (cf.previous() != null) {
+            ret = apply(cf.chained(), apply(cf.previous(), value));
+            return (O) ret;
+          }
+        }
+        ret = memoizedFunction(func).apply(value);
+        return (O) ret;
+      } catch (Throwable e) {
+        ret = e;
+        throw rethrow(e);
+      } finally {
+        snapshot(ret, func, value);
       }
-      return memoizedFunction(func).apply(value);
     }
 
     /**
@@ -319,11 +338,21 @@ public interface Session<T> {
     @SuppressWarnings("unchecked")
     @Override
     public <I> boolean test(Predicate<I> pred, I value) {
-      if (pred instanceof TransformingPredicate) {
-        Function func = ((TransformingPredicate) pred).function();
-        return test(((TransformingPredicate) pred).predicate(), apply(func, value));
+      Object ret = null;
+      try {
+        if (pred instanceof TransformingPredicate) {
+          Function func = ((TransformingPredicate) pred).function();
+          ret = test(((TransformingPredicate) pred).predicate(), apply(func, value));
+          return (boolean) ret;
+        }
+        ret = memoizedPredicate(pred).test(value);
+        return (boolean) ret;
+      } catch (Throwable e) {
+        ret = e;
+        throw rethrow(e);
+      } finally {
+        snapshot(ret, pred, value);
       }
-      return memoizedPredicate(pred).test(value);
     }
 
     @Override
@@ -334,20 +363,20 @@ public interface Session<T> {
 
     @SuppressWarnings("unchecked")
     private <I, O> Function<I, O> memoizedFunction(Function<I, O> function) {
-      return memoizationMapForFunctions.computeIfAbsent(function, Impl::memoize);
+      return memoizationMapForFunctions.computeIfAbsent(function, this::memoize);
     }
 
     @SuppressWarnings("unchecked")
     private <I> Predicate<I> memoizedPredicate(Predicate<I> p) {
-      return memoizationMapForPredicates.computeIfAbsent(p, Impl::memoize);
+      return memoizationMapForPredicates.computeIfAbsent(p, this::memoize);
     }
 
-    private static <I, O> Function<I, O> memoize(Function<I, O> function) {
+    private <I, O> Function<I, O> memoize(Function<I, O> function) {
       Map<I, Supplier<O>> memo = new HashMap<>();
-      return i -> memo.computeIfAbsent(i,
-          k -> {
+      return (I i) -> memo.computeIfAbsent(i,
+          (I j) -> {
             try {
-              O result = function.apply(k);
+              O result = function.apply(j);
               return () -> result;
             } catch (RuntimeException | Error e) {
               return () -> {
@@ -360,27 +389,18 @@ public interface Session<T> {
       ).get();
     }
 
-    private static <I> Predicate<I> memoize(Predicate<I> predicate) {
+    private <I> Predicate<I> memoize(Predicate<I> predicate) {
       Map<I, BooleanSupplier> memo = new HashMap<>();
-      return i -> memo.computeIfAbsent(i,
-          k -> {
+      return (I i) -> memo.computeIfAbsent(i,
+          (I j) -> {
             try {
-              boolean result = predicate.test(k);
+              boolean result = predicate.test(j);
               return () -> result;
             } catch (RuntimeException | Error e) {
-              String snapshot = InternalUtils.formatValue(e);
-              return new BooleanSupplier() {
-                @Override
-                public boolean getAsBoolean() {
-                  if (e instanceof RuntimeException)
-                    throw (RuntimeException) e;
-                  throw (Error) e;
-                }
-
-                @Override
-                public String toString() {
-                  return snapshot;
-                }
+              return () -> {
+                if (e instanceof RuntimeException)
+                  throw (RuntimeException) e;
+                throw (Error) e;
               };
             }
           }
@@ -406,7 +426,7 @@ public interface Session<T> {
       } else {
         writer.enter();
         try {
-          writer.appendLine("%s(%s)=%s", func, variableName, getAndFormatValue(() -> this.apply(func, value)));
+          writer.appendLine("%s(%s)=%s", func, variableName, this.snapshots.get(asList(func, value)));
         } finally {
           writer.leave();
         }
@@ -420,10 +440,9 @@ public interface Session<T> {
       try {
         List<String> buffer = new LinkedList<>();
         for (Call.ChainedFunction c = chained; c != null; c = c.previous()) {
-          Call.ChainedFunction finalC = c;
           buffer.add(format("%s=%s",
-              formatFunction(finalC, variableName),
-              getAndFormatValue(() -> this.apply(finalC, value))
+              formatFunction(c, variableName),
+              snapshotOf(c, value)
           ));
         }
         Collections.reverse(buffer);
@@ -431,6 +450,25 @@ public interface Session<T> {
       } finally {
         writer.leave();
       }
+    }
+
+    private <I, O> void snapshot(Object out, Function<I, O> func, I value) {
+      List<Object> key = asList(func, value);
+      if (!snapshots.containsKey(key)) {
+        snapshots.put(key, InternalUtils.formatValue(out));
+      }
+    }
+
+    private <I> void snapshot(Object out, Predicate<I> p, I value) {
+      List<Object> key = asList(p, value);
+      if (!snapshots.containsKey(key)) {
+        snapshots.put(key, InternalUtils.formatValue(out));
+      }
+    }
+
+    private <I> String snapshotOf(Function func, I value) {
+      List<Object> key = asList(func, value);
+      return this.snapshots.get(key);
     }
 
     private static String formatExpectation(Predicate p, Function function) {

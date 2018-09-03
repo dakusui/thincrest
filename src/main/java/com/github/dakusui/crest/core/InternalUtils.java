@@ -10,7 +10,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -63,14 +62,6 @@ public enum InternalUtils {
         methodName,
         args
     );
-  }
-
-  public static String getAndFormatValue(Supplier<Object> valueSupplier) {
-    try {
-      return formatValue(valueSupplier.get());
-    } catch (RuntimeException | Error e) {
-      return formatValue(e);
-    }
   }
 
   /*
@@ -408,5 +399,13 @@ public enum InternalUtils {
 
   public static String composeComparisonText(String message, Report report) {
     return new ComparisonFailure(message, report.expectation(), report.mismatch()).getMessage();
+  }
+
+  static  RuntimeException rethrow(Throwable e) {
+    if (e instanceof RuntimeException)
+      throw (RuntimeException) e;
+    if (e instanceof Error)
+      throw (Error) e;
+    return new RuntimeException(e);
   }
 }
