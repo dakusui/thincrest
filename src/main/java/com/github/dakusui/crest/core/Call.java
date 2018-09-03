@@ -14,7 +14,7 @@ import static java.util.Objects.requireNonNull;
  * That is, you can build a function that does following if a StringBuilder is given as
  * its input,
  * {@code
- *   (StringBuilder b) -> b.append("hello").append(1).append("world").append("everyone").toString()
+ * (StringBuilder b) -> b.append("hello").append(1).append("world").append("everyone").toString()
  * }
  * By following code,
  * {@code
@@ -28,9 +28,9 @@ import static java.util.Objects.requireNonNull;
  * The benefit of using this class is to be able to print what you are going to do
  * in a pretty format in "Crest" library's output. If you call {@code toString}
  * method on the {@code func} object, you will get,
- *
+ * <p>
  * {@code
- *   "@append[hello]->@append[1]->@append[everyone]->@toString[]"
+ * "@append[hello]->@append[1]->@append[everyone]->@toString[]"
  * }
  * <p>
  * , which is far more understandable than a string that you will get for a function
@@ -124,6 +124,88 @@ public interface Call {
     return new Call.Impl(null, object, methodName, args);
   }
 
+  interface ChainedFunction<T, R> extends Function<T, R> {
+    @Override
+    <V> ChainedFunction<T, V> andThen(Function<? super R, ? extends V> after);
+
+    ChainedFunction<?, ?> previous();
+
+    Function<?, R> chained();
+
+    static <T, S, R> ChainedFunction<T, R> chain(ChainedFunction<? super T, ? extends S> function, Function<? super S, ? extends R> next) {
+      return new Impl<T, S, R>(function, next);
+    }
+
+    static <T, R> ChainedFunction<T, R> create(Function<? super T, R> func) {
+      return new ChainedFunction<T, R>() {
+        @Override
+        public <V> ChainedFunction<T, V> andThen(Function<? super R, ? extends V> after) {
+          return chain(this, after);
+        }
+
+        @Override
+        public ChainedFunction<T, ?> previous() {
+          return null;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Function<T, R> chained() {
+          return (Function<T, R>) func;
+        }
+
+        @Override
+        public R apply(T t) {
+          return chained().apply(t);
+        }
+
+        @Override
+        public String toString() {
+          return chained().toString();
+        }
+      };
+    }
+
+    class Impl<T, S, R> implements ChainedFunction<T, R> {
+
+      private final Function<? super S, ? extends R>        func;
+      private final ChainedFunction<? super T, ? extends S> previous;
+
+      Impl(ChainedFunction<? super T, ? extends S> previous, Function<? super S, ? extends R> func) {
+        this.previous = previous;
+        this.func = requireNonNull(func);
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public R apply(T t) {
+        return this.chained().apply(this.previous().apply(t));
+      }
+
+      @Override
+      public <V> ChainedFunction<T, V> andThen(Function<? super R, ? extends V> after) {
+        return ChainedFunction.chain(this, after);
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public ChainedFunction<T, S> previous() {
+        return (ChainedFunction<T, S>) previous;
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public Function<S, R> chained() {
+        return (Function<S, R>) func;
+      }
+
+      @Override
+      public String toString() {
+        return previous().toString() + "->" + chained().toString();
+      }
+    }
+  }
+
   class Impl implements Call {
     private final String   methodName;
     private final Object[] args;
@@ -147,13 +229,16 @@ public interface Call {
     public <T> Function<Object, T> build() {
       return this.parent == null
           ? toFunction()
-          : this.parent.$().andThen(toFunction());
+          : this.parent.build().andThen(toFunction());
     }
 
+    @SuppressWarnings("unchecked")
     private Function toFunction() {
-      return this.object instanceof Class
-          ? Function.class.cast(Functions.invokeStatic((Class) this.object, methodName, args))
-          : Function.class.cast(Functions.invokeOn(this.object, methodName, args));
+      return ChainedFunction.create(
+          this.object instanceof Class
+              ? Function.class.cast(Functions.invokeStatic((Class) this.object, methodName, args))
+              : Function.class.cast(Functions.invokeOn(this.object, methodName, args))
+      );
     }
   }
 }

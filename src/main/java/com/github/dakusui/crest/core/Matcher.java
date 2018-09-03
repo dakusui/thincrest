@@ -1,98 +1,69 @@
 package com.github.dakusui.crest.core;
 
-import com.github.dakusui.crest.functions.TransformingPredicate;
-
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 
 public interface Matcher<T> {
-  boolean matches(T value, Assertion<? extends T> session);
+  boolean matches(T value, Session<T> session, List<Throwable> exceptions);
 
-  List<String> describeExpectation(Assertion<? extends T> session);
+  void describeExpectation(Session<T> session);
 
-  List<String> describeMismatch(T value, Assertion<? extends T> session);
+  void describeMismatch(T value, Session<T> session);
 
   interface Composite<T> extends Matcher<T> {
+    default void describeExpectation(Session<T> session) {
+      session.describeExpectation(this);
+    }
+
+    default void describeMismatch(T value, Session<T> session) {
+      session.describeMismatch(value, this);
+    }
+
+    boolean isTopLevel();
+
+    List<Matcher<T>> children();
+
+    String name();
+
     abstract class Base<T> implements Composite<T> {
       private final List<Matcher<T>> children;
       private final boolean          topLevel;
 
       @SuppressWarnings("unchecked")
-      public Base(boolean topLevel, List<Matcher<? super T>> children) {
+      protected Base(boolean topLevel, List<Matcher<? super T>> children) {
         this.children = (List<Matcher<T>>) Collections.<T>unmodifiableList((List<? extends T>) requireNonNull(children));
         this.topLevel = topLevel;
       }
 
       @Override
-      public boolean matches(T value, Assertion<? extends T> session) {
+      public boolean matches(T value, Session<T> session, List<Throwable> exceptions) {
+        List<Throwable> work = new LinkedList<>();
         boolean ret = first();
         for (Matcher<T> eachChild : children())
-          ret = op(ret, eachChild.matches(value, session));
-        return ret && session.exceptions().isEmpty();
+          ret = op(ret, eachChild.matches(value, session, work));
+        exceptions.addAll(work);
+        return ret && work.isEmpty();
       }
 
       @Override
-      public List<String> describeExpectation(Assertion<? extends T> session) {
-        return new LinkedList<String>() {{
-          add(String.format("%s:[", name()));
-          children().forEach(
-              (Matcher<T> eachChild) -> {
-                List<String> formattedExpectation = eachChild.describeExpectation(session);
-                if (formattedExpectation.size() == 1)
-                  add(String.format("  %s", formattedExpectation.get(0)));
-                else {
-                  addAll(indent(formattedExpectation));
-                }
-              }
-          );
-          add("]");
-        }};
+      public boolean isTopLevel() {
+        return this.topLevel;
       }
 
       @Override
-      public List<String> describeMismatch(T value, Assertion<? extends T> session) {
-        return new LinkedList<String>() {{
-          if (topLevel)
-            add(String.format("when x=%s; then %s:[", InternalUtils.formatValue(value), name()));
-          else
-            add(String.format("%s:[", name()));
-          for (Matcher<T> eachChild : children()) {
-            if (eachChild.matches(value, session))
-              addAll(indent(eachChild.describeExpectation(session)));
-            else
-              addAll(indent(eachChild.describeMismatch(value, session)));
-          }
-          add(String.format("]->%s", matches(value, session)));
-          session.exceptions().forEach(
-              e -> {
-                add(e.getMessage());
-                addAll(
-                    indent(Arrays.stream(e.getStackTrace()).map(
-                        StackTraceElement::toString
-                    ).collect(toList())));
-              }
-          );
-        }};
-      }
-
-      List<String> indent(List<String> in) {
-        return in.stream().map(s -> "  " + s).collect(toList());
-      }
-
-      List<Matcher<T>> children() {
+      public List<Matcher<T>> children() {
         return this.children;
       }
-
-      abstract protected String name();
 
       abstract protected boolean first();
 
       abstract protected boolean op(boolean current, boolean next);
+
     }
   }
 
@@ -101,7 +72,7 @@ public interface Matcher<T> {
     static <T> Matcher<T> create(boolean topLevel, List<Matcher<? super T>> matchers) {
       return new Conjunctive.Base<T>(topLevel, matchers) {
         @Override
-        protected String name() {
+        public String name() {
           return "and";
         }
 
@@ -124,7 +95,7 @@ public interface Matcher<T> {
       return new Composite.Base<T>(topLevel, matchers) {
 
         @Override
-        protected String name() {
+        public String name() {
           return "or";
         }
 
@@ -145,7 +116,7 @@ public interface Matcher<T> {
     static <T> Matcher<T> create(Matcher<? super T> matcher) {
       return new Composite.Base<T>(true, Collections.singletonList(matcher)) {
         @Override
-        protected String name() {
+        public String name() {
           return "not";
         }
 
@@ -163,64 +134,38 @@ public interface Matcher<T> {
   }
 
   interface Leaf<T> extends Matcher<T> {
-    static <I, O> Matcher<I> create(Predicate<? super O> p, Function<? super I, ? extends O> function) {
-      return new Matcher<I>() {
-        @SuppressWarnings({ "unchecked", "SimplifiableConditionalExpression" })
-        @Override
-        public boolean matches(I value, Assertion<? extends I> session) {
-          return session.thrownExceptionFor(function, value).isPresent()
-              ? false
-              : session.test((Predicate<Object>) p, session.apply(function, value));
-        }
+    default void describeExpectation(Session<T> session) {
+      session.describeExpectation(this);
+    }
 
+    default void describeMismatch(T value, Session<T> session) {
+      session.describeMismatch(value, this);
+    }
+
+    Predicate<?> p();
+
+    Function<T, ?> func();
+
+    static <I, O> Leaf<I> create(Predicate<? super O> p, Function<? super I, ? extends O> function) {
+      return new Leaf<I>() {
         @Override
-        public List<String> describeExpectation(Assertion<? extends I> session) {
-          return singletonList(formatExpectation(p, function));
+        public Predicate<?> p() {
+          return p;
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public List<String> describeMismatch(I value, Assertion<? extends I> session) {
-          @SuppressWarnings("unchecked") Optional<Throwable> exception = session.thrownExceptionFor(function, value);
-          exception = exception.isPresent()
-              ? exception
-              : session.thrownExceptionFor((Predicate<? super I>) p, (I) session.apply(function, value));
-          return exception.map(throwable -> singletonList(String.format(
-              "%s failed with %s(%s)",
-              formatExpectation(p, function),
-              throwable.getClass().getCanonicalName(),
-              throwable.getMessage()
-          ))).orElseGet(() -> {
-            if (p instanceof TransformingPredicate) {
-              TransformingPredicate pp = (TransformingPredicate) p;
-              return singletonList(String.format(
-                  "%s%s was not met because %s=%s; %s=%s",
-                  formatExpectation(p, function),
-                  pp.name().isPresent() ? "," : "",
-                  InternalUtils.formatFunction(pp.function(), InternalUtils.formatFunction(function, "x")),
-                  InternalUtils.formatValue(session.apply(pp.function(), session.apply(function, value))),
-                  InternalUtils.formatFunction(function, "x"),
-                  InternalUtils.formatValue(session.apply(function, value))
-              ));
-            }
-            return singletonList(String.format(
-                "%s was not met because %s=%s",
-                formatExpectation(p, function),
-                InternalUtils.formatFunction(function, "x"),
-                InternalUtils.formatValue(session.apply(function, value))));
-          });
+        public Function<I, ?> func() {
+          return (Function<I, ?>) function;
         }
 
-        String formatExpectation(Predicate p, Function function) {
-          if (p instanceof TransformingPredicate) {
-            TransformingPredicate pp = (TransformingPredicate) p;
-            return String.format("%s%s %s",
-                pp.name().isPresent() ?
-                    pp.name().get() + ", i.e. " :
-                    "",
-                InternalUtils.formatFunction(pp.function(), InternalUtils.formatFunction(function, "x")), pp.predicate());
-          } else
-            return String.format("%s %s", InternalUtils.formatFunction(function, "x"), p.toString());
+        @Override
+        public boolean matches(I value, Session<I> session, List<Throwable> exceptions) {
+          try {
+            return session.matches(this, value, exceptions::add) && exceptions.isEmpty();
+          } catch (Throwable e) {
+            return false;
+          }
         }
       };
     }
