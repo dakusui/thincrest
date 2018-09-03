@@ -1,13 +1,16 @@
 package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.utils.printable.Functions.MethodSelector;
+import org.junit.ComparisonFailure;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -15,6 +18,9 @@ import static java.util.stream.Collectors.toList;
 
 public enum InternalUtils {
   ;
+
+  public static final Consumer NOP = e -> {
+  };
 
   /**
    * Tries to find a method whose name is {@code methodName} from a given class {@code aClass}
@@ -59,6 +65,14 @@ public enum InternalUtils {
     );
   }
 
+  public static String getAndFormatValue(Supplier<Object> value) {
+    try {
+      return formatValue(value.get());
+    } catch (RuntimeException | Error e) {
+      return formatValue(e);
+    }
+  }
+
   /*
    * Based on BaseDescription#appendValue() of Hamcrest
    *
@@ -79,7 +93,19 @@ public enum InternalUtils {
       return String.format("<%sF>", value);
     if (value.getClass().isArray())
       return arrayToString(value);
-    return format("[%s]", summarize(value));
+    if (value instanceof Throwable)
+      return formatThrowable(getRootCause((Throwable) value));
+    return format("<%s>", summarize(value));
+  }
+
+  private static Throwable getRootCause(Throwable throwable) {
+    if (throwable.getCause() == null)
+      return throwable;
+    return getRootCause(throwable.getCause());
+  }
+
+  private static String formatThrowable(Throwable throwable) {
+    return String.format("%s(%s)", throwable.getClass().getCanonicalName(), throwable.getMessage());
   }
 
   @SuppressWarnings("unchecked")
@@ -100,6 +126,11 @@ public enum InternalUtils {
     }
     if (value instanceof Object[])
       return summarize(asList((Object[]) value));
+    if (value instanceof String) {
+      String s = (String) value;
+      if (s.length() > 20)
+        return s.substring(0, 12) + "..." + s.substring(s.length() - 5);
+    }
     String ret = value.toString();
     return ret.contains("$")
         ? ret.substring(ret.lastIndexOf("$") + 1)
@@ -373,5 +404,9 @@ public enum InternalUtils {
     default:
       return Character.toString(ch);
     }
+  }
+
+  public static String composeComparisonText(String message, Report report) {
+    return new ComparisonFailure(message, report.expectation(), report.mismatch()).getMessage();
   }
 }

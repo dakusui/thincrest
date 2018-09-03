@@ -92,7 +92,7 @@ public class InternalUtilsTest extends TestBase {
   public void givenNull$formatValue$thenCorrectlyFormatted() {
     assertEquals(
         "null",
-        InternalUtils.formatValue(null)
+        InternalUtils.formatValue((Object) null)
     );
   }
 

@@ -1,9 +1,6 @@
 package com.github.dakusui.crest;
 
-import com.github.dakusui.crest.core.Assertion;
-import com.github.dakusui.crest.core.Call;
-import com.github.dakusui.crest.core.InternalUtils;
-import com.github.dakusui.crest.core.Matcher;
+import com.github.dakusui.crest.core.*;
 import com.github.dakusui.crest.matcherbuilders.*;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
 import com.github.dakusui.crest.utils.printable.Functions;
@@ -27,7 +24,7 @@ public enum Crest {
    * <pre>assertThat("myValue", allOf(startsWith("my"), containsString("Val")))</pre>
    *
    * @param matchers Child matchers.
-   * @param <T> Type of the value to be matched with the returned matcher.
+   * @param <T>      Type of the value to be matched with the returned matcher.
    * @return A matcher that matches when all of given {@code matchers} match.
    */
   @SuppressWarnings("unchecked")
@@ -42,7 +39,7 @@ public enum Crest {
    * <pre>assertThat("myValue", anyOf(startsWith("my"), containsString("Val")))</pre>
    *
    * @param matchers Child matchers.
-   * @param <T> Type of the value to be matched with the returned matcher.
+   * @param <T>      Type of the value to be matched with the returned matcher.
    * @return A matcher that matches when any of given {@code matchers} matches.
    */
   @SuppressWarnings("unchecked")
@@ -60,7 +57,7 @@ public enum Crest {
   public static <T> Matcher<T> noneOf(Matcher... matcher) {
     return new Matcher.Composite.Base<T>(true, Arrays.asList(matcher)) {
       @Override
-      protected String name() {
+      public String name() {
         return "noneOf";
       }
 
@@ -274,23 +271,23 @@ public enum Crest {
   }
 
   public static <T> void assertThat(String message, T actual, Matcher<? super T> matcher) {
-    Assertion.assertThat(message, actual, matcher);
+    Report.assertThat(message, actual, matcher);
   }
 
   public static <T> void assumeThat(T actual, Matcher<? super T> matcher) {
-    Assertion.assumeThat("", actual, matcher);
+    assumeThat("", actual, matcher);
   }
 
   public static <T> void assumeThat(String message, T actual, Matcher<? super T> matcher) {
-    Assertion.assumeThat(message, actual, matcher);
+    Report.assumeThat(message, actual, matcher);
   }
 
   public static <T> void requireThat(T actual, Matcher<? super T> matcher) {
-    Assertion.requireThat("", actual, matcher);
+    requireThat("", actual, matcher);
   }
 
   public static <T> void requireThat(String message, T actual, Matcher<? super T> matcher) {
-    Assertion.requireThat(message, actual, matcher);
+    Report.requireThat(message, actual, matcher);
   }
 
 }
