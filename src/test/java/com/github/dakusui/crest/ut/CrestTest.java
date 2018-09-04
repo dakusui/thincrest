@@ -29,11 +29,6 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(Enclosed.class)
 public class CrestTest {
-  public static <T> Report reoport(String messageOnFailure, Matcher<? super T> matcher) {
-    //  return new Assertion.Impl<>(messageOnFailure, matcher);
-    return null;
-  }
-
   static class Description {
     private final String content;
 

@@ -206,21 +206,36 @@ public interface Session<T> {
       Function<T, ?> func = matcher.func();
       Predicate<?> p = matcher.p();
       appendMismatchSummary(value, func, p);
-      if (func instanceof Call.ChainedFunction) {
+      // if p is plain predicate
+      //    p(func(x)) == true
+      // -> In this case, no additional information can be printed for p
+
+      // if p is transforming predicate
+      //    p(y) == true
+      //    y    =  f(func(x))
+      // -> In this case, how p worked can be broken down into p(y) side and
+      //    f(func(x)) side.
+      if (p instanceof TransformingPredicate && !fails(func, value)) {
         this.mismatchWriter
             .enter()
             .appendLine("%s=%s(%s)", TRANSFORMED_VARIABLE_NAME, func, VARIABLE_NAME);
         try {
+          // This doesn't give additional information if func isn't a chained function
+          // but still makes easier to read the output.
           explainFunction(value, func, VARIABLE_NAME, this.mismatchWriter);
         } finally {
           this.mismatchWriter.leave();
         }
-      }
-      if (p instanceof TransformingPredicate && !fails(func, value))
         explainFunction(
             (T) apply(func, value),
             ((TransformingPredicate) p).function(),
             TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
+      }
+      // If func is a chained function, additional information can be printed.
+      // Otherwise the summary contains func's result already.
+      if (func instanceof Call.ChainedFunction) {
+        explainFunction(value, func, VARIABLE_NAME, this.mismatchWriter);
+      }
     }
 
     private void appendMismatchSummary(T value, Function<T, ?> func, Predicate<?> p) {
@@ -417,11 +432,11 @@ public interface Session<T> {
 
     @SuppressWarnings("unchecked")
     private void explainFunction(T value, Function<T, ?> func, String variableName, Impl.Writer writer) {
-      if (isAlreadyExplained(value, func, variableName)) {
-        writer.enter().appendLine("%s(%s)=(EXPLAINED)", func, variableName).leave();
-        return;
-      }
       if (func instanceof Call.ChainedFunction) {
+        if (isAlreadyExplained(value, func, variableName)) {
+          writer.enter().appendLine("%s(%s)=(EXPLAINED)", func, variableName).leave();
+          return;
+        }
         explainChainedFunction(value, (Call.ChainedFunction) func, variableName, writer);
       } else {
         writer.enter();

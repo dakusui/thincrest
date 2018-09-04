@@ -50,20 +50,21 @@ public class Issue27Test extends TestBase {
     try {
       Crest.assertThat(
           "WORLD",
-          allOf(
-              asString("toLowerCase").check(
-                  call("toUpperCase").andThen("substring", 2).andThen("charAt", 1).$(),
-                  equalTo('z')
-              ).$())
+          asString("toLowerCase").check(
+              call("toUpperCase").andThen("substring", 2).andThen("charAt", 1).$(),
+              equalTo('z')
+          ).$()
       );
     } catch (ComparisonFailure e) {
       System.out.println("ACTUAL:" + e.getActual());
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("    @toUpperCase[](y)=\"WORLD\"\n"
-              + "    @toUpperCase[]->@substring[2](y)=\"RLD\"\n"
-              + "    @toUpperCase[]->@substring[2]->@charAt[1](y)=\"L\"")
+          CoreMatchers.containsString("  y=@toLowerCase[](x)\n"
+              + "    @toLowerCase[](x)=\"world\"\n"
+              + "  @toUpperCase[](y)=\"WORLD\"\n"
+              + "  @toUpperCase[]->@substring[2](y)=\"RLD\"\n"
+              + "  @toUpperCase[]->@substring[2]->@charAt[1](y)=\"L\"")
       );
       throw new IOException();
     }
@@ -86,7 +87,9 @@ public class Issue27Test extends TestBase {
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("    @toUpperCase[](y)=\"WORLD\"\n"
+          CoreMatchers.containsString("    y=@toLowerCase[](x)\n"
+              + "      @toLowerCase[](x)=\"world\"\n"
+              + "    @toUpperCase[](y)=\"WORLD\"\n"
               + "    @toUpperCase[]->@substring[2](y)=\"RLD\"\n"
               + "    @toUpperCase[]->@substring[2]->@charAt[1](y)=\"L\"")
       );
@@ -110,7 +113,9 @@ public class Issue27Test extends TestBase {
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("    @toUpperCase[](y)=\"WORLD\"\n"
+          CoreMatchers.containsString("    y=@toLowerCase[](x)\n"
+              + "      @toLowerCase[](x)=\"world\"\n"
+              + "    @toUpperCase[](y)=\"WORLD\"\n"
               + "    @toUpperCase[]->@substring[2](y)=\"RLD\"\n"
               + "    @toUpperCase[]->@substring[2]->@charAt[1](y)=\"L\"")
       );
@@ -137,7 +142,7 @@ public class Issue27Test extends TestBase {
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("    y=@toLowerCase[]->@substring[1](x)\n"
+          CoreMatchers.containsString("  y=@toLowerCase[]->@substring[1](x)\n"
               + "      @toLowerCase[](x)=\"world\"\n"
               + "      @toLowerCase[]->@substring[1](x)=\"orld\"\n"
               + "    @replaceAll[d, DDD](y)=\"orlDDD\"\n"
@@ -185,9 +190,9 @@ public class Issue27Test extends TestBase {
       e.printStackTrace(System.out);
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("  y=@toLowerCase[]->@substring[-1](x)\n"
-              + "    @toLowerCase[](x)=\"world\"\n"
-              + "    @toLowerCase[]->@substring[-1](x)=java.lang.StringIndexOutOfBoundsException(String index out of range: -1)")
+          CoreMatchers.containsString("  @toLowerCase[](x)=\"world\"\n"
+              + "  @toLowerCase[]->@substring[-1](x)=java.lang.StringIndexOutOfBoundsException(String index out of range: -1)\n"
+              + "FAILED")
       );
       throw new IOException(e);
     }
