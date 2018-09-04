@@ -98,7 +98,7 @@ public interface Session<T> {
       }
 
       Impl.Writer appendLine(String format, Object... args) {
-        buffer.add(indent(this.level) + format(format, args));
+        buffer.add(String.format(indent(this.level) + format, args));
         return this;
       }
 
@@ -265,19 +265,19 @@ public interface Session<T> {
     }
 
     void describeExpectationTo(Impl.Writer writer, Matcher.Leaf<T> matcher) {
-      writer.appendLine(formatExpectation(matcher.p(), matcher.func()));
+      writer.appendLine("%s", formatExpectation(matcher.p(), matcher.func()));
     }
 
     void beginMismatch(T value, Matcher.Composite<T> matcher) {
       if (matcher.isTopLevel())
-        this.mismatchWriter.appendLine(format("when %s=%s; then %s:[", VARIABLE_NAME, formatValue(value), matcher.name()));
+        this.mismatchWriter.appendLine("when %s=%s; then %s:[", VARIABLE_NAME, formatValue(value), matcher.name());
       else
-        this.mismatchWriter.appendLine(format("%s:[", matcher.name()));
+        this.mismatchWriter.appendLine("%s:[", matcher.name());
       mismatchWriter.enter();
     }
 
     void endMismatch(T value, Matcher.Composite<T> matcher) {
-      this.mismatchWriter.leave().appendLine(format("]->%s", matcher.matches(value, this, new LinkedList<>())));
+      this.mismatchWriter.leave().appendLine("]->%s", matcher.matches(value, this, new LinkedList<>()));
     }
 
 
@@ -461,7 +461,7 @@ public interface Session<T> {
           ));
         }
         Collections.reverse(buffer);
-        buffer.forEach(each -> writer.appendLine(each));
+        buffer.forEach(each -> writer.appendLine("%s", each));
       } finally {
         writer.leave();
       }
