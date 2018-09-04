@@ -2,6 +2,7 @@ package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.utils.printable.Functions;
 
+import java.util.Arrays;
 import java.util.function.Function;
 
 import static com.github.dakusui.crest.utils.printable.Functions.THIS;
@@ -122,6 +123,38 @@ public interface Call {
    */
   static Call createOn(Object object, String methodName, Object... args) {
     return new Call.Impl(null, object, methodName, args);
+  }
+
+  interface Arg<T> {
+    Class<T> type();
+
+    T value();
+
+    static <T> Arg<T> of(Class<T> type, T value) {
+      return new Arg<T>() {
+        @Override
+        public Class<T> type() {
+          return type;
+        }
+
+        @Override
+        public T value() {
+          return value;
+        }
+
+        @Override
+        public String toString() {
+          return String.format(
+              "%s %s",
+              type.getSimpleName(),
+              value == null
+                  ? null
+                  : value.getClass().isArray()
+                  ? Arrays.toString((Object[]) value)
+                  : value);
+        }
+      };
+    }
   }
 
   interface ChainedFunction<T, R> extends Function<T, R> {

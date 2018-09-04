@@ -1,5 +1,6 @@
 package com.github.dakusui.crest.core;
 
+import com.github.dakusui.crest.core.Call.Arg;
 import com.github.dakusui.crest.utils.printable.Functions.MethodSelector;
 import org.junit.ComparisonFailure;
 
@@ -285,10 +286,21 @@ public enum InternalUtils {
           return false;
         else
           continue;
+      if (args[i] instanceof Arg)
+        if (isCompatibleWith(((Arg) args[0]).type(), formalParameters[i]))
+          continue;
+        else
+          return false;
       if (!toPrimitiveIfWrapper(formalParameters[i]).isAssignableFrom(toPrimitiveIfWrapper(toClass(args[i]))))
         return false;
     }
     return true;
+  }
+
+  private static boolean isCompatibleWith(Class<?> actualArgumentType, Class<?> formalParameterType) {
+    if (formalParameterType.isAssignableFrom(actualArgumentType))
+      return true;
+    return toPrimitiveIfWrapper(formalParameterType).isAssignableFrom(actualArgumentType);
   }
 
 
@@ -401,7 +413,7 @@ public enum InternalUtils {
     return new ComparisonFailure(message, report.expectation(), report.mismatch()).getMessage();
   }
 
-  static  RuntimeException rethrow(Throwable e) {
+  static RuntimeException rethrow(Throwable e) {
     if (e instanceof RuntimeException)
       throw (RuntimeException) e;
     if (e instanceof Error)

@@ -1,5 +1,6 @@
 package com.github.dakusui.crest.utils.printable;
 
+import com.github.dakusui.crest.core.Call;
 import com.github.dakusui.crest.core.InternalUtils;
 
 import java.lang.reflect.Method;
@@ -200,7 +201,14 @@ public enum Functions {
         on == THIS
             ? () -> String.format("@%s%s", methodName, summarize(args))
             : () -> String.format("%s@%s%s", on, methodName, summarize(args)),
-        (I target) -> InternalUtils.invokeMethod(replaceTarget(on, target), methodName, replaceTargetInArray(target, expandVarArgsInArray(args)))
+        (I target) -> InternalUtils.invokeMethod(
+            replaceTarget(on, target),
+            methodName,
+            replaceTargetInArray(
+                target,
+                replaceArgInArray(
+                    expandVarArgsInArray(args)
+                )))
     );
   }
 
@@ -208,8 +216,14 @@ public enum Functions {
   public static <I, E> Function<? super I, ? extends E> invokeStatic(Class klass, String methodName, Object... args) {
     return Printable.function(
         () -> String.format("@%s.%s%s", klass.getSimpleName(), methodName, summarize(args)),
-        (I target) -> InternalUtils.invokeStaticMethod(klass, methodName, replaceTargetInArray(target, expandVarArgsInArray(args)))
-    );
+        (I target) -> InternalUtils.invokeStaticMethod(
+            klass,
+            methodName,
+            replaceTargetInArray(
+                target,
+                replaceArgInArray(
+                    expandVarArgsInArray(args)
+                ))));
   }
 
   private static Object[] expandVarArgsInArray(Object[] args) {
@@ -226,6 +240,14 @@ public enum Functions {
       }
     }
     return args;
+  }
+
+  private static Object[] replaceArgInArray(Object[] args) {
+    return Arrays.stream(args)
+        .map(e -> e instanceof Call.Arg
+            ? ((Call.Arg) e).value()
+            : e)
+        .toArray();
   }
 
   private static Object[] replaceTargetInArray(Object target, Object[] args) {
