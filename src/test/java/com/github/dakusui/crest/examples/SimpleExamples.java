@@ -4,12 +4,10 @@ import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.utils.printable.Functions;
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static com.github.dakusui.crest.Crest.*;
 import static com.github.dakusui.crest.utils.printable.Functions.size;
@@ -470,9 +468,10 @@ public class SimpleExamples {
     );
   }
 
+  @SuppressWarnings("RedundantCollectionOperation")
   public static void main(String... args) {
-    System.out.println("empty.contrainsAll(empty):" +  Collections.emptyList().containsAll(Collections.emptyList()));
-    System.out.println("nonEmpty.contrainsAll(empty):" +  Collections.singletonList("a").containsAll(Collections.emptyList()));
-    System.out.println("empty.contrainsAll(nonEmpty):" +  Collections.emptyList().containsAll(Collections.singleton("a")));
+    System.out.println("empty.contrainsAll(empty):" + Collections.emptyList().containsAll(Collections.emptyList()));
+    System.out.println("nonEmpty.contrainsAll(empty):" + Collections.singletonList("a").containsAll(Collections.emptyList()));
+    System.out.println("empty.contrainsAll(nonEmpty):" + Collections.emptyList().containsAll(Collections.singleton("a")));
   }
 }
