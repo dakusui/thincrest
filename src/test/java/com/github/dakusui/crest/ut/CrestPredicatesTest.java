@@ -53,7 +53,7 @@ public class CrestPredicatesTest {
 
     @Test
     public void whenToString$thenLooksGood() {
-      assertEquals("=[123]", Predicates.eq(123).toString());
+      assertEquals("~[123]", Predicates.eq(123).toString());
     }
   }
 

@@ -14,35 +14,35 @@ public enum Predicates {
   ;
 
   public static <T> Predicate<T> alwaysTrue() {
-    return Printable.predicate("@alwaysTrue", t -> true);
+    return Printable.predicate("alwaysTrue", t -> true);
   }
 
   public static Predicate<? super Boolean> isTrue() {
-    return Printable.predicate("@isTrue", (Boolean v) -> v);
+    return Printable.predicate("isTrue", (Boolean v) -> v);
   }
 
   public static Predicate<Boolean> isFalse() {
-    return Printable.predicate("@isFalse", (Boolean v) -> !v);
+    return Printable.predicate("isFalse", (Boolean v) -> !v);
   }
 
   public static <T> Predicate<T> isNull() {
-    return Printable.predicate("@isNull", Objects::isNull);
+    return Printable.predicate("isNull", Objects::isNull);
   }
 
   public static <T> Predicate<T> isNotNull() {
-    return Printable.predicate("@isNotNull", Objects::nonNull);
+    return Printable.predicate("isNotNull", Objects::nonNull);
   }
 
   public static <T> Predicate<T> equalTo(T value) {
     return Printable.predicate(
-        () -> String.format("@equalTo[%s]", value),
+        () -> String.format("equalTo[%s]", value),
         v -> Objects.equals(v, value)
     );
   }
 
   public static <T> Predicate<? super T> isSameAs(T value) {
     return Printable.predicate(
-        () -> String.format("@==[%s]", value),
+        () -> String.format("==[%s]", value),
         v -> v == value
     );
   }
@@ -52,7 +52,7 @@ public enum Predicates {
     requireNonNull(value);
     //noinspection SimplifiableConditionalExpression
     return Printable.predicate(
-        () -> String.format("@isInstanceOf[%s]", value.getCanonicalName()),
+        () -> String.format("isInstanceOf[%s]", value.getCanonicalName()),
         v -> v == null ?
             false :
             value.isAssignableFrom(v.getClass())
@@ -61,35 +61,35 @@ public enum Predicates {
 
   public static <T extends Comparable<? super T>> Predicate<? super T> gt(T value) {
     return Printable.predicate(
-        () -> String.format("@>[%s]", value),
+        () -> String.format(">[%s]", value),
         v -> v.compareTo(value) > 0
     );
   }
 
   public static <T extends Comparable<? super T>> Predicate<? super T> ge(T value) {
     return Printable.predicate(
-        () -> String.format("@>=[%s]", value),
+        () -> String.format(">=[%s]", value),
         v -> v.compareTo(value) >= 0
     );
   }
 
   public static <T extends Comparable<? super T>> Predicate<? super T> lt(T value) {
     return Printable.predicate(
-        () -> String.format("@<[%s]", value),
+        () -> String.format("<[%s]", value),
         v -> v.compareTo(value) < 0
     );
   }
 
   public static <T extends Comparable<? super T>> Predicate<? super T> le(T value) {
     return Printable.predicate(
-        () -> String.format("@<=[%s]", value),
+        () -> String.format("<=[%s]", value),
         v -> v.compareTo(value) <= 0
     );
   }
 
   public static <T extends Comparable<? super T>> Predicate<? super T> eq(T value) {
     return Printable.predicate(
-        () -> String.format("@~[%s]", value),
+        () -> String.format("~[%s]", value),
         v -> v.compareTo(value) == 0
     );
   }
@@ -97,7 +97,7 @@ public enum Predicates {
   public static Predicate<? super String> matchesRegex(String regex) {
     requireNonNull(regex);
     return Printable.predicate(
-        () -> String.format("@matchesRegex[%s]", regex),
+        () -> String.format("matchesRegex[%s]", regex),
         s -> s.matches(regex)
     );
   }
@@ -105,7 +105,7 @@ public enum Predicates {
   public static Predicate<? super String> containsString(String string) {
     requireNonNull(string);
     return Printable.predicate(
-        () -> String.format("@containsString[%s]", string),
+        () -> String.format("containsString[%s]", string),
         s -> s.contains(string)
     );
   }
@@ -113,7 +113,7 @@ public enum Predicates {
   public static Predicate<? super String> startsWith(String string) {
     requireNonNull(string);
     return Printable.predicate(
-        () -> String.format("@startsWith[%s]", string),
+        () -> String.format("startsWith[%s]", string),
         s -> s.startsWith(string)
     );
   }
@@ -121,7 +121,7 @@ public enum Predicates {
   public static Predicate<? super String> endsWith(String string) {
     requireNonNull(string);
     return Printable.predicate(
-        () -> String.format("@endsWith[%s]", string),
+        () -> String.format("endsWith[%s]", string),
         s -> s.endsWith(string)
     );
   }
@@ -129,21 +129,21 @@ public enum Predicates {
   public static Predicate<? super String> equalsIgnoreCase(String string) {
     requireNonNull(string);
     return Printable.predicate(
-        () -> String.format("@equalsIgnoreCase[%s]", string),
+        () -> String.format("equalsIgnoreCase[%s]", string),
         s -> s.equalsIgnoreCase(string)
     );
   }
 
   public static Predicate<? super String> isEmptyString() {
     return Printable.predicate(
-        "@isEmpty",
+        "isEmpty",
         String::isEmpty
     );
   }
 
   public static Predicate<? super String> isEmptyOrNullString() {
     return Printable.predicate(
-        "@isEmptyOrNullString",
+        "isEmptyOrNullString",
         s -> Objects.isNull(s) || isEmptyString().test(s)
     );
   }
@@ -152,39 +152,39 @@ public enum Predicates {
     requireNonNull(entry);
     //noinspection SuspiciousMethodCalls
     return Printable.predicate(
-        () -> String.format("@contains[%s]", entry),
+        () -> String.format("contains[%s]", entry),
         c -> c.contains(entry)
     );
   }
 
   public static Predicate<? super Collection> isEmpty() {
-    return Printable.predicate("@isEmpty", Collection::isEmpty);
+    return Printable.predicate("isEmpty", Collection::isEmpty);
   }
 
   public static <E> Predicate<? super Stream<? extends E>> allMatch(Predicate<E> predicate) {
     return Printable.predicate(
-        () -> String.format("@allMatch[%s]", requireNonNull(predicate)),
+        () -> String.format("allMatch[%s]", requireNonNull(predicate)),
         stream -> stream.allMatch(predicate)
     );
   }
 
   public static <E> Predicate<? super Stream<? extends E>> noneMatch(Predicate<E> predicate) {
     return Printable.predicate(
-        () -> String.format("@noneMatch[%s]", requireNonNull(predicate)),
+        () -> String.format("noneMatch[%s]", requireNonNull(predicate)),
         stream -> stream.noneMatch(predicate)
     );
   }
 
   public static <E> Predicate<? super Stream<? extends E>> anyMatch(Predicate<E> predicate) {
     return Printable.predicate(
-        () -> String.format("@anyMatch[%s]", requireNonNull(predicate)),
+        () -> String.format("anyMatch[%s]", requireNonNull(predicate)),
         stream -> stream.anyMatch(predicate)
     );
   }
 
   public static <T> Predicate<? super T> invoke(String methodName, Object... args) {
     return Printable.predicate(
-        () -> String.format(".%s(%s)", methodName, String.join(",", summarize(args))),
+        () -> String.format(".%s%s", methodName, String.join(",", summarize(args))),
         (Object target) -> InternalUtils.invokeMethod(target, methodName, args)
     );
   }

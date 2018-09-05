@@ -59,7 +59,7 @@ public class Issue27Test extends TestBase {
           e.getMessage(),
           CoreMatchers.containsString("was not met because (x.append(\"hello\").append(\"world\")=<helloworld>:StringBuilder).append(\"!\").append(\"!\").toString()=\"helloworld!!\"\n"
               + "  x=<>:StringBuilder\n"
-              + "  y.append(\"!\").append(\"!\").toString() @equalTo[HELLOWORLD!]\n"
+              + "  y.append(\"!\").append(\"!\").toString() equalTo[HELLOWORLD!]\n"
               + "              |           |          |\n"
               + "              |           |          +-\"helloworld!!\"\n"
               + "              |           |\n"
@@ -93,7 +93,7 @@ public class Issue27Test extends TestBase {
           e.getMessage(),
           CoreMatchers.containsString("was not met because x.append(\"hello\").append(\"world\").toString()=\"helloworld\"\n"
               + "  x=<>:StringBuilder\n"
-              + "  x.append(\"hello\").append(\"world\").toString() @equalTo[HelloWorld]\n"
+              + "  x.append(\"hello\").append(\"world\").toString() equalTo[HelloWorld]\n"
               + "                  |               |          |\n"
               + "                  |               |          +-\"helloworld\"\n"
               + "                  |               |\n"
@@ -122,7 +122,7 @@ public class Issue27Test extends TestBase {
           e.getMessage(),
           CoreMatchers.containsString("(x.toLowerCase()=\"world\").toUpperCase().substring(2).charAt(1)=\"L\":Character\n"
               + "  x=\"WORLD\"\n"
-              + "  y.toUpperCase().substring(2).charAt(1) @equalTo[z]\n"
+              + "  y.toUpperCase().substring(2).charAt(1) equalTo[z]\n"
               + "                |            |         |\n"
               + "                |            |         +-\"L\":Character\n"
               + "                |            |\n"
@@ -155,7 +155,7 @@ public class Issue27Test extends TestBase {
           e.getMessage(),
           CoreMatchers.containsString("was not met because (x.toLowerCase()=\"world\").toUpperCase().substring(2).charAt(1)=\"L\":Character\n"
               + "    x=\"WORLD\"\n"
-              + "    y.toUpperCase().substring(2).charAt(1) @equalTo[z]\n"
+              + "    y.toUpperCase().substring(2).charAt(1) equalTo[z]\n"
               + "                  |            |         |\n"
               + "                  |            |         +-\"L\":Character\n"
               + "                  |            |\n"
@@ -186,7 +186,7 @@ public class Issue27Test extends TestBase {
           e.getMessage(),
           CoreMatchers.containsString("was not met because (x.toLowerCase()=\"world\").toUpperCase().substring(2).charAt(1)=\"L\":Character\n"
               + "    x=\"WORLD\"\n"
-              + "    y.toUpperCase().substring(2).charAt(1) @equalTo[z]\n"
+              + "    y.toUpperCase().substring(2).charAt(1) equalTo[z]\n"
               + "                  |            |         |\n"
               + "                  |            |         +-\"L\":Character\n"
               + "                  |            |\n"
@@ -241,7 +241,7 @@ public class Issue27Test extends TestBase {
           e.getMessage(),
           CoreMatchers.containsString("was not met because (x.toLowerCase().substring(1)=\"orld\").replaceAll(\"d\",\"DDD\").concat(\"XYZ\")=\"WORLDXYZ\"\n"
               + "    x=\"WORLD\"\n"
-              + "    y.replaceAll(\"d\",\"DDD\").concat(\"XYZ\") @matchesRegex[xyz]\n"
+              + "    y.replaceAll(\"d\",\"DDD\").concat(\"XYZ\") matchesRegex[xyz]\n"
               + "                          |             |\n"
               + "                          |             +-\"orlDDDXYZ\"\n"
               + "                          |\n"
@@ -272,7 +272,7 @@ public class Issue27Test extends TestBase {
       Assert.assertThat(
           e.getMessage(),
           CoreMatchers.containsString("  x=\"WORLD\"\n"
-              + "  y.toUpperCase().substring(-2).charAt(1) @equalTo[z]\n"
+              + "  y.toUpperCase().substring(-2).charAt(1) equalTo[z]\n"
               + "                |             |         |\n"
               + "                |             |         +-java.lang.StringIndexOutOfBoundsException(String index out of range: -2):RuntimeException\n"
               + "                |             |\n"
@@ -306,7 +306,7 @@ public class Issue27Test extends TestBase {
       Assert.assertThat(
           e.getMessage(),
           CoreMatchers.containsString("  x=\"WORLD\"\n"
-              + "  x.toLowerCase().substring(-1) .toUpperCase().substring(1).charAt(1) @equalTo[z]\n"
+              + "  x.toLowerCase().substring(-1) .toUpperCase().substring(1).charAt(1) equalTo[z]\n"
               + "                |             |\n"
               + "                |             +-java.lang.StringIndexOutOfBoundsException(String index out of range: -1):RuntimeException\n"
               + "                |\n"
@@ -331,7 +331,7 @@ public class Issue27Test extends TestBase {
       Assert.assertThat(
           e.getMessage(),
           CoreMatchers.containsString("[when x=\"HELLO\"; then not:[\n"
-              + "  x->stringify @containsString[HELLO]\n"
+              + "  x->stringify containsString[HELLO]\n"
               + "]->false]")
       );
       throw new IOException(e);

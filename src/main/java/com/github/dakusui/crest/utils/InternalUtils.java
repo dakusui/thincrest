@@ -183,9 +183,10 @@ public enum InternalUtils {
     }
   }
 
-  public static <T, R> Function<T, R> function(String s, Function<? super T, ? extends R> function) {
-    Objects.requireNonNull(s);
+  public static <T, R> Function<T, R> function(String ss, Function<? super T, ? extends R> function) {
+    Objects.requireNonNull(ss);
     Objects.requireNonNull(function);
+    String s = "->" + ss;
     return new Function<T, R>() {
       @Override
       public R apply(T t) {

@@ -128,7 +128,7 @@ public class ParameterizedPredicatesTest {
         } },
         new Object[][] { {
             Predicates.invoke("startsWith", "hello"),
-            "@startsWith[hello]",
+            ".startsWith(\"hello\")",
             $("helloWorld", true),
             $("worldHello", false),
         } }
