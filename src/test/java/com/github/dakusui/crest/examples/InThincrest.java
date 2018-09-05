@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.examples;
 
 import com.github.dakusui.crest.Crest;
-import com.github.dakusui.crest.core.InternalUtils;
+import com.github.dakusui.crest.utils.InternalUtils;
 import com.github.dakusui.crest.utils.printable.Functions;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.StringContains;

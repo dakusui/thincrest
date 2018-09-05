@@ -1,17 +1,20 @@
 package com.github.dakusui.crest;
 
 import com.github.dakusui.crest.core.*;
+import com.github.dakusui.crest.core.Call.Arg;
 import com.github.dakusui.crest.matcherbuilders.*;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
+import com.github.dakusui.crest.utils.InternalUtils;
 import com.github.dakusui.crest.utils.printable.Functions;
 import org.junit.AssumptionViolatedException;
 import org.junit.ComparisonFailure;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.crest.core.InternalUtils.composeComparisonText;
+import static com.github.dakusui.crest.utils.InternalUtils.composeComparisonText;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -267,6 +270,21 @@ public enum Crest {
 
   public static Call callOn(Object object, String methodName, Object... args) {
     return Call.createOn(object, methodName, args);
+  }
+
+  public static <T> Arg<T> arg(Class<T> type, T value) {
+    return Arg.of(type, value);
+  }
+
+  @SuppressWarnings("unchecked")
+  @SafeVarargs
+  public static <T> Arg<T[]> args(Class<T> type, T... values) {
+    return Arg.of((Class<T[]>) Array.newInstance(type, 1).getClass(), values);
+  }
+
+
+  public static Arg<Object[]> args(Object... values) {
+    return Crest.args(Object.class, values);
   }
 
   public static <T> void assertThat(T actual, Matcher<? super T> matcher) {

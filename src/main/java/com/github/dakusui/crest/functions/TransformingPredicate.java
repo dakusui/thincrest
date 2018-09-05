@@ -40,4 +40,10 @@ public class TransformingPredicate<P, O> implements Predicate<O> {
         Optional.of(this.name) :
         Optional.empty();
   }
+
+  @Override
+  public String toString() {
+    return String.format("%s %s", function(), predicate());
+  }
 }
+

@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.examples;
 
-import com.github.dakusui.crest.core.InternalUtils;
+import com.github.dakusui.crest.utils.InternalUtils;
 import org.junit.Test;
 
 import java.util.Objects;

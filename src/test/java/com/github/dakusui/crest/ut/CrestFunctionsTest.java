@@ -50,7 +50,7 @@ public class CrestFunctionsTest {
     @Test
     public void whenToString$thenLooksGood() {
       assertEquals(
-          "elementAt[123]",
+          "->at[123]",
           Functions.elementAt(123).toString()
       );
     }
@@ -68,7 +68,7 @@ public class CrestFunctionsTest {
     @Test
     public void whenToString$thenLooksGood() {
       assertEquals(
-          "size",
+          "->size",
           Functions.size().toString()
       );
     }
@@ -86,7 +86,7 @@ public class CrestFunctionsTest {
     @Test
     public void whenToString$thenLooksGood() {
       assertEquals(
-          "stream",
+          "->stream",
           stream().toString()
       );
     }
@@ -114,7 +114,7 @@ public class CrestFunctionsTest {
     @Test
     public void whenToString$thenLooksGood() {
       assertEquals(
-          "@equals[Hello, world]",
+          ".equals(\"Hello, world\")",
           invoke("equals", "Hello, world").toString()
       );
 
@@ -133,7 +133,7 @@ public class CrestFunctionsTest {
     @Test
     public void whenToString$thenLooksGood() {
       assertEquals(
-          "toString",
+          "->stringify",
           stringify().toString()
       );
 

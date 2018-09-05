@@ -7,6 +7,7 @@ import com.github.dakusui.crest.utils.TestBase;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -21,6 +22,23 @@ public class Issue27Test extends TestBase {
     Assert.assertFalse(Session.create().addException(new Throwable()).report().exceptions().isEmpty());
   }
 
+  @Ignore
+  @Test
+  public void example() {
+    Crest.assertThat(
+        new StringBuilder(),
+        asObject(
+            call("append", "hello")
+                .andThen("append", "world")
+                .$())
+            .check(
+                call("append", "!").andThen("append", "!").andThen("toString").$(),
+                equalTo("HELLOWORLD!")
+            )
+            .$()
+    );
+  }
+
   @Test(expected = IOException.class)
   public void stateful() throws IOException {
     try {
@@ -31,7 +49,7 @@ public class Issue27Test extends TestBase {
                   .andThen("append", "world")
                   .$())
               .check(
-                  call("append", "!").$(),
+                  call("append", "!").andThen("append", "!").andThen("toString").$(),
                   equalTo("HELLOWORLD!")
               )
               .$()
@@ -39,7 +57,49 @@ public class Issue27Test extends TestBase {
     } catch (ComparisonFailure e) {
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("@append[hello]->@append[world](x)=<helloworld>")
+          CoreMatchers.containsString("was not met because (x.append(\"hello\").append(\"world\")=<helloworld>:StringBuilder).append(\"!\").append(\"!\").toString()=\"helloworld!!\"\n"
+              + "  x=<>:StringBuilder\n"
+              + "  y.append(\"!\").append(\"!\").toString() equalTo[HELLOWORLD!]\n"
+              + "              |           |          |\n"
+              + "              |           |          +-\"helloworld!!\"\n"
+              + "              |           |\n"
+              + "              |           +------------<helloworld!!>:StringBuilder\n"
+              + "              |\n"
+              + "              +------------------------<helloworld!>:StringBuilder\n"
+              + "  y=x.append(\"hello\").append(\"world\")\n"
+              + "                    |               |\n"
+              + "                    |               +-<helloworld>:StringBuilder\n"
+              + "                    |\n"
+              + "                    +-----------------<hello>:StringBuilder]>")
+      );
+      throw new IOException();
+    }
+  }
+
+  @Test(expected = IOException.class)
+  public void stateful2() throws IOException {
+    try {
+      Crest.assertThat(
+          new StringBuilder(),
+          asString(
+              call("append", "hello")
+                  .andThen("append", "world")
+                  .andThen("toString")
+                  .$())
+              .equalTo("HelloWorld").$()
+      );
+    } catch (ComparisonFailure e) {
+      Assert.assertThat(
+          e.getMessage(),
+          CoreMatchers.containsString("was not met because x.append(\"hello\").append(\"world\").toString()=\"helloworld\"\n"
+              + "  x=<>:StringBuilder\n"
+              + "  x.append(\"hello\").append(\"world\").toString() equalTo[HelloWorld]\n"
+              + "                  |               |          |\n"
+              + "                  |               |          +-\"helloworld\"\n"
+              + "                  |               |\n"
+              + "                  |               +------------<helloworld>:StringBuilder\n"
+              + "                  |\n"
+              + "                  +----------------------------<hello>:StringBuilder")
       );
       throw new IOException();
     }
@@ -50,20 +110,27 @@ public class Issue27Test extends TestBase {
     try {
       Crest.assertThat(
           "WORLD",
-          allOf(
-              asString("toLowerCase").check(
-                  call("toUpperCase").andThen("substring", 2).andThen("charAt", 1).$(),
-                  equalTo('z')
-              ).$())
+          asString("toLowerCase").check(
+              call("toUpperCase").andThen("substring", 2).andThen("charAt", 1).$(),
+              equalTo('z')
+          ).$()
       );
     } catch (ComparisonFailure e) {
       System.out.println("ACTUAL:" + e.getActual());
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("    @toUpperCase[](y)=\"WORLD\"\n"
-              + "    @toUpperCase[]->@substring[2](y)=\"RLD\"\n"
-              + "    @toUpperCase[]->@substring[2]->@charAt[1](y)=\"L\"")
+          CoreMatchers.containsString("(x.toLowerCase()=\"world\").toUpperCase().substring(2).charAt(1)=\"L\":Character\n"
+              + "  x=\"WORLD\"\n"
+              + "  y.toUpperCase().substring(2).charAt(1) equalTo[z]\n"
+              + "                |            |         |\n"
+              + "                |            |         +-\"L\":Character\n"
+              + "                |            |\n"
+              + "                |            +-----------\"RLD\"\n"
+              + "                |\n"
+              + "                +------------------------\"WORLD\"\n"
+              + "  y=x.toLowerCase()\n"
+              + "    x.toLowerCase()=\"world\"")
       );
       throw new IOException();
     }
@@ -86,9 +153,16 @@ public class Issue27Test extends TestBase {
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("    @toUpperCase[](y)=\"WORLD\"\n"
-              + "    @toUpperCase[]->@substring[2](y)=\"RLD\"\n"
-              + "    @toUpperCase[]->@substring[2]->@charAt[1](y)=\"L\"")
+          CoreMatchers.containsString("was not met because (x.toLowerCase()=\"world\").toUpperCase().substring(2).charAt(1)=\"L\":Character\n"
+              + "    x=\"WORLD\"\n"
+              + "    y.toUpperCase().substring(2).charAt(1) equalTo[z]\n"
+              + "                  |            |         |\n"
+              + "                  |            |         +-\"L\":Character\n"
+              + "                  |            |\n"
+              + "                  |            +-----------\"RLD\"\n"
+              + "                  |\n"
+              + "                  +------------------------\"WORLD\"\n"
+              + "    y=x.toLowerCase()")
       );
       throw new IOException();
     }
@@ -110,13 +184,41 @@ public class Issue27Test extends TestBase {
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("    @toUpperCase[](y)=\"WORLD\"\n"
-              + "    @toUpperCase[]->@substring[2](y)=\"RLD\"\n"
-              + "    @toUpperCase[]->@substring[2]->@charAt[1](y)=\"L\"")
+          CoreMatchers.containsString("was not met because (x.toLowerCase()=\"world\").toUpperCase().substring(2).charAt(1)=\"L\":Character\n"
+              + "    x=\"WORLD\"\n"
+              + "    y.toUpperCase().substring(2).charAt(1) equalTo[z]\n"
+              + "                  |            |         |\n"
+              + "                  |            |         +-\"L\":Character\n"
+              + "                  |            |\n"
+              + "                  |            +-----------\"RLD\"\n"
+              + "                  |\n"
+              + "                  +------------------------\"WORLD\"\n"
+              + "    y=x.toLowerCase()\n"
+              + "      x.toLowerCase()=\"world\"\n"
+              + "]->false")
       );
       throw new IOException();
     }
 
+  }
+
+  @Ignore
+  @Test
+  public void lessSimpleExample() {
+    Crest.assertThat("hello",
+        "WORLD",
+        allOf(
+            asString(call("toLowerCase").andThen("substring", 1).$())
+                .check(
+                    call("replaceAll", "d", "DDD").andThen("concat", "XYZ").$(),
+                    matchesRegex("xyz"))
+                .check(
+                    call("toUpperCase").andThen("substring", 2).andThen("charAt", 1).$(),
+                    equalTo('D'))
+                .$(),
+            asInteger("length").equalTo(5).$()
+        )
+    );
   }
 
   @Test(expected = IOException.class)
@@ -137,11 +239,19 @@ public class Issue27Test extends TestBase {
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("    y=@toLowerCase[]->@substring[1](x)\n"
-              + "      @toLowerCase[](x)=\"world\"\n"
-              + "      @toLowerCase[]->@substring[1](x)=\"orld\"\n"
-              + "    @replaceAll[d, DDD](y)=\"orlDDD\"\n"
-              + "    @replaceAll[d, DDD]->@concat[XYZ](y)=\"orlDDDXYZ")
+          CoreMatchers.containsString("was not met because (x.toLowerCase().substring(1)=\"orld\").replaceAll(\"d\",\"DDD\").concat(\"XYZ\")=\"WORLDXYZ\"\n"
+              + "    x=\"WORLD\"\n"
+              + "    y.replaceAll(\"d\",\"DDD\").concat(\"XYZ\") matchesRegex[xyz]\n"
+              + "                          |             |\n"
+              + "                          |             +-\"orlDDDXYZ\"\n"
+              + "                          |\n"
+              + "                          +---------------\"orlDDD\"\n"
+              + "    y=x.toLowerCase().substring(1)\n"
+              + "                    |            |\n"
+              + "                    |            +-\"orld\"\n"
+              + "                    |\n"
+              + "                    +--------------\"world\"\n"
+              + "]->false]>")
       );
       throw new IOException();
     }
@@ -161,9 +271,19 @@ public class Issue27Test extends TestBase {
       e.printStackTrace(System.out);
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("  @toUpperCase[](y)=\"ORLD\"\n"
-              + "  @toUpperCase[]->@substring[-2](y)=java.lang.StringIndexOutOfBoundsException(String index out of range: -2)\n"
-              + "  @toUpperCase[]->@substring[-2]->@charAt[1](y)=java.lang.StringIndexOutOfBoundsException(String index out of range: -2)")
+          CoreMatchers.containsString("  x=\"WORLD\"\n"
+              + "  y.toUpperCase().substring(-2).charAt(1) equalTo[z]\n"
+              + "                |             |         |\n"
+              + "                |             |         +-java.lang.StringIndexOutOfBoundsException(String index out of range: -2):RuntimeException\n"
+              + "                |             |\n"
+              + "                |             +-----------java.lang.StringIndexOutOfBoundsException(String index out of range: -2):RuntimeException\n"
+              + "                |\n"
+              + "                +-------------------------\"ORLD\"\n"
+              + "  y=x.toLowerCase().substring(1)\n"
+              + "                  |            |\n"
+              + "                  |            +-\"orld\"\n"
+              + "                  |\n"
+              + "                  +--------------\"world\"")
       );
       throw new IOException(e);
     }
@@ -185,9 +305,13 @@ public class Issue27Test extends TestBase {
       e.printStackTrace(System.out);
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("  y=@toLowerCase[]->@substring[-1](x)\n"
-              + "    @toLowerCase[](x)=\"world\"\n"
-              + "    @toLowerCase[]->@substring[-1](x)=java.lang.StringIndexOutOfBoundsException(String index out of range: -1)")
+          CoreMatchers.containsString("  x=\"WORLD\"\n"
+              + "  x.toLowerCase().substring(-1) .toUpperCase().substring(1).charAt(1) equalTo[z]\n"
+              + "                |             |\n"
+              + "                |             +-java.lang.StringIndexOutOfBoundsException(String index out of range: -1):RuntimeException\n"
+              + "                |\n"
+              + "                +---------------\"world\"\n"
+              + "FAILED")
       );
       throw new IOException(e);
     }
@@ -206,11 +330,9 @@ public class Issue27Test extends TestBase {
       e.printStackTrace(System.out);
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("expected:<[not:[\n"
-              + "  toString(x) containsString[HELLO]\n"
-              + "]]> but was:<[when x=\"HELLO\"; then not:[\n"
-              + "  toString(x) containsString[HELLO]\n"
-              + "]->false]>")
+          CoreMatchers.containsString("[when x=\"HELLO\"; then not:[\n"
+              + "  x->stringify containsString[HELLO]\n"
+              + "]->false]")
       );
       throw new IOException(e);
     }

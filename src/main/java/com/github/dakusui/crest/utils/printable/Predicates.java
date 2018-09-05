@@ -1,13 +1,13 @@
 package com.github.dakusui.crest.utils.printable;
 
-import com.github.dakusui.crest.core.InternalUtils;
+import com.github.dakusui.crest.utils.InternalUtils;
 
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
+import static com.github.dakusui.crest.utils.InternalUtils.summarize;
 import static java.util.Objects.requireNonNull;
 
 public enum Predicates {
@@ -89,7 +89,7 @@ public enum Predicates {
 
   public static <T extends Comparable<? super T>> Predicate<? super T> eq(T value) {
     return Printable.predicate(
-        () -> String.format("=[%s]", value),
+        () -> String.format("~[%s]", value),
         v -> v.compareTo(value) == 0
     );
   }
@@ -184,8 +184,8 @@ public enum Predicates {
 
   public static <T> Predicate<? super T> invoke(String methodName, Object... args) {
     return Printable.predicate(
-        () -> String.format("@%s%s", methodName, asList(args)),
-        (Object target) -> (boolean) InternalUtils.invokeMethod(target, methodName, args)
+        () -> String.format(".%s%s", methodName, String.join(",", summarize(args))),
+        (Object target) -> InternalUtils.invokeMethod(target, methodName, args)
     );
   }
 

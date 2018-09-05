@@ -1,7 +1,9 @@
 package com.github.dakusui.crest.core;
 
+import com.github.dakusui.crest.utils.InternalUtils;
 import com.github.dakusui.crest.utils.printable.Functions;
 
+import java.util.Arrays;
 import java.util.function.Function;
 
 import static com.github.dakusui.crest.utils.printable.Functions.THIS;
@@ -124,6 +126,38 @@ public interface Call {
     return new Call.Impl(null, object, methodName, args);
   }
 
+  interface Arg<T> {
+    Class<T> type();
+
+    T value();
+
+    static <T> Arg<T> of(Class<T> type, T value) {
+      return new Arg<T>() {
+        @Override
+        public Class<T> type() {
+          return type;
+        }
+
+        @Override
+        public T value() {
+          return value;
+        }
+
+        @Override
+        public String toString() {
+          return String.format(
+              "%s %s",
+              type.getSimpleName(),
+              value == null
+                  ? null
+                  : value.getClass().isArray()
+                  ? Arrays.toString((Object[]) value)
+                  : value);
+        }
+      };
+    }
+  }
+
   interface ChainedFunction<T, R> extends Function<T, R> {
     @Override
     <V> ChainedFunction<T, V> andThen(Function<? super R, ? extends V> after);
@@ -201,7 +235,7 @@ public interface Call {
 
       @Override
       public String toString() {
-        return previous().toString() + "->" + chained().toString();
+        return previous().toString() + chained().toString();
       }
     }
   }
@@ -232,12 +266,12 @@ public interface Call {
           : this.parent.build().andThen(toFunction());
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "RedundantCast" })
     private Function toFunction() {
       return ChainedFunction.create(
           this.object instanceof Class
-              ? Function.class.cast(Functions.invokeStatic((Class) this.object, methodName, args))
-              : Function.class.cast(Functions.invokeOn(this.object, methodName, args))
+              ? (Function) Functions.invokeStatic((Class) this.object, methodName, args)
+              : (Function) Functions.invokeOn(this.object, methodName, args)
       );
     }
   }
