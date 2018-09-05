@@ -46,15 +46,6 @@ Replace ```{VERSION}``` with one that you are going to use such as ```3.5.0```.
 You can check available versions from [here](https://search.maven.org/search?q=a:thincrest)(The Central Repository).
 All released versions are listed [here](https://github.com/dakusui/thincrest/releases)(GitHub).
 
-# Known issues
-## A comparison window of IntelliJ gives broken information
-This behavior was found as [Issue-19](https://github.com/dakusui/thincrest/issues/19) of ```thincrest```
-If a comparison window of IntelliJ gives broken information like following,
-![screen shot 2018-08-24 at 5 43 46 am](https://user-images.githubusercontent.com/529265/44551042-f130b400-a760-11e8-8d22-436236fc1079.png)
-
-this behavior is caused by an IntelliJ side's bug described as [IDEA-193010](https://youtrack.jetbrains.com/issue/IDEA-193010).
-Use Intellij not having this bug (previous to 2018.1 or newer than it) is the solution.
-Or you can print the strings (```message```, ```expected```, and ```actual``` that you are passing to ```ExecutionFailure```'s constructor) would be a workaround.
 
 # References
 * [0] "JUnit"
