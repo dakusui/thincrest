@@ -1,4 +1,4 @@
-# thincrest
+# [thincrest](https://github.com/dakusui/thincrest/wiki)
 When you are testing a Java class ```BankAccount```, you probably write a test scenario like following.
 
 ```java
