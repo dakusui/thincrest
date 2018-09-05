@@ -2,7 +2,6 @@ package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.core.*;
-import com.github.dakusui.crest.utils.InternalUtils;
 import com.github.dakusui.crest.utils.TestBase;
 import com.github.dakusui.crest.utils.printable.Predicates;
 import org.hamcrest.CoreMatchers;
@@ -43,11 +42,11 @@ public class CrestTest {
     }
   }
 
-  private static final Predicate<Integer> FAILING_CHECK = InternalUtils.predicate("failingCheck", v -> {
+  private static final Predicate<Integer> FAILING_CHECK = predicate("failingCheck", v -> {
     throw new RuntimeException("FAILED");
   });
 
-  private static final Function<List<String>, Integer> FAILING_TRANSFORM = InternalUtils.function("failingTransform", v -> {
+  private static final Function<List<String>, Integer> FAILING_TRANSFORM = function("failingTransform", v -> {
     throw new RuntimeException("FAILED");
   });
 

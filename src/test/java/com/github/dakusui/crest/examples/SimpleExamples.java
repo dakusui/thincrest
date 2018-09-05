@@ -1,7 +1,6 @@
 package com.github.dakusui.crest.examples;
 
 import com.github.dakusui.crest.Crest;
-import com.github.dakusui.crest.utils.InternalUtils;
 import com.github.dakusui.crest.utils.printable.Functions;
 import org.junit.Test;
 
@@ -160,7 +159,7 @@ public class SimpleExamples {
             + "alium Aquitani, tertium linua ipsorum Celtae, nostra Galli appelantur",
         allOf(
             asString().containsString("Caesar").check("contains", "est").containsString("Caesar").matcher(),
-            asObject("length").check(InternalUtils.predicate(">1024", o -> ((Integer) o) > 1024)).matcher()
+            asObject("length").check(predicate(">1024", o -> ((Integer) o) > 1024)).matcher()
         )
     );
   }
@@ -290,7 +289,7 @@ public class SimpleExamples {
         { "world", 5 },
         { "everyone", 8 },
     };
-    Function<Object[][], HashMap<Object, Object>> arrToMap = InternalUtils.function(
+    Function<Object[][], HashMap<Object, Object>> arrToMap = function(
         "arrToMap",
         (Object[][] arr) -> new HashMap<Object, Object>() {
           {
@@ -312,7 +311,7 @@ public class SimpleExamples {
         { "world", 5 },
         { "everyone", 8 },
     };
-    Function<Object[][], HashMap<Object, Object>> arrToMap = InternalUtils.function(
+    Function<Object[][], HashMap<Object, Object>> arrToMap = function(
         "arrToMap",
         (Object[][] arr) -> new HashMap<Object, Object>() {
           {
@@ -444,7 +443,7 @@ public class SimpleExamples {
 
   @Test
   public void listSize$thenFail() {
-    Predicate<? super Integer> failingPredicate = InternalUtils.predicate(
+    Predicate<? super Integer> failingPredicate = predicate(
         "failing predicate",
         i -> {
           throw new RuntimeException("FAILED");
@@ -460,7 +459,7 @@ public class SimpleExamples {
 
   @Test
   public void listSizeWithFailingFunction$thenFail() {
-    Function<List<String>, Integer> failingFunction = InternalUtils.function("failingFunction", strings -> {
+    Function<List<String>, Integer> failingFunction = function("failingFunction", strings -> {
       throw new RuntimeException("FAILED");
     });
     assertThat(
