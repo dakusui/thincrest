@@ -7,7 +7,7 @@ When you are testing a Java class ```BankAccount```, you probably write a test s
     bankAccount.withdraw(110);
 ```
 
-Don't you think that it's cool if you can get a comparison window like this?
+Don't you think that it's cool if you can get a comparison window like this when you hit a bug?
 ![screenshot from 2018-09-06 03-39-02](https://user-images.githubusercontent.com/529265/45114161-32748b00-b187-11e8-8cf1-134771092a87.png)
 
 ```thincrest``` library is for that. 
