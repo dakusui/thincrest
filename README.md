@@ -1,111 +1,60 @@
 # thincrest
+When you are testing a Java class ```BankAccount```, you probably write a test scenario like following.
+
+```java
+    BankAccount bankAccount = new BankAccount("John Doe");
+    bankAccount.deposit(1000);
+    bankAccount.withdraw(110);
+```
+
+Don't you think that it's cool if you can get a comparison window like this?
+![screenshot from 2018-09-06 03-39-02](https://user-images.githubusercontent.com/529265/45114161-32748b00-b187-11e8-8cf1-134771092a87.png)
+
+```thincrest``` library is for that. 
+
+You can find more on this example in [Tutorial](https://github.com/dakusui/thincrest/wiki/Tutorial)
 
 **thincrest**(pronounced 'think rest') is a small library that does assertions
  such as **Hamcrest**[[1]] and **Assert J**[[2]]. It is designed to be able to
   balance following values
   
- * Avoid fail->fix->run->fail->fix->run loop.
  * Readable messages on failures.
  * Readable test codes.
+ * Avoid fail->fix->run->fail->fix->run loop.
+ * Easy to use with various classes without writing custom matchers, although it is still possible.
  * IDE friendliness.
- * Easy to implement user custom matchers.
  
 It used to be a thin wrapper for **Hamcrest** ant it is the reason why this library
 was initially named so, but it is not anymore.
 
 # Usage
+## Requirements
+**thincrest** requires Java SE8 or later. 
+
 ## Installation
-**thincrest** requires Java SE8 or later. Following is a maven coordinate for it.
+You can use following maven coordinate.
 
 ```xml
-
-    <dependency>
-      <groupId>com.github.dakusui</groupId>
-      <artifactId>thincrest</artifactId>
-      <version>[3.3.0,)</version>
-      <scope>test</scope>
-    </dependency>
+<dependency>
+  <groupId>com.github.dakusui</groupId>
+  <artifactId>thincrest</artifactId>
+  <version>{VERSION}</version>
+</dependency>
 ```
 
-Once you install the dependency, lets static import **thincrest**'s facade ```Crest```
-to use it from your test class.
+Replace ```{VERSION}``` with one that you are going to use such as ```3.5.0```. 
+You can check available versions from [here](https://search.maven.org/search?q=a:thincrest)(The Central Repository).
+All released versions are listed [here](https://github.com/dakusui/thincrest/releases)(GitHub).
 
-```java
-import static com.github.dakusui.crest.Crest.*;
-```
+# Known issues
+## A comparison window of IntelliJ gives broken information
+This behavior was found as [Issue-19](https://github.com/dakusui/thincrest/issues/19) of ```thincrest```
+If a comparison window of IntelliJ gives broken information like following,
+![screen shot 2018-08-24 at 5 43 46 am](https://user-images.githubusercontent.com/529265/44551042-f130b400-a760-11e8-8d22-436236fc1079.png)
 
-This enables you to use following static methods without typing the class name.
-
-* allOf(Matcher<? super T>... matchers)
-* anyOf(Matcher<? super T>... matchers)
-* asObject(...)
-* asComparableOf(...)
-* asString(...)
-* asObjectList(...)
-* asListOf(...)
-* asObjectMap(...)
-* asMapOf(...)
-* assertThat(...)
-
-## Examples
-
-Following is a first simple test written by **thincrest**.
-
-```java
-
-    public class Examples {
-      @Test
-      public void helloWorldThincrest() {
-        assertThat(
-            Arrays.asList("Hello", "world"),
-            asString().matchesRegex("HELLO").any()
-        );
-      }
-    }
-```
-
-The static method ```asString``` requests to convert a given value to a ```java.lang.String```
-by calling ```toString``` method on it. The method of it, ```matchesReges``` checks
-if the converted value matches a given regular expression, in this example it's
-```HELLO```, and in case it doesn't pass the verification, the test will fail.
-
-**thincrest** also has its own ```allOf``` and ```anyOf``` matcher as hamcrest does.
-But the implementation of them by **thincrest** is a bit different from their original
-versions.
-
-```java
-
-    public class Examples {
-      @Test
-      public void helloAllOfTheWorldThincrest() {
-        assertThat(
-            Arrays.asList("Hello", "world"),
-            allOf(
-                asListOf(String.class).allMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
-                asListOf(String.class).noneMatch(Printable.predicate("==bye", "bye"::equals)).matcher(),
-                asListOf(String.class).anyMatch(Printable.predicate("==bye", "bye"::equals)).matcher()
-            )
-        );
-      }
-    }
-
-```
-
-The example above will give you following output which you can easily examine with
-your IDE's comparison window.
-
-```
-    expected:<[and:[
-      collectionToList(x) allMatch[==bye]
-      collectionToList(x) noneMatch[==bye]
-      collectionToList(x) anyMatch[==bye]
-    ]]> but was:<[when x=<[Hello, world]>; then and:[
-      collectionToList(x) allMatch[==bye] was false because collectionToList(x)=<[Hello, world]>
-      collectionToList(x) noneMatch[==bye]
-      collectionToList(x) anyMatch[==bye] was false because collectionToList(x)=<[Hello, world]>
-    ]->false]>
-
-```
+this behavior is caused by an IntelliJ side's bug described as [IDEA-193010](https://youtrack.jetbrains.com/issue/IDEA-193010).
+Use Intellij not having this bug (previous to 2018.1 or newer than it) is the solution.
+Or you can print the strings (```message```, ```expected```, and ```actual``` that you are passing to ```ExecutionFailure```'s constructor) would be a workaround.
 
 # References
 * [0] "JUnit"
