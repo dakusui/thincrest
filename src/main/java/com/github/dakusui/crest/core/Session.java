@@ -1,7 +1,6 @@
 package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.functions.TransformingPredicate;
-import com.github.dakusui.crest.utils.InternalUtils;
 
 import java.util.*;
 import java.util.function.*;
@@ -52,6 +51,8 @@ public interface Session<T> {
 
   @SuppressWarnings("unchecked")
   default <X> boolean matches(Matcher.Leaf<T> leaf, T value, Consumer<Throwable> listener) {
+    if (this instanceof Impl)
+      ((Impl) this).snapshot(value, null, value);
     try {
       return this.test(
           (Predicate<X>) leaf.p(),
@@ -216,10 +217,31 @@ public interface Session<T> {
       //    y    =  f(func(x))
       // -> In this case, how p worked can be broken down into p(y) side and
       //    f(func(x)) side.
+
+      this.mismatchWriter.enter();
+      this.mismatchWriter.appendLine("%s=%s", VARIABLE_NAME, snapshotOf(null, value));
+      this.mismatchWriter.leave();
       if (p instanceof TransformingPredicate && !fails(func, value)) {
+        TransformingPredicate pp = (TransformingPredicate) p;
         this.mismatchWriter
             .enter()
-            .appendLine("%s=%s(%s)", TRANSFORMED_VARIABLE_NAME, func, VARIABLE_NAME);
+            .appendLine(
+                "%s%s %s",
+                TRANSFORMED_VARIABLE_NAME,
+                pp.function(),
+                pp.predicate())
+            .leave();
+        explainFunction(
+            (T) apply(func, value),
+            pp.function(),
+            TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
+        this.mismatchWriter
+            .enter()
+            .appendLine(
+                "%s=%s%s",
+                TRANSFORMED_VARIABLE_NAME,
+                VARIABLE_NAME,
+                func);
         try {
           // This doesn't give additional information if func isn't a chained function
           // but still makes easier to read the output.
@@ -227,14 +249,15 @@ public interface Session<T> {
         } finally {
           this.mismatchWriter.leave();
         }
-        explainFunction(
-            (T) apply(func, value),
-            ((TransformingPredicate) p).function(),
-            TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
-      }
-      // If func is a chained function, additional information can be printed.
-      // Otherwise the summary contains func's result already.
-      if (func instanceof Call.ChainedFunction) {
+      } else {
+        this.mismatchWriter
+            .enter()
+            .appendLine(
+                "%s%s %s",
+                VARIABLE_NAME,
+                func,
+                p)
+            .leave();
         explainFunction(value, func, VARIABLE_NAME, this.mismatchWriter);
       }
     }
@@ -242,7 +265,7 @@ public interface Session<T> {
     private void appendMismatchSummary(T value, Function<T, ?> func, Predicate<?> p) {
       String formattedExpectation = formatExpectation(p, func);
       String formattedFunction = formatFunction(func, VARIABLE_NAME);
-      String formattedFunctionOutput = this.snapshots.get(asList(func, value));
+      String formattedFunctionOutput = this.snapshotOf(func, value);
       if (fails(func, value)) {
         this.mismatchWriter.appendLine(
             "%s failed with %s",
@@ -253,15 +276,27 @@ public interface Session<T> {
         this.mismatchWriter.appendLine(
             "%s failed with %s",
             formattedExpectation,
-            this.snapshots.get(asList(p, this.apply(func, value)))
+            this.snapshotOf(p, this.apply(func, value))
         );
       } else {
-        this.mismatchWriter.appendLine(
-            "%s was not met because %s=%s",
-            formattedExpectation,
-            formattedFunction,
-            formattedFunctionOutput
-        );
+        if (p instanceof TransformingPredicate) {
+          TransformingPredicate pp = (TransformingPredicate) p;
+          this.mismatchWriter.appendLine(
+              "%s was not met because (%s=%s)%s=%s",
+              formattedExpectation,
+              formattedFunction,
+              formattedFunctionOutput,
+              pp.function(),
+              this.snapshotOf(pp.function(), value)
+          );
+        } else {
+          this.mismatchWriter.appendLine(
+              "%s was not met because %s=%s",
+              formattedExpectation,
+              formattedFunction,
+              formattedFunctionOutput
+          );
+        }
       }
     }
 
@@ -435,14 +470,14 @@ public interface Session<T> {
     private void explainFunction(T value, Function<T, ?> func, String variableName, Impl.Writer writer) {
       if (func instanceof Call.ChainedFunction) {
         if (isAlreadyExplained(value, func, variableName)) {
-          writer.enter().appendLine("%s(%s)=(EXPLAINED)", func, variableName).leave();
+          writer.enter().appendLine("%s%s=(EXPLAINED)", variableName, func).leave();
           return;
         }
         explainChainedFunction(value, (Call.ChainedFunction) func, variableName, writer);
       } else {
         writer.enter();
         try {
-          writer.appendLine("%s(%s)=%s", func, variableName, this.snapshots.get(asList(func, value)));
+          writer.appendLine("%s%s=%s", variableName, func, this.snapshotOf(func, value));
         } finally {
           writer.leave();
         }
@@ -454,49 +489,64 @@ public interface Session<T> {
     private <I, O> void explainChainedFunction(I value, Call.ChainedFunction<I, O> chained, String variableName, Impl.Writer writer) {
       writer.enter();
       try {
-        List<String> buffer = new LinkedList<>();
+        class Entry {
+          private final String formattedFunctionName;
+          private final String snapshot;
+
+          private Entry(String funcName, String snapshot) {
+            this.formattedFunctionName = funcName;
+            this.snapshot = snapshot;
+          }
+        }
+        List<Entry> workEntries = new LinkedList<>();
         for (Call.ChainedFunction c = chained; c != null; c = c.previous()) {
-          buffer.add(format("%s=%s",
+          workEntries.add(0, new Entry(
               formatFunction(c, variableName),
               snapshotOf(c, value)
           ));
         }
-        Collections.reverse(buffer);
-        buffer.forEach(each -> writer.appendLine("%s", each));
+        List<String> work = new LinkedList<>();
+        String previousReplacement = "";
+        for (Entry entry : workEntries) {
+          String formattedFunctionName = entry.formattedFunctionName;
+          String replacement = previousReplacement + spaces(formattedFunctionName.length() - previousReplacement.length() - 1);
+          work.add(String.format(
+              "%s+-%s%s",
+              replacement,
+              times('-', workEntries.get(workEntries.size() - 1).formattedFunctionName.length() - formattedFunctionName.length()),
+              entry.snapshot
+          ));
+          previousReplacement = replacement + "|";
+          work.add(previousReplacement);
+        }
+        Collections.reverse(work);
+        work.forEach(e -> mismatchWriter.appendLine("%s", e));
       } finally {
         writer.leave();
       }
     }
 
-    private <I, O> void snapshot(Object out, Function<I, O> func, I value) {
-      List<Object> key = asList(func, value);
+    private void snapshot(Object out, Object funcOrPredicate, Object value) {
+      List<Object> key = asList(funcOrPredicate, value);
       if (!snapshots.containsKey(key)) {
-        snapshots.put(key, InternalUtils.formatValue(out));
+        if (out instanceof String) {
+          snapshots.put(key, String.format("%s", formatValue(out)));
+        } else {
+          snapshots.put(key, String.format("%s:%s", formatValue(out), toSimpleClassName(out)));
+        }
       }
     }
 
-    private <I> void snapshot(Object out, Predicate<I> p, I value) {
-      List<Object> key = asList(p, value);
-      if (!snapshots.containsKey(key)) {
-        snapshots.put(key, InternalUtils.formatValue(out));
-      }
-    }
-
-    private <I> String snapshotOf(Function func, I value) {
-      List<Object> key = asList(func, value);
-      return this.snapshots.get(key);
+    private <I> String snapshotOf(Object funcOrPred, I value) {
+      return this.snapshots.get(asList(funcOrPred, value));
     }
 
     private static String formatExpectation(Predicate p, Function function) {
       if (p instanceof TransformingPredicate) {
         TransformingPredicate pp = (TransformingPredicate) p;
-        return format("%s%s %s",
-            pp.name().isPresent() ?
-                pp.name().get() + ", i.e. " :
-                "",
-            formatFunction(pp.function(), formatFunction(function, "x")), pp.predicate());
+        return String.format("(%s=%s%s)%s %s", TRANSFORMED_VARIABLE_NAME, VARIABLE_NAME, function, pp.function(), pp.predicate());
       } else
-        return format("%s %s", formatFunction(function, "x"), p.toString());
+        return format("%s %s", formatFunction(function, VARIABLE_NAME), p);
     }
   }
 }

@@ -31,12 +31,35 @@ public class Issue27Test extends TestBase {
                   .andThen("append", "world")
                   .$())
               .check(
-                  call("append", "!").$(),
+                  call("append", "!").andThen("append", "!").andThen("toString").$(),
                   equalTo("HELLOWORLD!")
               )
               .$()
       );
-    } catch (ComparisonFailure e) {
+    } catch (RuntimeException e) {
+      //    } catch (ComparisonFailure e) {
+      Assert.assertThat(
+          e.getMessage(),
+          CoreMatchers.containsString("@append[hello]->@append[world](x)=<helloworld>")
+      );
+      throw new IOException();
+    }
+  }
+
+  @Test(expected = IOException.class)
+  public void stateful2() throws IOException {
+    try {
+      Crest.assertThat(
+          new StringBuilder(),
+          asString(
+              call("append", "hello")
+                  .andThen("append", "world")
+                  .andThen("toString")
+                  .$())
+              .equalTo("HelloWorld").$()
+      );
+    } catch (RuntimeException e) {
+      //    } catch (ComparisonFailure e) {
       Assert.assertThat(
           e.getMessage(),
           CoreMatchers.containsString("@append[hello]->@append[world](x)=<helloworld>")

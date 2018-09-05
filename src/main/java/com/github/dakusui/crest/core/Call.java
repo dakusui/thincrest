@@ -235,7 +235,7 @@ public interface Call {
 
       @Override
       public String toString() {
-        return previous().toString() + "->" + chained().toString();
+        return previous().toString() + chained().toString();
       }
     }
   }

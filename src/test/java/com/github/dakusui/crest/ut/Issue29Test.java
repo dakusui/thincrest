@@ -1,6 +1,7 @@
 package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.core.ExecutionFailure;
+import com.github.dakusui.crest.utils.TestBase;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -13,7 +14,7 @@ import static com.github.dakusui.crest.utils.printable.Functions.THIS;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
-public class Issue29Test {
+public class Issue29Test extends TestBase {
   @Test
   public void useStrict() {
     assertThat(

@@ -23,55 +23,55 @@ public enum Functions {
 
   public static <E> Function<E, E> identity() {
     return Printable.function(
-        "identity",
+        "->identity",
         Function.identity()
     );
   }
 
   public static <E> Function<? super E, String> stringify() {
     return Printable.function(
-        "toString",
+        "->stringify",
         Object::toString
     );
   }
 
   public static Function<? super String, Integer> length() {
     return Printable.function(
-        "length",
+        "->length",
         String::length
     );
   }
 
   public static <E> Function<List<? extends E>, ? extends E> elementAt(int i) {
     return Printable.function(
-        () -> String.format("elementAt[%s]", i),
+        () -> String.format("->at[%s]", i),
         es -> (E) es.get(i)
     );
   }
 
   public static Function<? super Collection, Integer> size() {
     return Printable.function(
-        "size",
+        "->size",
         Collection::size
     );
   }
 
   public static <E> Function<Collection<? extends E>, Stream<? extends E>> stream() {
     return Printable.function(
-        "stream",
+        "->stream",
         Collection::stream
     );
   }
 
   public static <E> Function<? super Object, ? extends E> cast(Class<E> type) {
     return Printable.function(
-        () -> String.format("castTo[%s]", requireNonNull(type).getSimpleName()),
+        () -> String.format("->castTo[%s]", requireNonNull(type).getSimpleName()),
         type::cast
     );
   }
 
   public static <I extends Collection<? extends E>, E> Function<I, List<E>> collectionToList() {
-    return Printable.function("collectionToList", (I c) -> new LinkedList<E>() {
+    return Printable.function("->collectionToList", (I c) -> new LinkedList<E>() {
       {
         addAll(c);
       }
@@ -79,11 +79,11 @@ public enum Functions {
   }
 
   public static <E> Function<E[], List<E>> arrayToList() {
-    return Printable.function("arrayToList", Arrays::asList);
+    return Printable.function("->arrayToList", Arrays::asList);
   }
 
   public static Function<String, Integer> countLines() {
-    return Printable.function("countLines", (String s) -> s.split("\n").length);
+    return Printable.function("->countLines", (String s) -> s.split("\n").length);
   }
 
   @SuppressWarnings("unchecked")
@@ -94,8 +94,8 @@ public enum Functions {
   public static <I, E> Function<? super I, ? extends E> invokeOn(Object on, String methodName, Object... args) {
     return Printable.function(
         on == THIS
-            ? () -> String.format("@%s%s", methodName, summarize(args))
-            : () -> String.format("%s@%s%s", on, methodName, summarize(args)),
+            ? () -> String.format(".%s%s", methodName, summarize(args))
+            : () -> String.format("->%s.%s%s", on, methodName, summarize(args)),
         (I target) -> InternalUtils.invokeMethod(
             InternalUtils.replaceTarget(on, target),
             methodName,
@@ -106,7 +106,7 @@ public enum Functions {
   @SuppressWarnings("unchecked")
   public static <I, E> Function<? super I, ? extends E> invokeStatic(Class klass, String methodName, Object... args) {
     return Printable.function(
-        () -> String.format("@%s.%s%s", klass.getSimpleName(), methodName, summarize(args)),
+        () -> String.format("->%s.%s%s", klass.getSimpleName(), methodName, summarize(args)),
         (I target) -> InternalUtils.invokeStaticMethod(
             klass,
             target,

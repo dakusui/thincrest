@@ -119,9 +119,13 @@ public enum InternalUtils {
     if (value instanceof Collection) {
       Collection collection = (Collection) value;
       if (collection.size() < 4)
-        return collection.stream().map(InternalUtils::summarize).collect(toList()).toString();
+        return String.format("(%s)",
+            String.join(
+                ",",
+                (List<String>) collection.stream().map(InternalUtils::summarize).collect(toList())
+            ));
       Iterator<?> i = collection.iterator();
-      return format("[%s,%s,%s...;%s]",
+      return format("(%s,%s,%s...;%s)",
           summarize(i.next()),
           summarize(i.next()),
           summarize(i.next()),
@@ -133,12 +137,14 @@ public enum InternalUtils {
     if (value instanceof String) {
       String s = (String) value;
       if (s.length() > 20)
-        return s.substring(0, 12) + "..." + s.substring(s.length() - 5);
+        s = s.substring(0, 12) + "..." + s.substring(s.length() - 5);
+      return String.format("\"%s\"", s);
     }
     String ret = value.toString();
-    return ret.contains("$")
+    ret = ret.contains("$")
         ? ret.substring(ret.lastIndexOf("$") + 1)
         : ret;
+    return ret;
   }
 
   @SuppressWarnings("unchecked")
@@ -196,7 +202,7 @@ public enum InternalUtils {
 
           @Override
           public String toString() {
-            return format("%s->%s", before, s);
+            return format("%s%s", before, s);
           }
         };
       }
@@ -211,7 +217,7 @@ public enum InternalUtils {
 
           @Override
           public String toString() {
-            return format("%s->%s", s, after);
+            return format("%s%s", s, after);
           }
         };
       }
@@ -285,7 +291,7 @@ public enum InternalUtils {
   }
 
   public static String formatFunction(Function<?, ?> function, @SuppressWarnings("SameParameterValue") String variableName) {
-    return format("%s(%s)", function.toString(), variableName);
+    return format("%s%s", variableName, function.toString());
   }
 
   @SuppressWarnings("unchecked")
@@ -327,9 +333,18 @@ public enum InternalUtils {
   }
 
   private static Class<?> toClass(Object value) {
+    if (value == null)
+      return null;
     if (value instanceof Arg)
       return ((Arg) value).type();
     return value.getClass();
+  }
+
+  public static String toSimpleClassName(Object value) {
+    Class klass = toClass(value);
+    return klass == null
+        ? null
+        : klass.getSimpleName();
   }
 
   private static Class<?> toWrapperIfPrimitive(Class<?> in) {
@@ -450,4 +465,16 @@ public enum InternalUtils {
   public static <T> T requireArgument(T value, Predicate<T> condition) {
     return require(value, condition, IllegalArgumentException::new);
   }
+
+  public static String spaces(int size) {
+    return times(' ', size);
+  }
+
+  public static String times(char c, int size) {
+    StringBuilder b = new StringBuilder();
+    for (int i = 0; i < size; i++)
+      b.append(c);
+    return b.toString();
+  }
+
 }
