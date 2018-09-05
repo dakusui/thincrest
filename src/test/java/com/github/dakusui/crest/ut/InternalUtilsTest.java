@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.ut;
 
-import com.github.dakusui.crest.core.InternalUtils;
+import com.github.dakusui.crest.utils.InternalUtils;
 import com.github.dakusui.crest.utils.TestBase;
 import org.junit.Test;
 

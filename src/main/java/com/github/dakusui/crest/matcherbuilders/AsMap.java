@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.matcherbuilders;
 
-import com.github.dakusui.crest.core.InternalUtils;
+import com.github.dakusui.crest.utils.InternalUtils;
 
 import java.util.Map;
 import java.util.Objects;

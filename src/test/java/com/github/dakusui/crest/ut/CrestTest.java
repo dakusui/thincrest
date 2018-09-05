@@ -2,6 +2,7 @@ package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.core.*;
+import com.github.dakusui.crest.utils.InternalUtils;
 import com.github.dakusui.crest.utils.TestBase;
 import com.github.dakusui.crest.utils.printable.Predicates;
 import org.hamcrest.CoreMatchers;
@@ -665,14 +666,14 @@ public class CrestTest {
   public static class CallMechanismTest extends TestBase {
     @Test
     public void givenStaticCall$whenToString$thenWorksRight() {
-      Function<Object, String> func = call(String.class, "format", "<me=%s, %s>", varargs(THIS, "hello")).$();
+      Function<Object, String> func = call(String.class, "format", "<me=%s, %s>", args(THIS, "hello")).$();
 
       System.out.println(func.toString());
       System.out.println(func.apply("world"));
       Crest.assertThat(
           func,
           allOf(
-              Crest.asString("toString").equalTo("@String.format[<me=%s, %s>, Object:varargs[(THIS), hello]]").$(),
+              Crest.asString("toString").equalTo("@String.format[<me=%s, %s>, Object[] [(THIS), hello]]").$(),
               Crest.asString(call("apply", "world").$()).equalTo("<me=world, hello>").$()
           )
       );
@@ -680,14 +681,14 @@ public class CrestTest {
 
     @Test
     public void givenStaticCallOnOverloadedMethod$whenToString$thenWorksRight() {
-      Object func = call(Stream.class, "of", varargsOf(Integer.class, 1, 2, 3)).andThen("collect", Collectors.toList()).$();
+      Object func = call(Stream.class, "of", args(Integer.class, 1, 2, 3)).andThen("collect", Collectors.toList()).$();
       System.out.println(func.toString());
       try {
         Crest.assertThat(
             func,
             allOf(
-                Crest.asString("toString").startsWith("@Stream.of[Integer:varargs[1, 2, 3]]->@collect[CollectorImpl@").$(),
-                Crest.asInteger(call("apply", "NOTHING").andThen("size").$()).equalTo(1).$()
+                Crest.asString("toString").startsWith("@Stream.of[Integer[] [1, 2, 3]]->@collect[CollectorImpl@").$(),
+                Crest.asInteger(call("apply", "NOTHING").andThen("size").$()).equalTo(3).$()
             )
         );
       } catch (ExecutionFailure e) {
@@ -706,7 +707,7 @@ public class CrestTest {
           func,
           allOf(
               Crest.asString("toString").equalTo("Hello world@indexOf[(THIS)]->@toString[]").$(),
-              Crest.asString(call("apply", "world").$()).equalTo("6").$()
+              Crest.asString(call("apply", "world").$()).equalTo("0").$()
           )
       );
     }

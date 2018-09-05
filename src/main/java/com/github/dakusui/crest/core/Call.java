@@ -1,5 +1,6 @@
 package com.github.dakusui.crest.core;
 
+import com.github.dakusui.crest.utils.InternalUtils;
 import com.github.dakusui.crest.utils.printable.Functions;
 
 import java.util.Arrays;
@@ -265,12 +266,12 @@ public interface Call {
           : this.parent.build().andThen(toFunction());
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "RedundantCast" })
     private Function toFunction() {
       return ChainedFunction.create(
           this.object instanceof Class
-              ? Function.class.cast(Functions.invokeStatic((Class) this.object, methodName, args))
-              : Function.class.cast(Functions.invokeOn(this.object, methodName, args))
+              ? (Function) Functions.invokeStatic((Class) this.object, methodName, args)
+              : (Function) Functions.invokeOn(this.object, methodName, args)
       );
     }
   }

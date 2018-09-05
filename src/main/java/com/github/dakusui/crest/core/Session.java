@@ -1,11 +1,12 @@
 package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.functions.TransformingPredicate;
+import com.github.dakusui.crest.utils.InternalUtils;
 
 import java.util.*;
 import java.util.function.*;
 
-import static com.github.dakusui.crest.core.InternalUtils.*;
+import static com.github.dakusui.crest.utils.InternalUtils.*;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 

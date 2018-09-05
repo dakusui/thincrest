@@ -1,7 +1,8 @@
-package com.github.dakusui.crest.core;
+package com.github.dakusui.crest.utils;
 
 import com.github.dakusui.crest.core.Call.Arg;
-import com.github.dakusui.crest.utils.printable.Functions.MethodSelector;
+import com.github.dakusui.crest.core.Report;
+import com.github.dakusui.crest.utils.printable.Functions;
 import org.junit.ComparisonFailure;
 
 import java.lang.reflect.Array;
@@ -19,7 +20,17 @@ import static java.util.stream.Collectors.toList;
 public enum InternalUtils {
   ;
 
-  public static final Consumer NOP = e -> {
+  public static final Consumer     NOP                     = e -> {
+  };
+  public static final Class<?>[][] PRIMITIVE_WRAPPER_TABLE = {
+      { boolean.class, Boolean.class },
+      { byte.class, Byte.class },
+      { char.class, Character.class },
+      { short.class, Short.class },
+      { int.class, Integer.class },
+      { long.class, Long.class },
+      { float.class, Float.class },
+      { double.class, Double.class },
   };
 
   /**
@@ -41,8 +52,9 @@ public enum InternalUtils {
    * @return A method for given class {@code aClass}, {@code method}, and {@code args}.
    */
   public static Method findMethod(Class<?> aClass, String methodName, Object[] args) {
-    MethodSelector methodSelector =
-        new MethodSelector.Default().andThen(new MethodSelector.Narrowest());
+    MethodSelector methodSelector = new MethodSelector.Default()
+        .andThen(new MethodSelector.PreferNarrower())
+        .andThen(new MethodSelector.PreferExact());
     return getIfOnlyOneElseThrow(
         methodSelector,
         methodSelector.select(
@@ -132,11 +144,11 @@ public enum InternalUtils {
   @SuppressWarnings("unchecked")
   public static <R> R invokeMethod(Object target, String methodName, Object[] args) {
     try {
-      Method m = findMethod(Objects.requireNonNull(target).getClass(), methodName, args);
+      Method m = findMethod(Objects.requireNonNull(target).getClass(), methodName, replaceTargetInArray(target, args));
       boolean accessible = m.isAccessible();
       try {
         m.setAccessible(true);
-        return (R) m.invoke(target, args);
+        return (R) m.invoke(target, replaceTargetInArray(target, replaceArgInArray(args)));
       } finally {
         m.setAccessible(accessible);
       }
@@ -148,13 +160,13 @@ public enum InternalUtils {
   }
 
   @SuppressWarnings("unchecked")
-  public static <R> R invokeStaticMethod(Class target, String methodName, Object[] args) {
+  public static <R> R invokeStaticMethod(Class klass, Object target, String methodName, Object[] args) {
     try {
-      Method m = findMethod(Objects.requireNonNull(target), methodName, args);
+      Method m = findMethod(Objects.requireNonNull(klass), methodName, replaceTargetInArray(target, args));
       boolean accessible = m.isAccessible();
       try {
         m.setAccessible(true);
-        return (R) m.invoke(null, args);
+        return (R) m.invoke(null, replaceTargetInArray(target, replaceArgInArray(args)));
       } finally {
         m.setAccessible(accessible);
       }
@@ -272,7 +284,7 @@ public enum InternalUtils {
     };
   }
 
-  static String formatFunction(Function<?, ?> function, @SuppressWarnings("SameParameterValue") String variableName) {
+  public static String formatFunction(Function<?, ?> function, @SuppressWarnings("SameParameterValue") String variableName) {
     return format("%s(%s)", function.toString(), variableName);
   }
 
@@ -286,21 +298,16 @@ public enum InternalUtils {
           return false;
         else
           continue;
-      if (args[i] instanceof Arg)
-        if (isCompatibleWith(((Arg) args[0]).type(), formalParameters[i]))
-          continue;
-        else
-          return false;
-      if (!toPrimitiveIfWrapper(formalParameters[i]).isAssignableFrom(toPrimitiveIfWrapper(toClass(args[i]))))
+      if (!withBoxingIsAssignableFrom(formalParameters[i], toClass(args[i])))
         return false;
     }
     return true;
   }
 
-  private static boolean isCompatibleWith(Class<?> actualArgumentType, Class<?> formalParameterType) {
-    if (formalParameterType.isAssignableFrom(actualArgumentType))
+  static boolean withBoxingIsAssignableFrom(Class<?> a, Class<?> b) {
+    if (a.isAssignableFrom(b))
       return true;
-    return toPrimitiveIfWrapper(formalParameterType).isAssignableFrom(actualArgumentType);
+    return toWrapperIfPrimitive(a).isAssignableFrom(toWrapperIfPrimitive(b));
   }
 
 
@@ -320,26 +327,18 @@ public enum InternalUtils {
   }
 
   private static Class<?> toClass(Object value) {
+    if (value instanceof Arg)
+      return ((Arg) value).type();
     return value.getClass();
   }
 
-  private static Class<?> toPrimitiveIfWrapper(Class<?> in) {
-    for (Class<?>[] pair : new Class<?>[][] {
-        { boolean.class, Boolean.class },
-        { byte.class, Byte.class },
-        { char.class, Character.class },
-        { short.class, Short.class },
-        { int.class, Integer.class },
-        { long.class, Long.class },
-        { float.class, Float.class },
-        { double.class, Double.class },
-    }) {
-      if (Objects.equals(in, pair[1]))
-        return pair[0];
+  private static Class<?> toWrapperIfPrimitive(Class<?> in) {
+    for (Class<?>[] pair : PRIMITIVE_WRAPPER_TABLE) {
+      if (Objects.equals(in, pair[0]))
+        return pair[1];
     }
     return in;
   }
-
 
   private static Method getIfOnlyOneElseThrow(MethodSelector selector, List<Method> foundMethods, Class<?> aClass, String methodName, Object[] args) {
     if (foundMethods.isEmpty())
@@ -413,11 +412,42 @@ public enum InternalUtils {
     return new ComparisonFailure(message, report.expectation(), report.mismatch()).getMessage();
   }
 
-  static RuntimeException rethrow(Throwable e) {
+  public static RuntimeException rethrow(Throwable e) {
     if (e instanceof RuntimeException)
       throw (RuntimeException) e;
     if (e instanceof Error)
       throw (Error) e;
     return new RuntimeException(e);
+  }
+
+  public static Object[] replaceArgInArray(Object[] args) {
+    return Arrays.stream(args)
+        .map(e -> e instanceof Arg
+            ? ((Arg) e).value()
+            : e)
+        .toArray();
+  }
+
+  public static Object[] replaceTargetInArray(Object target, Object[] args) {
+    return Arrays.stream(args)
+        .map(e -> replaceTarget(e, target)).toArray();
+  }
+
+  public static <I> Object replaceTarget(Object on, I target) {
+    return on == Functions.THIS ?
+        target :
+        on instanceof Object[] ?
+            replaceTargetInArray(target, (Object[]) on) :
+            on;
+  }
+
+  public static <T> T require(T value, Predicate<T> condition, Function<String, RuntimeException> exceptionFactory) {
+    if (condition.test(value))
+      return value;
+    throw exceptionFactory.apply(String.format("Value <%s> did not meet the requirement <%s>", value, condition));
+  }
+
+  public static <T> T requireArgument(T value, Predicate<T> condition) {
+    return require(value, condition, IllegalArgumentException::new);
   }
 }
