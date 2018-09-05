@@ -1,7 +1,6 @@
 package com.github.dakusui.crest.examples;
 
 import com.github.dakusui.crest.Crest;
-import com.github.dakusui.crest.utils.InternalUtils;
 import com.github.dakusui.crest.utils.printable.Functions;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.StringContains;
@@ -151,7 +150,7 @@ public class InThincrest {
     Crest.assertThat(
         aString,
         asString(
-            InternalUtils.function("trimSpace", (String s) -> s.replaceAll("\\s", ""))
+            function("trimSpace", (String s) -> s.replaceAll("\\s", ""))
         ).equalsIgnoreCase("HELLO,WORLD!").matcher()
     );
   }
@@ -176,7 +175,7 @@ public class InThincrest {
   public void qiita_20_another$thenFail() {
     Crest.assertThat(
         aString,
-        asString().check(InternalUtils.predicate("containsOnlyDigits", s -> s.matches("[0-9]+"))).matcher()
+        asString().check(predicate("containsOnlyDigits", s -> s.matches("[0-9]+"))).matcher()
     );
   }
 
