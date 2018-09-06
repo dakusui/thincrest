@@ -15,7 +15,7 @@ Don't you think that it's cool if you can get a comparison window like this when
 You can find more on this example in [Tutorial](https://github.com/dakusui/thincrest/wiki/Tutorial)
 
 **thincrest**(pronounced 'think rest') is a small library that does assertions
- such as **Hamcrest**[[1]] and **Assert J**[[2]]. It is designed to be able to
+ such as **Hamcrest**[[3]], **Assert J**[[4]], or **Google Truth**[[5]]. It is designed to be able to
   balance following values
   
  * Readable messages on failures.
@@ -59,5 +59,5 @@ All released versions are listed [here](https://github.com/dakusui/thincrest/rel
 [1]: http://hamcrest.org/
 [2]: https://github.com/junit-team/junit4/blob/master/doc/ReleaseNotes4.4.md#summary-of-changes-in-version-44
 [3]: https://en.wikipedia.org/wiki/Hamcrest
-[4]: http://google.github.io/truth/
+[4]: http://joel-costigliola.github.io/assertj/
 [5]: http://google.github.io/truth/

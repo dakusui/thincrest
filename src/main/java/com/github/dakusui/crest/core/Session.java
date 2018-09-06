@@ -272,7 +272,7 @@ public interface Session<T> {
             formattedExpectation,
             formattedFunctionOutput
         );
-      } else if (fails(p, value)) {
+      } else if (fails(p, this.apply(func, value))) {
         this.mismatchWriter.appendLine(
             "%s failed with %s",
             formattedExpectation,
@@ -287,7 +287,7 @@ public interface Session<T> {
               formattedFunction,
               formattedFunctionOutput,
               pp.function(),
-              this.snapshotOf(pp.function(), value)
+              this.snapshotOf(pp.function(), this.apply(func, value))
           );
         } else {
           this.mismatchWriter.appendLine(
