@@ -1,22 +1,21 @@
 package com.github.dakusui.crest.functions;
 
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class TransformingPredicate<P, O> implements Predicate<O> {
   private final Predicate<? super P>             predicate;
   private final Function<? super O, ? extends P> function;
-  private       String                           name;
+  private final String                           name;
 
   public TransformingPredicate(Predicate<? super P> predicate, Function<? super O, ? extends P> function) {
     this(null, predicate, function);
   }
 
   public TransformingPredicate(String name, Predicate<? super P> predicate, Function<? super O, ? extends P> function) {
-    this.name = name;
     this.predicate = predicate;
     this.function = function;
+    this.name = name;
   }
 
   @Override
@@ -35,15 +34,9 @@ public class TransformingPredicate<P, O> implements Predicate<O> {
     return this.function;
   }
 
-  public Optional<String> name() {
-    return name != null ?
-        Optional.of(this.name) :
-        Optional.empty();
-  }
-
   @Override
   public String toString() {
-    return String.format("%s %s", function(), predicate());
+    return String.format("%s%s %s", this.name == null ? "" : this.name, function(), predicate());
   }
 }
 

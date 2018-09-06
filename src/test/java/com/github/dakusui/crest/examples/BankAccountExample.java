@@ -1,5 +1,6 @@
 package com.github.dakusui.crest.examples;
 
+import com.github.dakusui.crest.utils.TestBase;
 import com.github.dakusui.crest.utils.printable.Predicates;
 import org.junit.Test;
 
@@ -8,9 +9,9 @@ import java.util.stream.Stream;
 import static com.github.dakusui.crest.Crest.*;
 import static java.util.Arrays.asList;
 
-public class BankAccountExample {
-  @Test(expected = AssertionError.class)
-  public void givenAccountOfJohnDoe$whenDoDepositAndWithdraw$thenLookingAllRight() {
+public class BankAccountExample extends TestBase {
+  @Test
+  public void givenAccountOfJohnDoe$whenDoDepositAndWithdraw$thenLookingAllRight$thenFail() {
     BankAccount bankAccount = new BankAccount("John Doe");
     bankAccount.deposit(1000);
     bankAccount.withdraw(110);
