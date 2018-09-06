@@ -4,8 +4,6 @@ import org.junit.ComparisonFailure;
 
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -29,15 +27,6 @@ import static java.util.Objects.requireNonNull;
  * of the SUT.
  */
 public class ExecutionFailure extends Error {
-  @SuppressWarnings("WeakerAccess")
-  public ExecutionFailure(String message, String expected, String actual, Throwable t) {
-    this(message, expected, actual, singletonList(t));
-  }
-
-  public ExecutionFailure(String message, String expected, String actual) {
-    this(message, expected, actual, emptyList());
-  }
-
   public ExecutionFailure(String message, String expected, String actual, List<Throwable> throwables) {
     super(
         new ComparisonFailure(message, expected, actual).getMessage(),

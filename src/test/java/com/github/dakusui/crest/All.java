@@ -4,6 +4,8 @@ import com.github.dakusui.crest.examples.BankAccountExample;
 import com.github.dakusui.crest.examples.ExamplesTest;
 import com.github.dakusui.crest.ut.*;
 import com.github.dakusui.crest.utils.UtilsAll;
+import com.github.dakusui.crest.utils.ut.FunctionsTest;
+import com.github.dakusui.crest.utils.ut.PredicatesTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -11,13 +13,17 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     BankAccountExample.class,
     CrestFunctionsTest.class,
-    CrestTest.class,
     CrestPredicatesTest.class,
+    CrestTest.class,
+    ExamplesTest.class,
+    FunctionsTest.class,
+    PredicatesTest.class,
     PrintableTest.class,
     InternalUtilsTest.class,
     MatcherTest.class,
-    ExamplesTest.class,
-    UtilsAll.class
+    UtilsAll.class,
+    Issue27Test.class,
+    Issue29Test.class
 })
 public class All {
 }

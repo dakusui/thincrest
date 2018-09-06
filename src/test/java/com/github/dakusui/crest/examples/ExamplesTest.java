@@ -18,6 +18,12 @@ import static org.junit.Assert.assertEquals;
 
 public class ExamplesTest extends TestBase {
   @Test
+  public void bankAccount() {
+    Class<?> exampleClass = BankAccount.class;
+    verifyExample(exampleClass);
+  }
+
+  @Test
   public void simpleExample() {
     Class<?> exampleClass = SimpleExamples.class;
     verifyExample(exampleClass);
