@@ -1,5 +1,6 @@
 package com.github.dakusui.crest.ut;
 
+import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.utils.TestBase;
 import com.github.dakusui.crest.utils.printable.Functions;
 import org.junit.Assert;
@@ -27,12 +28,12 @@ public class CrestFunctionsTest {
       assertThat(
           aList,
           allOf(
-              asObject(stringify()).check(alwaysTrue()).matcher(),
-              asObject(invoke("toString")).check(alwaysTrue()).matcher(),
-              asObject(elementAt(0)).check(alwaysTrue()).matcher(),
-              asObject(size()).check(alwaysTrue()).matcher(),
-              asObject(stream()).check(alwaysTrue()).matcher(),
-              asObject("toString").check(alwaysTrue()).matcher()
+              Crest.<List<String>, String>asObject(stringify()).check(alwaysTrue()).matcher(),
+              Crest.<List<String>, Object>asObject(invoke("toString")).check(alwaysTrue()).matcher(),
+              Crest.<List<String>, Object>asObject(elementAt(0)).check(alwaysTrue()).matcher(),
+              Crest.<List<String>, Object>asObject(size()).check(alwaysTrue()).matcher(),
+              Crest.<List<String>, Object>asObject(stream()).check(alwaysTrue()).matcher(),
+              Crest.<List<String>, Object>asObject("toString").check(alwaysTrue()).matcher()
           )
       );
     }
