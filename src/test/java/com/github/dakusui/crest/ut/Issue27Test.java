@@ -239,7 +239,7 @@ public class Issue27Test extends TestBase {
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("was not met because (x.toLowerCase().substring(1)=\"orld\").replaceAll(\"d\",\"DDD\").concat(\"XYZ\")=\"WORLDXYZ\"\n"
+          CoreMatchers.containsString("was not met because (x.toLowerCase().substring(1)=\"orld\").replaceAll(\"d\",\"DDD\").concat(\"XYZ\")=\"orlDDDXYZ\"\n"
               + "    x=\"WORLD\"\n"
               + "    y.replaceAll(\"d\",\"DDD\").concat(\"XYZ\") matchesRegex[xyz]\n"
               + "                          |             |\n"
@@ -251,7 +251,7 @@ public class Issue27Test extends TestBase {
               + "                    |            +-\"orld\"\n"
               + "                    |\n"
               + "                    +--------------\"world\"\n"
-              + "]->false]>")
+              + "]->false")
       );
       throw new IOException();
     }

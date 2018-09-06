@@ -15,7 +15,8 @@ public class BankAccount {
   public static class Record {
     public enum Type {
       WITHDRAW,
-      DEPOSIT
+      DEPOSIT,
+      TRANSFER
     }
 
     private final Record.Type type;
@@ -58,7 +59,7 @@ public class BankAccount {
 
   public void deposit(int amount) {
     this.balance += amount;
-    this.history.add(new Record(Record.Type.WITHDRAW /* BUG! */, amount));
+    this.history.add(new Record(Record.Type.TRANSFER /* BUG! */, amount));
   }
 
   public void withdraw(int amount) {
@@ -73,29 +74,5 @@ public class BankAccount {
   @Override
   public String toString() {
     return "BankAcccount:" + this.name;
-  }
-
-  @Test
-  public void givenAccountOfJohnDoe$whenDoDepositAndWithdraw$thenLookingAllRight() {
-    BankAccount bankAccount = new BankAccount("John Doe");
-    bankAccount.deposit(1000);
-    bankAccount.withdraw(110);
-    Stream.of(
-        asList("name", bankAccount.getName()),
-        asList("balance", bankAccount.getBalance()),
-        asList("history", bankAccount.getHistory())
-    ).forEach(
-        System.out::println
-    );
-
-    assertThat(
-        bankAccount,
-        allOf(
-            asString("getName").equalTo("John Doe").$(),
-            asInteger("getBalance").equalTo(890).$(),
-            asObject(call("getHistory").andThen("get", 0).andThen("getType").$())
-                .equalTo(Record.Type.DEPOSIT).$()
-        )
-    );
   }
 }
