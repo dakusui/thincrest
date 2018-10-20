@@ -4,7 +4,7 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
-class PrintablePredicate<T> implements Predicate<T> {
+public class PrintablePredicate<T> implements Predicate<T> {
   private final String       s;
   private final Predicate<T> predicate;
 
