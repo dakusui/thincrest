@@ -428,5 +428,13 @@ public enum Crest {
       }
     };
   }
+
+  public static Eater.RegexEater afterRegex(String regex) {
+    return new Eater.RegexEater(null, regex);
+  }
+
+  public static <T> Eater.ListEater<T> afterElement(T element) {
+    return new Eater.ListEater<>(null, element);
+  }
 }
 
