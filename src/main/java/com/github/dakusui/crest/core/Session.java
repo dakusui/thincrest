@@ -1,6 +1,8 @@
 package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.functions.TransformingPredicate;
+import junit.framework.AssertionFailedError;
+import junit.framework.ComparisonFailure;
 
 import java.util.*;
 import java.util.function.*;
@@ -21,6 +23,12 @@ public interface Session<T> {
           throw (Error) exception;
         throw new RuntimeException(exception);
       }
+      if (report.exceptions().get(0) instanceof AssertionFailedError)
+        throw new ComparisonFailure(
+            report.exceptions().get(0).getMessage(),
+            report.expectation(),
+            report.mismatch()
+        );
       throw new ExecutionFailure(message, report.expectation(), report.mismatch(), report.exceptions());
     }
   }
@@ -529,7 +537,7 @@ public interface Session<T> {
     private void snapshot(Object out, Object funcOrPredicate, Object value) {
       List<Object> key = asList(funcOrPredicate, value);
       if (!snapshots.containsKey(key)) {
-        if (out instanceof String) {
+        if (out instanceof String || out instanceof Throwable) {
           snapshots.put(key, String.format("%s", formatValue(out)));
         } else {
           snapshots.put(key, String.format("%s:%s", formatValue(out), toSimpleClassName(out)));

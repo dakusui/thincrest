@@ -14,6 +14,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.utils.InternalUtils.composeComparisonText;
+import static com.github.dakusui.crest.utils.printable.Predicates.equalTo;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
@@ -429,12 +430,16 @@ public enum Crest {
     };
   }
 
-  public static Eater.RegexEater afterRegex(String regex) {
+  public static Eater.RegexEater substringAfterRegex(String regex) {
     return new Eater.RegexEater(null, regex);
   }
 
-  public static <T> Eater.ListEater<T> afterElement(T element) {
-    return new Eater.ListEater<>(null, element);
+  public static <T> Eater.ListEater<T> sublistAfterElement(T element) {
+    return sublistAfter(equalTo(element));
+  }
+
+  public static <T> Eater.ListEater<T> sublistAfter(Predicate<T> predicate) {
+    return new Eater.ListEater<>(null, predicate);
   }
 }
 

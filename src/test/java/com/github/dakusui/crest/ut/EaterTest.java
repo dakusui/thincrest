@@ -1,29 +1,42 @@
 package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.Crest;
-import com.github.dakusui.crest.core.ExecutionFailure;
+import com.github.dakusui.crest.utils.TestBase;
+import junit.framework.AssertionFailedError;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static com.github.dakusui.crest.Crest.*;
+import static com.github.dakusui.crest.utils.printable.Predicates.equalsIgnoreCase;
 import static java.util.Arrays.asList;
 
-public class EaterTest {
-  @Test(expected = NoSuchElementException.class)
-  public void test2() throws Throwable {
+public class EaterTest extends TestBase {
+  @Test(expected = ExpectedException.class)
+  public void test2() {
     String targetContainer = "ZabcZdefZxyzZ";
     try {
       assertThat(
           targetContainer,
-          allOf(
-              asString(afterRegex("ab.").after("d.f").after("XYZ").$()).equalTo("Z").$()
-          )
+          asString(substringAfterRegex("ab.").after("d.f").after("XYZ").$()).equalTo("Z").$()
       );
-    } catch (ExecutionFailure e) {
+    } catch (AssertionFailedError e) {
       e.printStackTrace();
-      throw e.getCause();
+      throw new ExpectedException();
+    }
+  }
+
+  @Test(expected = ExpectedException.class)
+  public void test2multiline() {
+    String targetContainer = "Zabc\nZdef\nZxyzZ";
+    try {
+      assertThat(
+          targetContainer,
+          asString(substringAfterRegex("ab.").after("d.f").after("XYZ").$()).equalTo("Z").$()
+      );
+    } catch (AssertionFailedError e) {
+      e.printStackTrace();
+      throw new ExpectedException();
     }
   }
 
@@ -33,26 +46,52 @@ public class EaterTest {
     assertThat(
         targetContainer,
         allOf(
-            asString(afterRegex("ab.").after("d.f").after("xyz").$()).equalTo("Z").$()
+            asString(substringAfterRegex("ab.").after("d.f").after("xyz").$()).equalTo("Z").$()
         )
     );
   }
 
-  @Test(expected = NoSuchElementException.class)
-  public void test4() throws Throwable {
+  @Test
+  public void test3multiline() {
+    String targetContainer = "ZabcZ\ndefZ\nxyzZ";
+    assertThat(
+        targetContainer,
+        asString(substringAfterRegex("ab.").after("d.f").after("xyz").$()).equalTo("Z").$()
+    );
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test(expected = ExpectedException.class)
+  public void test4() {
     List<String> targetContainer = asList("Z", "abc", "Z", "def", "Z", "xyz", "Z");
     try {
       assertThat(
           targetContainer,
           Crest.allOf(
-              asListOf(String.class,
-                  afterElement("abc").after("def").after("XYZ").$()).isNotNull().$()
-          )
-      );
-    } catch (ExecutionFailure e) {
-      throw e.getCause();
+              asListOf(
+                  String.class,
+                  sublistAfterElement("abc").afterElement("def").afterElement("XYZ").$()
+              ).isNotNull().$()));
+    } catch (AssertionFailedError e) {
+      e.printStackTrace();
+      throw new ExpectedException();
     }
   }
 
+  @SuppressWarnings("unchecked")
+  @Test
+  public void test5() {
+    List<String> targetContainer = asList("Z", "abc", "Z", "def", "Z", "xyz", "Z");
+    assertThat(
+        targetContainer,
+        asListOf(String.class,
+            sublistAfterElement("abc")
+                .afterElement("def")
+                .after(equalsIgnoreCase("XYZ")).$())
+            .isNotEmpty().$()
+    );
+  }
 
+  private static class ExpectedException extends RuntimeException {
+  }
 }

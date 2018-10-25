@@ -1,13 +1,15 @@
 package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.utils.printable.Printable;
+import junit.framework.AssertionFailedError;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.github.dakusui.crest.utils.printable.Predicates.equalTo;
 import static java.util.Objects.requireNonNull;
 
 public interface Eater<T /* Target*/, C /* Target container */> {
@@ -30,12 +32,12 @@ public interface Eater<T /* Target*/, C /* Target container */> {
   }
 
   abstract class Base<T, C> implements Eater<T, C> {
-    final T           target;
+    final T           finder;
     final Eater<T, C> parent;
 
-    Base(Eater<T, C> parent, T target) {
+    Base(Eater<T, C> parent, T finder) {
       this.parent = parent;
-      this.target = requireNonNull(target);
+      this.finder = requireNonNull(finder);
     }
 
     @SuppressWarnings("unchecked")
@@ -55,7 +57,7 @@ public interface Eater<T /* Target*/, C /* Target container */> {
     }
 
     String describeFunction() {
-      return String.format("->after[%s]", this.target);
+      return String.format("->after[%s]", this.finder);
     }
 
     protected abstract Function<C, C> createFunction();
@@ -78,10 +80,10 @@ public interface Eater<T /* Target*/, C /* Target container */> {
 
     protected Function<String, String> createFunction() {
       return (String container) -> {
-        Matcher matcher = Pattern.compile(String.format("(%s)", target)).matcher(container);
+        Matcher matcher = Pattern.compile(String.format("(%s)", finder)).matcher(container);
         if (matcher.find())
           return restOf(container, matcher.group(1));
-        throw new NoSuchElementException(String.format("regex:%s was not found", target));
+        throw new AssertionFailedError(String.format("regex:%s was not found", finder));
       };
     }
 
@@ -90,25 +92,39 @@ public interface Eater<T /* Target*/, C /* Target container */> {
     }
   }
 
-  class ListEater<T> extends Base<T, List<T>> {
+  class ListEater<T> extends Base<Predicate<T>, List<T>> {
 
-    public ListEater(Eater<T, List<T>> parent, T target) {
+    public ListEater(Eater<Predicate<T>, List<T>> parent, Predicate<T> target) {
       super(parent, target);
-    }
-
-    @Override
-    public Eater after(T target) {
-      return new ListEater<>(this, target);
     }
 
     @Override
     protected Function<List<T>, List<T>> createFunction() {
       return container -> {
-        int index = container.indexOf(ListEater.this.target);
+        int index = findTarget(container);
         if (index < 0)
-          throw new NoSuchElementException(String.format("Element:%s was not found", target));
+          throw new AssertionFailedError(String.format("Element:%s was not found", finder));
         return container.subList(index + 1, container.size());
       };
+    }
+
+    @Override
+    public ListEater<T> after(Predicate<T> finder) {
+      return new ListEater<>(this, finder);
+    }
+
+    public ListEater<T> afterElement(T target) {
+      return new ListEater<>(this, equalTo(target));
+    }
+
+    int findTarget(List<T> container) {
+      int i = 0;
+      for (T elem : container) {
+        if (this.finder.test(elem))
+          return i;
+        i++;
+      }
+      return -1;
     }
   }
 }

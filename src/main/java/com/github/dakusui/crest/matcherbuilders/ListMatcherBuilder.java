@@ -95,6 +95,10 @@ public class ListMatcherBuilder<IN, ENTRY, SELF extends ListMatcherBuilder<IN, E
     return this.check(Predicates.isEmpty());
   }
 
+  public SELF isNotEmpty() {
+    return this.check(Predicates.isEmpty().negate());
+  }
+
   public SELF allMatch(Predicate<? super ENTRY> predicate) {
     return this.check(
         Crest.predicate(
