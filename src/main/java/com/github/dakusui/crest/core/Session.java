@@ -1,6 +1,8 @@
 package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.functions.TransformingPredicate;
+import junit.framework.AssertionFailedError;
+import junit.framework.ComparisonFailure;
 
 import java.util.*;
 import java.util.function.*;
@@ -21,6 +23,12 @@ public interface Session<T> {
           throw (Error) exception;
         throw new RuntimeException(exception);
       }
+      if (report.exceptions().get(0) instanceof AssertionFailedError)
+        throw new ComparisonFailure(
+            report.exceptions().get(0).getMessage(),
+            report.expectation(),
+            report.mismatch()
+        );
       throw new ExecutionFailure(message, report.expectation(), report.mismatch(), report.exceptions());
     }
   }
@@ -359,8 +367,8 @@ public interface Session<T> {
     public <I, O> O apply(Function<I, O> func, I value) {
       Object ret = null;
       try {
-        if (func instanceof Call.ChainedFunction) {
-          Call.ChainedFunction cf = (Call.ChainedFunction) func;
+        if (func instanceof ChainedFunction) {
+          ChainedFunction cf = (ChainedFunction) func;
           if (cf.previous() != null) {
             ret = apply(cf.chained(), apply(cf.previous(), value));
             return (O) ret;
@@ -468,12 +476,12 @@ public interface Session<T> {
 
     @SuppressWarnings("unchecked")
     private void explainFunction(T value, Function<T, ?> func, String variableName, Impl.Writer writer) {
-      if (func instanceof Call.ChainedFunction) {
+      if (func instanceof ChainedFunction) {
         if (isAlreadyExplained(value, func, variableName)) {
           writer.enter().appendLine("%s%s=(EXPLAINED)", variableName, func).leave();
           return;
         }
-        explainChainedFunction(value, (Call.ChainedFunction) func, variableName, writer);
+        explainChainedFunction(value, (ChainedFunction) func, variableName, writer);
       } else {
         writer.enter();
         try {
@@ -486,7 +494,7 @@ public interface Session<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private <I, O> void explainChainedFunction(I value, Call.ChainedFunction<I, O> chained, String variableName, Impl.Writer writer) {
+    private <I, O> void explainChainedFunction(I value, ChainedFunction<I, O> chained, String variableName, Impl.Writer writer) {
       writer.enter();
       try {
         class Entry {
@@ -499,7 +507,7 @@ public interface Session<T> {
           }
         }
         List<Entry> workEntries = new LinkedList<>();
-        for (Call.ChainedFunction c = chained; c != null; c = c.previous()) {
+        for (ChainedFunction c = chained; c != null; c = c.previous()) {
           workEntries.add(0, new Entry(
               formatFunction(c, variableName),
               snapshotOf(c, value)
@@ -529,7 +537,7 @@ public interface Session<T> {
     private void snapshot(Object out, Object funcOrPredicate, Object value) {
       List<Object> key = asList(funcOrPredicate, value);
       if (!snapshots.containsKey(key)) {
-        if (out instanceof String) {
+        if (out instanceof String || out instanceof Throwable) {
           snapshots.put(key, String.format("%s", formatValue(out)));
         } else {
           snapshots.put(key, String.format("%s:%s", formatValue(out), toSimpleClassName(out)));
