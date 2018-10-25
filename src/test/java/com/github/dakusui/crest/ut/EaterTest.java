@@ -8,23 +8,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.crest.utils.printable.Predicates.equalTo;
-import static com.github.dakusui.crest.utils.printable.Predicates.matchesRegex;
 import static java.util.Arrays.asList;
 
 public class EaterTest {
-  @Test
-  public void test() {
-    Crest.assertThat(
-        "hello",
-        allOf(
-            asString(
-                call("toString").andThen("toString").$())
-                .check(
-                    equalTo("hello").and(matchesRegex("H"))
-                ).$()));
-  }
-
   @Test(expected = NoSuchElementException.class)
   public void test2() throws Throwable {
     String targetContainer = "ZabcZdefZxyzZ";
@@ -42,7 +28,7 @@ public class EaterTest {
   }
 
   @Test
-  public void test3() throws Throwable {
+  public void test3() {
     String targetContainer = "ZabcZdefZxyzZ";
     assertThat(
         targetContainer,
@@ -52,15 +38,20 @@ public class EaterTest {
     );
   }
 
-  @Test
-  public void test4() {
+  @Test(expected = NoSuchElementException.class)
+  public void test4() throws Throwable {
     List<String> targetContainer = asList("Z", "abc", "Z", "def", "Z", "xyz", "Z");
-    assertThat(
-        targetContainer,
-        Crest.allOf(
-            asListOf(String.class, afterElement("abc").after("def").after("XYZ").$()).isNotNull().$()
-        )
-    );
+    try {
+      assertThat(
+          targetContainer,
+          Crest.allOf(
+              asListOf(String.class,
+                  afterElement("abc").after("def").after("XYZ").$()).isNotNull().$()
+          )
+      );
+    } catch (ExecutionFailure e) {
+      throw e.getCause();
+    }
   }
 
 
