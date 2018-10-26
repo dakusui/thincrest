@@ -94,7 +94,7 @@ public enum Predicates {
     );
   }
 
-  public static Predicate<? super String> matchesRegex(String regex) {
+  public static Predicate<String> matchesRegex(String regex) {
     requireNonNull(regex);
     return Printable.predicate(
         () -> String.format("matchesRegex[%s]", regex),
@@ -102,7 +102,7 @@ public enum Predicates {
     );
   }
 
-  public static Predicate<? super String> containsString(String string) {
+  public static Predicate<String> containsString(String string) {
     requireNonNull(string);
     return Printable.predicate(
         () -> String.format("containsString[%s]", string),
@@ -110,7 +110,7 @@ public enum Predicates {
     );
   }
 
-  public static Predicate<? super String> startsWith(String string) {
+  public static Predicate<String> startsWith(String string) {
     requireNonNull(string);
     return Printable.predicate(
         () -> String.format("startsWith[%s]", string),
@@ -118,7 +118,7 @@ public enum Predicates {
     );
   }
 
-  public static Predicate<? super String> endsWith(String string) {
+  public static Predicate<String> endsWith(String string) {
     requireNonNull(string);
     return Printable.predicate(
         () -> String.format("endsWith[%s]", string),
@@ -126,7 +126,7 @@ public enum Predicates {
     );
   }
 
-  public static Predicate<? super String> equalsIgnoreCase(String string) {
+  public static Predicate<String> equalsIgnoreCase(String string) {
     requireNonNull(string);
     return Printable.predicate(
         () -> String.format("equalsIgnoreCase[%s]", string),
@@ -134,14 +134,14 @@ public enum Predicates {
     );
   }
 
-  public static Predicate<? super String> isEmptyString() {
+  public static Predicate<String> isEmptyString() {
     return Printable.predicate(
         "isEmpty",
         String::isEmpty
     );
   }
 
-  public static Predicate<? super String> isEmptyOrNullString() {
+  public static Predicate<String> isEmptyOrNullString() {
     return Printable.predicate(
         "isEmptyOrNullString",
         s -> Objects.isNull(s) || isEmptyString().test(s)
@@ -155,6 +155,10 @@ public enum Predicates {
         () -> String.format("contains[%s]", entry),
         c -> c.contains(entry)
     );
+  }
+
+  public static Predicate<Object[]> isEmptyArray() {
+    return Printable.predicate("isEmpty", objects -> objects.length == 0);
   }
 
   public static Predicate<? super Collection> isEmpty() {

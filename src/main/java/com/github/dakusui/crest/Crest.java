@@ -5,6 +5,7 @@ import com.github.dakusui.crest.core.Call.Arg;
 import com.github.dakusui.crest.matcherbuilders.*;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
 import com.github.dakusui.crest.utils.printable.Functions;
+import com.github.dakusui.crest.utils.printable.Printable;
 import org.junit.AssumptionViolatedException;
 import org.junit.ComparisonFailure;
 
@@ -14,7 +15,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.utils.InternalUtils.composeComparisonText;
-import static java.lang.String.format;
+import static com.github.dakusui.crest.utils.InternalUtils.requireArgument;
+import static com.github.dakusui.crest.utils.printable.Predicates.equalTo;
+import static com.github.dakusui.crest.utils.printable.Predicates.isEmptyArray;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -36,6 +39,7 @@ public enum Crest {
   @SuppressWarnings("unchecked")
   @SafeVarargs
   public static <T> Matcher<T> allOf(Matcher<? super T>... matchers) {
+    requireArgument(matchers, isEmptyArray().negate());
     return Matcher.Conjunctive.create(true, asList(matchers));
   }
 
@@ -51,6 +55,7 @@ public enum Crest {
   @SuppressWarnings("unchecked")
   @SafeVarargs
   public static <T> Matcher<T> anyOf(Matcher<? super T>... matchers) {
+    requireArgument(matchers, isEmptyArray().negate());
     return Matcher.Disjunctive.create(true, asList(matchers));
   }
 
@@ -321,112 +326,25 @@ public enum Crest {
     );
   }
 
-  public static <T, R> Function<T, R> function(String ss, Function<? super T, ? extends R> function) {
-    requireNonNull(ss);
-    requireNonNull(function);
-    String s = "->" + ss;
-    return new Function<T, R>() {
-      @Override
-      public R apply(T t) {
-        return function.apply(t);
-      }
-
-      public <V> Function<V, R> compose(Function<? super V, ? extends T> before) {
-        requireNonNull(before);
-        return new Function<V, R>() {
-          @Override
-          public R apply(V v) {
-            return function.apply(before.apply(v));
-          }
-
-          @Override
-          public String toString() {
-            return format("%s%s", before, s);
-          }
-        };
-      }
-
-      public <V> Function<T, V> andThen(Function<? super R, ? extends V> after) {
-        requireNonNull(after);
-        return new Function<T, V>() {
-          @Override
-          public V apply(T t) {
-            return after.apply(function.apply(t));
-          }
-
-          @Override
-          public String toString() {
-            return format("%s%s", s, after);
-          }
-        };
-      }
-
-      @Override
-      public String toString() {
-        return s;
-      }
-    };
+  public static <T, R> Function<T, R> function(String ss, Function<T, R> function) {
+    return Printable.function(String.format("->%s", requireNonNull(ss)), requireNonNull(function));
   }
 
-  public static <T> Predicate<T> predicate(String s, Predicate<? super T> predicate) {
-    return new Predicate<T>() {
-      @Override
-      public boolean test(T t) {
-        return predicate.test(t);
-      }
-
-      @Override
-      public Predicate<T> and(Predicate<? super T> other) {
-        requireNonNull(other);
-        return new Predicate<T>() {
-          @Override
-          public boolean test(T t) {
-            return predicate.test(t) && other.test(t);
-          }
-
-          @Override
-          public String toString() {
-            return format("(%s&&%s)", s, other);
-          }
-        };
-      }
-
-      @Override
-      public Predicate<T> negate() {
-        return new Predicate<T>() {
-          @Override
-          public boolean test(T t) {
-            return !predicate.test(t);
-          }
-
-          @Override
-          public String toString() {
-            return format("!%s", s);
-          }
-        };
-      }
-
-      @Override
-      public Predicate<T> or(Predicate<? super T> other) {
-        requireNonNull(other);
-        return new Predicate<T>() {
-          @Override
-          public boolean test(T t) {
-            return predicate.test(t) || other.test(t);
-          }
-
-          @Override
-          public String toString() {
-            return format("(%s||%s)", s, other);
-          }
-        };
-      }
-
-      @Override
-      public String toString() {
-        return s;
-      }
-    };
+  public static <T> Predicate<T> predicate(String s, Predicate<T> predicate) {
+    return Printable.predicate(s, predicate);
   }
+
+  public static Eater.RegexEater substringAfterRegex(String regex) {
+    return new Eater.RegexEater(null, regex);
+  }
+
+  public static <T> Eater.ListEater<T> sublistAfterElement(T element) {
+    return sublistAfter(equalTo(element));
+  }
+
+  public static <T> Eater.ListEater<T> sublistAfter(Predicate<T> predicate) {
+    return new Eater.ListEater<>(null, predicate);
+  }
+
 }
 
