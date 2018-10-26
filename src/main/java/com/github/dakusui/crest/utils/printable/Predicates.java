@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 public enum Predicates {
   ;
+
   public static <T> Predicate<T> alwaysTrue() {
     return Printable.predicate("alwaysTrue", t -> true);
   }
@@ -154,6 +155,10 @@ public enum Predicates {
         () -> String.format("contains[%s]", entry),
         c -> c.contains(entry)
     );
+  }
+
+  public static Predicate<Object[]> isEmptyArray() {
+    return Printable.predicate("isEmpty", objects -> objects.length == 0);
   }
 
   public static Predicate<? super Collection> isEmpty() {

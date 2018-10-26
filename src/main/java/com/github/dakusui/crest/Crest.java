@@ -14,7 +14,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.utils.InternalUtils.composeComparisonText;
+import static com.github.dakusui.crest.utils.InternalUtils.requireArgument;
 import static com.github.dakusui.crest.utils.printable.Predicates.equalTo;
+import static com.github.dakusui.crest.utils.printable.Predicates.isEmptyArray;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
@@ -37,6 +39,7 @@ public enum Crest {
   @SuppressWarnings("unchecked")
   @SafeVarargs
   public static <T> Matcher<T> allOf(Matcher<? super T>... matchers) {
+    requireArgument(matchers, isEmptyArray().negate());
     return Matcher.Conjunctive.create(true, asList(matchers));
   }
 
@@ -52,6 +55,7 @@ public enum Crest {
   @SuppressWarnings("unchecked")
   @SafeVarargs
   public static <T> Matcher<T> anyOf(Matcher<? super T>... matchers) {
+    requireArgument(matchers, isEmptyArray().negate());
     return Matcher.Disjunctive.create(true, asList(matchers));
   }
 
