@@ -20,8 +20,6 @@ public class Issue43Test extends TestBase {
       cause.printStackTrace();
       if (cause instanceof RuntimeException && cause.getMessage().contains("noSuchMethod"))
         throw new ExpectedException();
-    } catch (Throwable t) {
-      throw new Error();
     }
   }
 
