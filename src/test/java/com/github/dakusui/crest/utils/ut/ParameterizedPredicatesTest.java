@@ -1,6 +1,8 @@
 package com.github.dakusui.crest.utils.ut;
 
 import com.github.dakusui.crest.utils.printable.Predicates;
+import com.github.dakusui.crest.utils.printable.Printable;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -17,7 +19,7 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
-public class ParameterizedPredicatesTest {
+public class ParameterizedPredicatesTest extends TestBase {
   @Parameters
   public static List<Object[]> parameters() {
     Object x = new Object() {
@@ -118,6 +120,7 @@ public class ParameterizedPredicatesTest {
         new Object[][] { {
             Predicates.equalTo("Y").negate().or(Predicates.equalTo("X").and(Predicates.isInstanceOf(String.class))),
             "(!equalTo[Y]||(equalTo[X]&&isInstanceOf[java.lang.String]))",
+            $("Z", true),
             $("X", true),
             $("Y", false)
         } },
@@ -131,13 +134,29 @@ public class ParameterizedPredicatesTest {
             ".startsWith(\"hello\")",
             $("helloWorld", true),
             $("worldHello", false),
+        } },
+        new Object[][] { {
+            Printable.predicate("alwaysTrue", s -> true)
+                .negate()
+                .and(Printable.predicate("alwaysFalse", s -> false)
+                .or(Printable.predicate("hello", s -> false).and(Printable.predicate("bye", s -> true)))),
+            "(!alwaysTrue&&(alwaysFalse||(hello&&bye)))",
+            $("ANYTHING", false),
         } }
+
     );
   }
 
   final private Predicate      predicate;
   final private String         expectationForToString;
   final private List<TestItem> testItems;
+
+  @Before
+  public void before() {
+    System.out.printf("predicate:%s%n", this.predicate);
+    System.out.printf("expectationForToString:%s%n", this.expectationForToString);
+    System.out.printf("testItems:%s%n", this.testItems);
+  }
 
   @Test
   public void exerciseToString() {
