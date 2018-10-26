@@ -10,6 +10,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static com.github.dakusui.crest.utils.printable.Predicates.alwaysTrue;
+
 public abstract class ObjectMatcherBuilder<IN, OUT, SELF extends ObjectMatcherBuilder<IN, OUT, SELF>> implements MatcherBuilder<IN, OUT, SELF> {
   private final Function<? super IN, ? extends OUT> function;
   private final List<Predicate<? super OUT>>        predicates;
@@ -58,6 +60,8 @@ public abstract class ObjectMatcherBuilder<IN, OUT, SELF extends ObjectMatcherBu
   }
 
   private Matcher<? super IN> matcher(Op op) {
+    if (predicates.isEmpty())
+      predicates.add(alwaysTrue());
     return (predicates.size() == 1) ?
         Matcher.Leaf.create(predicates.get(0), this.function) :
         Objects.requireNonNull(op).create(predicates, this.function);

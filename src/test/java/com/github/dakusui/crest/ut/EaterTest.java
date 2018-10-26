@@ -71,7 +71,7 @@ public class EaterTest extends TestBase {
               asListOf(
                   String.class,
                   sublistAfterElement("abc").afterElement("def").afterElement("XYZ").$()
-              ).isNotNull().$()));
+              ).$()));
     } catch (AssertionFailedError e) {
       e.printStackTrace();
       throw new ExpectedException();
