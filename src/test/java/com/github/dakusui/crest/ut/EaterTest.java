@@ -3,6 +3,7 @@ package com.github.dakusui.crest.ut;
 import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.utils.TestBase;
 import junit.framework.AssertionFailedError;
+import org.junit.ComparisonFailure;
 import org.junit.Test;
 
 import java.util.List;
@@ -12,6 +13,20 @@ import static com.github.dakusui.crest.utils.printable.Predicates.equalsIgnoreCa
 import static java.util.Arrays.asList;
 
 public class EaterTest extends TestBase {
+  @Test(expected = ExpectedException.class)
+  public void test() {
+    String targetContainer = "ZabcZdefZXYZz";
+    try {
+      assertThat(
+          targetContainer,
+          asString(substringAfterRegex("ab.").after("d.f").after("XYZ").$()).equalTo("Z").$()
+      );
+    } catch (ComparisonFailure e) {
+      e.printStackTrace();
+      throw new ExpectedException();
+    }
+  }
+
   @Test(expected = ExpectedException.class)
   public void test2() {
     String targetContainer = "ZabcZdefZxyzZ";
@@ -46,6 +61,18 @@ public class EaterTest extends TestBase {
     assertThat(
         targetContainer,
         allOf(
+            asString(substringAfterRegex("ab.").after("d.f").after("xyz").$()).equalTo("Z").$()
+        )
+    );
+  }
+
+  @Test
+  public void test3multiAssertions() {
+    String targetContainer = "ZabcZdefZxyzZ";
+    assertThat(
+        targetContainer,
+        allOf(
+            asString(substringAfterRegex("ab.").after("d.f").after("xyz").$()).equalTo("Z").$(),
             asString(substringAfterRegex("ab.").after("d.f").after("xyz").$()).equalTo("Z").$()
         )
     );

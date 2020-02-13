@@ -230,19 +230,6 @@ public interface Session<T> {
       this.mismatchWriter.appendLine("%s=%s", VARIABLE_NAME, snapshotOf(null, value));
       this.mismatchWriter.leave();
       if (p instanceof TransformingPredicate && !fails(func, value)) {
-        TransformingPredicate pp = (TransformingPredicate) p;
-        this.mismatchWriter
-            .enter()
-            .appendLine(
-                "%s%s %s",
-                TRANSFORMED_VARIABLE_NAME,
-                pp.function(),
-                pp.predicate())
-            .leave();
-        explainFunction(
-            (T) apply(func, value),
-            pp.function(),
-            TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
         this.mismatchWriter
             .enter()
             .appendLine(
@@ -257,6 +244,19 @@ public interface Session<T> {
         } finally {
           this.mismatchWriter.leave();
         }
+        TransformingPredicate pp = (TransformingPredicate) p;
+        this.mismatchWriter
+            .enter()
+            .appendLine(
+                "%s%s %s",
+                TRANSFORMED_VARIABLE_NAME,
+                pp.function(),
+                pp.predicate())
+            .leave();
+        explainFunction(
+            (T) apply(func, value),
+            pp.function(),
+            TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
       } else {
         this.mismatchWriter
             .enter()
