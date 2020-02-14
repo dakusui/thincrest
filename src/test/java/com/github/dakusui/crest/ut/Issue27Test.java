@@ -55,6 +55,7 @@ public class Issue27Test extends TestBase {
               .$()
       );
     } catch (ComparisonFailure e) {
+      e.printStackTrace(System.out);
       Assert.assertThat(
           e.getMessage(),
           CoreMatchers.containsString("was not met\n"

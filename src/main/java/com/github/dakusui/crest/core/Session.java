@@ -297,9 +297,9 @@ public interface Session<T> {
     }
 
     void beginMismatch(T value, Matcher.Composite<T> matcher) {
-      if (matcher.isTopLevel())
-        this.mismatchWriter.appendLine("when %s=%s; then %s:[", VARIABLE_NAME, formatValue(value), matcher.name());
-      else
+      if (matcher.isTopLevel()) {
+        this.mismatchWriter.appendLine("when %s=%s; then %s:[", VARIABLE_NAME, summarizeValue(value), matcher.name());
+      } else
         this.mismatchWriter.appendLine("%s:[", matcher.name());
       mismatchWriter.enter();
     }
@@ -526,9 +526,9 @@ public interface Session<T> {
       List<Object> key = asList(funcOrPredicate, value);
       if (!snapshots.containsKey(key)) {
         if (out instanceof String || out instanceof Throwable) {
-          snapshots.put(key, String.format("%s", formatValue(out)));
+          snapshots.put(key, String.format("%s", summarizeValue(out)));
         } else {
-          snapshots.put(key, String.format("%s:%s", formatValue(out), toSimpleClassName(out)));
+          snapshots.put(key, String.format("%s:%s", summarizeValue(out), toSimpleClassName(out)));
         }
       }
     }

@@ -284,7 +284,6 @@ public class CrestTest {
               + "    x=<(\"Hello\",\"world\",\"!\")>:\n"
               + "    x->size=<3>:Integer\n"
               + "  x->at[0] equalTo[hello] was not met\n"
-              + "    x=<(\"Hello\",\"world\",\"!\")>:\n"
               + "    x->at[0]=\"Hello\"\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
@@ -413,7 +412,6 @@ public class CrestTest {
               + "    x=<(\"Hello\",\"world\",\"!\")>:\n"
               + "    x->size=<3>:Integer\n"
               + "  x->at[0] equalTo[hello] was not met\n"
-              + "    x=<(\"Hello\",\"world\",\"!\")>:\n"
               + "    x->at[0]=\"Hello\"\n"
               + "]->false",
           description.orElseThrow(AssertionError::new).toString()
@@ -455,10 +453,8 @@ public class CrestTest {
               + "    x->size=<3>:Integer\n"
               + "  and:[\n"
               + "    x->at[0] equalTo[hello] was not met\n"
-              + "      x=<(\"Hello\",\"world\",\"!\")>:\n"
               + "      x->at[0]=\"Hello\"\n"
               + "    x->at[0] equalTo[HELLO] was not met\n"
-              + "      x=<(\"Hello\",\"world\",\"!\")>:\n"
               + "      x->at[0]=\"Hello\"\n"
               + "  ]->false\n"
               + "]->false",
@@ -500,10 +496,8 @@ public class CrestTest {
                   + "    x->size=<3>:Integer\n"
                   + "  or:[\n"
                   + "    x->at[0] equalTo[hello] was not met\n"
-                  + "      x=<(\"Hello\",\"world\",\"!\")>:\n"
                   + "      x->at[0]=\"Hello\"\n"
                   + "    x->at[0] equalTo[HELLO] was not met\n"
-                  + "      x=<(\"Hello\",\"world\",\"!\")>:\n"
                   + "      x->at[0]=\"Hello\"\n"
                   + "  ]->false\n"
                   + "]->false"

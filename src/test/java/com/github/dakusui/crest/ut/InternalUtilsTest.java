@@ -76,7 +76,7 @@ public class InternalUtilsTest extends TestBase {
   public void givenStringContainingControlSequences$formatValue$thenCorrectlyFormatted() {
     assertEquals(
         "\" \\n\\t\\\"\"",
-        InternalUtils.formatValue(" \n\t\"")
+        InternalUtils.summarizeValue(" \n\t\"")
     );
   }
 
@@ -84,7 +84,7 @@ public class InternalUtilsTest extends TestBase {
   public void givenChar_$r_$formatValue$thenCorrectlyFormatted() {
     assertEquals(
         "\"\\r\"",
-        InternalUtils.formatValue('\r')
+        InternalUtils.summarizeValue('\r')
     );
   }
 
@@ -92,7 +92,7 @@ public class InternalUtilsTest extends TestBase {
   public void givenNull$formatValue$thenCorrectlyFormatted() {
     assertEquals(
         "null",
-        InternalUtils.formatValue((Object) null)
+        InternalUtils.summarizeValue((Object) null)
     );
   }
 
