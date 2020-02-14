@@ -94,6 +94,8 @@ public interface Session<T> {
   }
 
   class Impl<T> implements Session<T> {
+    private boolean variableExplained = false;
+
     static class Writer {
       private int          level  = 0;
       private List<String> buffer = new LinkedList<>();
@@ -226,10 +228,12 @@ public interface Session<T> {
       //    y    =  f(func(x))
       // -> In this case, how p worked can be broken down into p(y) side and
       //    f(func(x)) side.
-
-      this.mismatchWriter.enter();
-      this.mismatchWriter.appendLine("%s=%s", VARIABLE_NAME, snapshotOf(null, value));
-      this.mismatchWriter.leave();
+      if (!variableExplained) {
+        this.mismatchWriter.enter();
+        this.mismatchWriter.appendLine("%s=%s", VARIABLE_NAME, snapshotOf(null, value));
+        this.mismatchWriter.leave();
+        this.variableExplained = true;
+      }
       if (p instanceof TransformingPredicate && !fails(func, value)) {
         this.mismatchWriter
             .enter()
