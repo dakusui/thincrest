@@ -32,5 +32,7 @@ public class PrintableFunction<T, R> implements Function<T, R> {
     return s;
   }
 
-
+  public static <T, R> PrintableFunction<T, R> create(String s, Function<? super T, ? extends R> function) {
+    return new PrintableFunction<>(s, function);
+  }
 }

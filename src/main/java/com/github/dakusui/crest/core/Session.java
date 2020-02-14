@@ -1,6 +1,7 @@
 package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.functions.TransformingPredicate;
+import com.github.dakusui.crest.utils.printable.TrivialFunction;
 import junit.framework.AssertionFailedError;
 import junit.framework.ComparisonFailure;
 
@@ -60,7 +61,7 @@ public interface Session<T> {
   @SuppressWarnings("unchecked")
   default <X> boolean matches(Matcher.Leaf<T> leaf, T value, Consumer<Throwable> listener) {
     if (this instanceof Impl)
-      ((Impl) this).snapshot(value, null, value);
+      ((Impl<T>) this).snapshot(value, null, value);
     try {
       return this.test(
           (Predicate<X>) leaf.p(),
@@ -93,7 +94,9 @@ public interface Session<T> {
   }
 
   class Impl<T> implements Session<T> {
-    class Writer {
+    private boolean variableExplained = false;
+
+    static class Writer {
       private int          level  = 0;
       private List<String> buffer = new LinkedList<>();
 
@@ -125,12 +128,12 @@ public interface Session<T> {
       }
     }
 
-    private static final String                    VARIABLE_NAME               = "x";
-    private static final String                    TRANSFORMED_VARIABLE_NAME   = "y";
-    private              Map<Function, Function>   memoizationMapForFunctions  = new HashMap<>();
-    private              Map<Predicate, Predicate> memoizationMapForPredicates = new HashMap<>();
-    private              Map<List<Object>, String> snapshots                   = new HashMap<>();
-    private              HashSet<List<Object>>     explained                   = new HashSet<>();
+    private static final String                              VARIABLE_NAME               = "x";
+    private static final String                              TRANSFORMED_VARIABLE_NAME   = "y";
+    private              Map<Function<?, ?>, Function<?, ?>> memoizationMapForFunctions  = new HashMap<>();
+    private              Map<Predicate<?>, Predicate<?>>     memoizationMapForPredicates = new HashMap<>();
+    private              Map<List<Object>, String>           snapshots                   = new HashMap<>();
+    private              HashSet<List<Object>>               explained                   = new HashSet<>();
 
 
     Impl.Writer expectationWriter = new Impl.Writer();
@@ -225,24 +228,13 @@ public interface Session<T> {
       //    y    =  f(func(x))
       // -> In this case, how p worked can be broken down into p(y) side and
       //    f(func(x)) side.
-
-      this.mismatchWriter.enter();
-      this.mismatchWriter.appendLine("%s=%s", VARIABLE_NAME, snapshotOf(null, value));
-      this.mismatchWriter.leave();
+      if (!variableExplained) {
+        this.mismatchWriter.enter();
+        this.mismatchWriter.appendLine("%s=%s", VARIABLE_NAME, snapshotOf(null, value));
+        this.mismatchWriter.leave();
+        this.variableExplained = true;
+      }
       if (p instanceof TransformingPredicate && !fails(func, value)) {
-        TransformingPredicate pp = (TransformingPredicate) p;
-        this.mismatchWriter
-            .enter()
-            .appendLine(
-                "%s%s %s",
-                TRANSFORMED_VARIABLE_NAME,
-                pp.function(),
-                pp.predicate())
-            .leave();
-        explainFunction(
-            (T) apply(func, value),
-            pp.function(),
-            TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
         this.mismatchWriter
             .enter()
             .appendLine(
@@ -257,22 +249,31 @@ public interface Session<T> {
         } finally {
           this.mismatchWriter.leave();
         }
-      } else {
+        TransformingPredicate<?, ?> pp = (TransformingPredicate<?, ?>) p;
         this.mismatchWriter
             .enter()
             .appendLine(
                 "%s%s %s",
-                VARIABLE_NAME,
-                func,
-                p)
+                TRANSFORMED_VARIABLE_NAME,
+                pp.function(),
+                pp.predicate())
             .leave();
+        explainFunction(
+            (T) apply(func, value),
+            (Function<T, ?>) pp.function(),
+            TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
+      } else {
+        if (func instanceof ChainedFunction)
+          this.mismatchWriter
+              .enter()
+              .appendLine("%s%s %s", VARIABLE_NAME, func, p)
+              .leave();
         explainFunction(value, func, VARIABLE_NAME, this.mismatchWriter);
       }
     }
 
     private void appendMismatchSummary(T value, Function<T, ?> func, Predicate<?> p) {
       String formattedExpectation = formatExpectation(p, func);
-      String formattedFunction = formatFunction(func, VARIABLE_NAME);
       String formattedFunctionOutput = this.snapshotOf(func, value);
       if (fails(func, value)) {
         this.mismatchWriter.appendLine(
@@ -287,24 +288,7 @@ public interface Session<T> {
             this.snapshotOf(p, this.apply(func, value))
         );
       } else {
-        if (p instanceof TransformingPredicate) {
-          TransformingPredicate pp = (TransformingPredicate) p;
-          this.mismatchWriter.appendLine(
-              "%s was not met because (%s=%s)%s=%s",
-              formattedExpectation,
-              formattedFunction,
-              formattedFunctionOutput,
-              pp.function(),
-              this.snapshotOf(pp.function(), this.apply(func, value))
-          );
-        } else {
-          this.mismatchWriter.appendLine(
-              "%s was not met because %s=%s",
-              formattedExpectation,
-              formattedFunction,
-              formattedFunctionOutput
-          );
-        }
+        this.mismatchWriter.appendLine("%s was not met", formattedExpectation);
       }
     }
 
@@ -313,9 +297,9 @@ public interface Session<T> {
     }
 
     void beginMismatch(T value, Matcher.Composite<T> matcher) {
-      if (matcher.isTopLevel())
-        this.mismatchWriter.appendLine("when %s=%s; then %s:[", VARIABLE_NAME, formatValue(value), matcher.name());
-      else
+      if (matcher.isTopLevel()) {
+        this.mismatchWriter.appendLine("when %s=%s; then %s:[", VARIABLE_NAME, summarizeValue(value), matcher.name());
+      } else
         this.mismatchWriter.appendLine("%s:[", matcher.name());
       mismatchWriter.enter();
     }
@@ -332,9 +316,9 @@ public interface Session<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean fails(Function func, Object value) {
+    private boolean fails(Function<?, ?> func, Object value) {
       try {
-        this.apply(func, value);
+        this.apply((Function<Object, Object>) func, value);
         return false;
       } catch (Throwable t) {
         return true;
@@ -342,9 +326,9 @@ public interface Session<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private boolean fails(Predicate p, Object value) {
+    private boolean fails(Predicate<?> p, Object value) {
       try {
-        this.test(p, value);
+        this.test((Predicate<Object>) p, value);
         return false;
       } catch (Throwable t) {
         return true;
@@ -368,9 +352,9 @@ public interface Session<T> {
       Object ret = null;
       try {
         if (func instanceof ChainedFunction) {
-          ChainedFunction cf = (ChainedFunction) func;
+          ChainedFunction<I, O> cf = (ChainedFunction<I, O>) func;
           if (cf.previous() != null) {
-            ret = apply(cf.chained(), apply(cf.previous(), value));
+            ret = this.apply((Function<Object, Object>) cf.chained(), apply((Function<Object, Object>) cf.previous(), value));
             return (O) ret;
           }
         }
@@ -400,8 +384,8 @@ public interface Session<T> {
       Object ret = null;
       try {
         if (pred instanceof TransformingPredicate) {
-          Function func = ((TransformingPredicate) pred).function();
-          ret = test(((TransformingPredicate) pred).predicate(), apply(func, value));
+          Function<Object, Object> func = (Function<Object, Object>) ((TransformingPredicate<Object, Object>) pred).function();
+          ret = test(((TransformingPredicate<Object, Object>) pred).predicate(), apply(func, value));
           return (boolean) ret;
         }
         ret = memoizedPredicate(pred).test(value);
@@ -422,12 +406,12 @@ public interface Session<T> {
 
     @SuppressWarnings("unchecked")
     private <I, O> Function<I, O> memoizedFunction(Function<I, O> function) {
-      return memoizationMapForFunctions.computeIfAbsent(function, this::memoize);
+      return (Function<I, O>) memoizationMapForFunctions.computeIfAbsent(function, this::memoize);
     }
 
     @SuppressWarnings("unchecked")
     private <I> Predicate<I> memoizedPredicate(Predicate<I> p) {
-      return memoizationMapForPredicates.computeIfAbsent(p, this::memoize);
+      return (Predicate<I>) memoizationMapForPredicates.computeIfAbsent(p, this::memoize);
     }
 
     private <I, O> Function<I, O> memoize(Function<I, O> function) {
@@ -481,13 +465,15 @@ public interface Session<T> {
           writer.enter().appendLine("%s%s=(EXPLAINED)", variableName, func).leave();
           return;
         }
-        explainChainedFunction(value, (ChainedFunction) func, variableName, writer);
+        explainChainedFunction(value, (ChainedFunction<Object, Object>) func, variableName, writer);
       } else {
-        writer.enter();
-        try {
-          writer.appendLine("%s%s=%s", variableName, func, this.snapshotOf(func, value));
-        } finally {
-          writer.leave();
+        if (!(func instanceof TrivialFunction)) {
+          writer.enter();
+          try {
+            writer.appendLine("%s%s=%s", variableName, func, this.snapshotOf(func, value));
+          } finally {
+            writer.leave();
+          }
         }
       }
       explained(value, func, variableName);
@@ -507,7 +493,9 @@ public interface Session<T> {
           }
         }
         List<Entry> workEntries = new LinkedList<>();
-        for (ChainedFunction c = chained; c != null; c = c.previous()) {
+        for (ChainedFunction<Object, Object> c = (ChainedFunction<Object, Object>) chained;
+             c != null;
+             c = (ChainedFunction<Object, Object>) c.previous()) {
           workEntries.add(0, new Entry(
               formatFunction(c, variableName),
               snapshotOf(c, value)
@@ -538,9 +526,9 @@ public interface Session<T> {
       List<Object> key = asList(funcOrPredicate, value);
       if (!snapshots.containsKey(key)) {
         if (out instanceof String || out instanceof Throwable) {
-          snapshots.put(key, String.format("%s", formatValue(out)));
+          snapshots.put(key, String.format("%s", summarizeValue(out)));
         } else {
-          snapshots.put(key, String.format("%s:%s", formatValue(out), toSimpleClassName(out)));
+          snapshots.put(key, String.format("%s:%s", summarizeValue(out), toSimpleClassName(out)));
         }
       }
     }
@@ -549,9 +537,9 @@ public interface Session<T> {
       return this.snapshots.get(asList(funcOrPred, value));
     }
 
-    private static String formatExpectation(Predicate p, Function function) {
+    private static String formatExpectation(Predicate<?> p, Function<?, ?> function) {
       if (p instanceof TransformingPredicate) {
-        TransformingPredicate pp = (TransformingPredicate) p;
+        TransformingPredicate<?, ?> pp = (TransformingPredicate<?, ?>) p;
         return String.format("(%s=%s%s)%s %s", TRANSFORMED_VARIABLE_NAME, VARIABLE_NAME, function, pp.function(), pp.predicate());
       } else
         return format("%s %s", formatFunction(function, VARIABLE_NAME), p);

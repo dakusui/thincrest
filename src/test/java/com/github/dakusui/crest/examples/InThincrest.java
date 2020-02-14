@@ -38,13 +38,18 @@ public class InThincrest {
   // (3)
   @Test
   public void qiita_2_3$thenFail() {
-    Crest.assertThat(
-        aList,
-        allOf(
-            asBoolean(isEmpty()).isTrue().matcher(),
-            asBoolean(isEmpty()).isFalse().matcher()
-        )
-    );
+    try {
+      Crest.assertThat(
+          aList,
+          allOf(
+              asBoolean(isEmpty()).isTrue().matcher(),
+              asBoolean(isEmpty()).isFalse().matcher()
+          )
+      );
+    } catch (Throwable t) {
+      t.printStackTrace();
+      throw t;
+    }
   }
 
   @Test
@@ -334,7 +339,7 @@ public class InThincrest {
     Crest.assertThat(
         anIterator,
         // To check if its empty or not, type doesn't matter. Let's say 'Object'.
-        Crest.asObjectList((Iterator i) -> new LinkedList<Object>() {{
+        Crest.asObjectList((Iterator<?> i) -> new LinkedList<Object>() {{
           while (i.hasNext()) {
             add(i.next());
           }

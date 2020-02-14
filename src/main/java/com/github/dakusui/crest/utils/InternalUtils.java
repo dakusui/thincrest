@@ -82,7 +82,7 @@ public enum InternalUtils {
    *
    * http://hamcrest.org/JavaHamcrest/
    */
-  public static String formatValue(Object value) {
+  public static String summarizeValue(Object value) {
     if (value == null)
       return "null";
     if (value instanceof String)

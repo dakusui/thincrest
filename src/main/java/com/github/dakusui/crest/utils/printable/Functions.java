@@ -49,7 +49,7 @@ public enum Functions {
     );
   }
 
-  public static Function<? super Collection, Integer> size() {
+  public static Function<? super Collection<?>, Integer> size() {
     return Printable.function(
         "->size",
         Collection::size
@@ -86,7 +86,6 @@ public enum Functions {
     return Printable.function("->countLines", (String s) -> s.split("\n").length);
   }
 
-  @SuppressWarnings("unchecked")
   public static <I, E> Function<? super I, ? extends E> invoke(String methodName, Object... args) {
     return invokeOn(THIS, methodName, args);
   }
@@ -103,8 +102,7 @@ public enum Functions {
         ));
   }
 
-  @SuppressWarnings("unchecked")
-  public static <I, E> Function<? super I, ? extends E> invokeStatic(Class klass, String methodName, Object... args) {
+  public static <I, E> Function<? super I, ? extends E> invokeStatic(Class<?> klass, String methodName, Object... args) {
     return Printable.function(
         () -> String.format("->%s.%s%s", klass.getSimpleName(), methodName, summarize(args)),
         (I target) -> InternalUtils.invokeStaticMethod(
@@ -113,5 +111,9 @@ public enum Functions {
             methodName,
             args
         ));
+  }
+
+  public static <T, R> TrivialFunction<T, R> trivial(Function<? super T, ? extends R> function) {
+    return TrivialFunction.create(function);
   }
 }

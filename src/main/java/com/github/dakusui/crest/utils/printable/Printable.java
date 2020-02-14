@@ -10,7 +10,7 @@ public enum Printable {
   static boolean assertsEnabled = false;
 
   static {
-    //noinspection ConstantConditions,AssertWithSideEffects
+    // noinspection AssertWithSideEffects
     assert assertsEnabled = true; // Intentional side-effect!!!
   }
 
@@ -38,12 +38,12 @@ public enum Printable {
         function;
   }
 
-  @SuppressWarnings("unchecked")
   public static <T> Predicate<T> printablePredicate(String s, Predicate<T> predicate) {
-    return (Predicate<T>) new PrintablePredicate(s, predicate);
+    return new PrintablePredicate<>(s, predicate);
   }
 
-  public static <T, R> Function<T, R> printableFunction(String s, Function<? super T, ? extends R> function) {
-    return new PrintableFunction<>(s, function);
+  public static <T, R> PrintableFunction<T, R> printableFunction(String s, Function<? super T, ? extends R> function) {
+    return PrintableFunction.create(s, function);
   }
+
 }
