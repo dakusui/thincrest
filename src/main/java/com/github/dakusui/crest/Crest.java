@@ -36,7 +36,6 @@ public enum Crest {
    * @param <T>      Type of the value to be matched with the returned matcher.
    * @return A matcher that matches when all of given {@code matchers} match.
    */
-  @SuppressWarnings("unchecked")
   @SafeVarargs
   public static <T> Matcher<T> allOf(Matcher<? super T>... matchers) {
     requireArgument(matchers, isEmptyArray().negate());
@@ -52,7 +51,6 @@ public enum Crest {
    * @param <T>      Type of the value to be matched with the returned matcher.
    * @return A matcher that matches when any of given {@code matchers} matches.
    */
-  @SuppressWarnings("unchecked")
   @SafeVarargs
   public static <T> Matcher<T> anyOf(Matcher<? super T>... matchers) {
     requireArgument(matchers, isEmptyArray().negate());
@@ -65,7 +63,7 @@ public enum Crest {
 
 
   @SuppressWarnings("unchecked")
-  public static <T> Matcher<T> noneOf(Matcher... matcher) {
+  public static <T> Matcher<T> noneOf(@SuppressWarnings("rawtypes") Matcher... matcher) {
     return new Matcher.Composite.Base<T>(true, Arrays.asList(matcher)) {
       @Override
       public String name() {
@@ -101,7 +99,7 @@ public enum Crest {
   }
 
   public static <I> AsBoolean<I> asBoolean(String methodName, Object... args) {
-    return asBoolean(Functions.invoke(methodName, (Object[]) args).andThen(Functions.cast(Boolean.class)));
+    return asBoolean(Functions.invoke(methodName, args).andThen(Functions.cast(Boolean.class)));
   }
 
   public static <I> AsBoolean<I> asBoolean(Predicate<? super I> predicate) {
@@ -118,7 +116,7 @@ public enum Crest {
   }
 
   public static <I> AsByte<I> asByte(String methodName, Object... args) {
-    return asByte(Functions.invoke(methodName, (Object[]) args).andThen(Functions.cast(Byte.class)));
+    return asByte(Functions.invoke(methodName, args).andThen(Functions.cast(Byte.class)));
   }
 
   public static AsByte<Byte> asByte() {
@@ -130,7 +128,7 @@ public enum Crest {
   }
 
   public static <I> AsChar<I> asChar(String methodName, Object... args) {
-    return asChar(Functions.invoke(methodName, (Object[]) args).andThen(Functions.cast(Character.class)));
+    return asChar(Functions.invoke(methodName, args).andThen(Functions.cast(Character.class)));
   }
 
   public static AsChar<Character> asChar() {
@@ -142,7 +140,7 @@ public enum Crest {
   }
 
   public static <I> AsShort<I> asShort(String methodName, Object... args) {
-    return asShort(Functions.invoke(methodName, (Object[]) args).andThen(Functions.cast(Short.class)));
+    return asShort(Functions.invoke(methodName, args).andThen(Functions.cast(Short.class)));
   }
 
   public static AsShort<Short> asShort() {
@@ -154,7 +152,7 @@ public enum Crest {
   }
 
   public static <I> AsInteger<I> asInteger(String methodName, Object... args) {
-    return asInteger(Functions.invoke(methodName, (Object[]) args).andThen(Functions.cast(Integer.class)));
+    return asInteger(Functions.invoke(methodName, args).andThen(Functions.cast(Integer.class)));
   }
 
   public static AsInteger<Integer> asInteger() {
@@ -166,7 +164,7 @@ public enum Crest {
   }
 
   public static <I> AsLong<I> asLong(String methodName, Object... args) {
-    return asLong(Functions.invoke(methodName, (Object[]) args).andThen(Functions.cast(Long.class)));
+    return asLong(Functions.invoke(methodName, args).andThen(Functions.cast(Long.class)));
   }
 
   public static AsLong<Long> asLong() {
@@ -178,7 +176,7 @@ public enum Crest {
   }
 
   public static <I> AsFloat<I> asFloat(String methodName, Object... args) {
-    return asFloat(Functions.invoke(methodName, (Object[]) args).andThen(Functions.cast(Float.class)));
+    return asFloat(Functions.invoke(methodName, args).andThen(Functions.cast(Float.class)));
   }
 
   public static AsFloat<Float> asFloat() {
@@ -190,7 +188,7 @@ public enum Crest {
   }
 
   public static <I> AsDouble<I> asDouble(String methodName, Object... args) {
-    return asDouble(Functions.invoke(methodName, (Object[]) args).andThen(Functions.cast(Double.class)));
+    return asDouble(Functions.invoke(methodName, args).andThen(Functions.cast(Double.class)));
   }
 
   public static AsDouble<Double> asDouble() {
@@ -245,7 +243,7 @@ public enum Crest {
     return new AsList<>(function);
   }
 
-  public static <I extends Map, SELF extends AsMap<I, Object, Object, SELF>> SELF asObjectMap() {
+  public static <I extends Map<?, ?>, SELF extends AsMap<I, Object, Object, SELF>> SELF asObjectMap() {
     return asMapOf(Object.class, Object.class, function("mapToMap", o -> new HashMap<>()));
   }
 
@@ -268,7 +266,7 @@ public enum Crest {
     return Call.create(methodName, args);
   }
 
-  public static Call call(Class klass, String methodName, Object... args) {
+  public static Call call(Class<?> klass, String methodName, Object... args) {
     return callOn(klass, methodName, args);
   }
 

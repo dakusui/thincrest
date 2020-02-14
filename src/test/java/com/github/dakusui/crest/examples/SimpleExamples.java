@@ -4,10 +4,12 @@ import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.utils.printable.Functions;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import static com.github.dakusui.crest.Crest.*;
 import static com.github.dakusui.crest.utils.printable.Functions.size;
@@ -326,7 +328,7 @@ public class SimpleExamples {
 
   @Test
   public void givenMapWithoutTypes$whenHasKey$thenFail() {
-    Map map = new HashMap<Object, Object>() {{
+    Map<?, ?> map = new HashMap<Object, Object>() {{
       put("hello", 5);
       put("world", 5);
       put("everyone", 8);
