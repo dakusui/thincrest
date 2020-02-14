@@ -16,6 +16,7 @@ import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.utils.InternalUtils.composeComparisonText;
 import static com.github.dakusui.crest.utils.InternalUtils.requireArgument;
+import static com.github.dakusui.crest.utils.printable.Functions.trivial;
 import static com.github.dakusui.crest.utils.printable.Predicates.equalTo;
 import static com.github.dakusui.crest.utils.printable.Predicates.isEmptyArray;
 import static java.util.Arrays.asList;
@@ -83,7 +84,7 @@ public enum Crest {
   }
 
   public static <I> AsObject<I, I> asObject() {
-    return new AsObject<>(Functions.identity());
+    return new AsObject<>(trivial(Functions.identity()));
   }
 
   public static <I, O> AsObject<I, O> asObject(String methodName, Object... args) {
@@ -95,7 +96,7 @@ public enum Crest {
   }
 
   public static AsBoolean<Boolean> asBoolean() {
-    return asBoolean(Functions.identity());
+    return asBoolean(trivial(Functions.identity()));
   }
 
   public static <I> AsBoolean<I> asBoolean(String methodName, Object... args) {
@@ -120,7 +121,7 @@ public enum Crest {
   }
 
   public static AsByte<Byte> asByte() {
-    return asByte(Functions.identity());
+    return asByte(trivial(Functions.identity()));
   }
 
   public static <I> AsChar<I> asChar(Function<? super I, Character> function) {
@@ -132,7 +133,7 @@ public enum Crest {
   }
 
   public static AsChar<Character> asChar() {
-    return asChar(Functions.identity());
+    return asChar(trivial(Functions.identity()));
   }
 
   public static <I> AsShort<I> asShort(Function<? super I, Short> function) {
@@ -144,7 +145,7 @@ public enum Crest {
   }
 
   public static AsShort<Short> asShort() {
-    return asShort(Functions.identity());
+    return asShort(trivial(Functions.identity()));
   }
 
   public static <I> AsInteger<I> asInteger(Function<? super I, Integer> function) {
@@ -156,7 +157,7 @@ public enum Crest {
   }
 
   public static AsInteger<Integer> asInteger() {
-    return asInteger(Functions.identity());
+    return asInteger(trivial(Functions.identity()));
   }
 
   public static <I> AsLong<I> asLong(Function<? super I, Long> function) {
@@ -168,7 +169,7 @@ public enum Crest {
   }
 
   public static AsLong<Long> asLong() {
-    return asLong(Functions.identity());
+    return asLong(trivial(Functions.identity()));
   }
 
   public static <I> AsFloat<I> asFloat(Function<? super I, Float> function) {
@@ -180,7 +181,7 @@ public enum Crest {
   }
 
   public static AsFloat<Float> asFloat() {
-    return asFloat(Functions.identity());
+    return asFloat(trivial(Functions.identity()));
   }
 
   public static <I> AsDouble<I> asDouble(Function<? super I, Double> function) {
@@ -192,7 +193,7 @@ public enum Crest {
   }
 
   public static AsDouble<Double> asDouble() {
-    return asDouble(Functions.identity());
+    return asDouble(trivial(Functions.identity()));
   }
 
   /*
@@ -215,7 +216,7 @@ public enum Crest {
   }
 
   public static <I> AsString<I> asString() {
-    return asString(Functions.stringify());
+    return asString(trivial(Functions.stringify()));
   }
 
   public static <I> AsString<I> asString(Function<? super I, ? extends String> function) {
@@ -228,7 +229,7 @@ public enum Crest {
   }
 
   public static <I extends Collection<?>> AsList<? super I, ?> asObjectList() {
-    return asListOf(Object.class, Functions.collectionToList());
+    return asListOf(Object.class, trivial(Functions.collectionToList()));
   }
 
   public static <I> AsList<? super I, ?> asObjectList(Function<? super I, ? extends List<Object>> function) {
@@ -243,8 +244,9 @@ public enum Crest {
     return new AsList<>(function);
   }
 
+  @SuppressWarnings("unchecked")
   public static <I extends Map<?, ?>, SELF extends AsMap<I, Object, Object, SELF>> SELF asObjectMap() {
-    return asMapOf(Object.class, Object.class, function("mapToMap", o -> new HashMap<>()));
+    return asMapOf(Object.class, Object.class, trivial(function("mapToMap", HashMap::new)));
   }
 
   public static <I, SELF extends AsMap<I, Object, Object, SELF>> SELF asObjectMap(Function<? super I, ? extends Map<Object, Object>> function) {

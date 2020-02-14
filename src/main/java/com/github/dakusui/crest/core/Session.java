@@ -1,6 +1,7 @@
 package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.functions.TransformingPredicate;
+import com.github.dakusui.crest.utils.printable.TrivialFunction;
 import junit.framework.AssertionFailedError;
 import junit.framework.ComparisonFailure;
 
@@ -462,11 +463,13 @@ public interface Session<T> {
         }
         explainChainedFunction(value, (ChainedFunction<Object, Object>) func, variableName, writer);
       } else {
-        writer.enter();
-        try {
-          writer.appendLine("%s%s=%s", variableName, func, this.snapshotOf(func, value));
-        } finally {
-          writer.leave();
+        if (!(func instanceof TrivialFunction)) {
+          writer.enter();
+          try {
+            writer.appendLine("%s%s=%s", variableName, func, this.snapshotOf(func, value));
+          } finally {
+            writer.leave();
+          }
         }
       }
       explained(value, func, variableName);

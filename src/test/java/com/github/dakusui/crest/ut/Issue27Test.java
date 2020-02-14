@@ -338,7 +338,7 @@ public class Issue27Test extends TestBase {
       Assert.assertThat(
           e.getMessage(),
           CoreMatchers.containsString("[when x=\"HELLO\"; then not:[\n"
-              + "  x->stringify containsString[HELLO]\n"
+              + "  x containsString[HELLO]\n"
               + "]->false]")
       );
       throw new IOException(e);

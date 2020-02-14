@@ -1,8 +1,11 @@
 package com.github.dakusui.crest.utils.ut;
 
+import com.github.dakusui.crest.utils.TestUtils;
 import com.github.dakusui.crest.utils.printable.Predicates;
 import com.github.dakusui.crest.utils.printable.Printable;
+import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -19,7 +22,11 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
-public class ParameterizedPredicatesTest extends TestBase {
+public class ParameterizedPredicatesTest {
+  @BeforeClass
+  public static void suppressStdOutErrIfRunUnderSurefire() {
+  }
+
   @Parameters
   public static List<Object[]> parameters() {
     Object x = new Object() {
@@ -62,7 +69,7 @@ public class ParameterizedPredicatesTest extends TestBase {
         new Object[] { new Object[] {
             Predicates.isInstanceOf(List.class),
             "isInstanceOf[java.util.List]",
-            $(new LinkedList(), true),
+            $(new LinkedList<>(), true),
             $(new HashSet<>(), false),
         } },
         new Object[] { new Object[] {
@@ -147,12 +154,13 @@ public class ParameterizedPredicatesTest extends TestBase {
     );
   }
 
-  final private Predicate      predicate;
+  final private Predicate<Object>      predicate;
   final private String         expectationForToString;
   final private List<TestItem> testItems;
 
   @Before
   public void before() {
+    TestUtils.suppressStdOutErrIfRunUnderSurefire();
     System.out.printf("predicate:%s%n", this.predicate);
     System.out.printf("expectationForToString:%s%n", this.expectationForToString);
     System.out.printf("testItems:%s%n", this.testItems);
@@ -163,7 +171,6 @@ public class ParameterizedPredicatesTest extends TestBase {
     assertEquals(expectationForToString, predicate.toString());
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void exercisePredicate() {
     for (TestItem testItem : testItems) {
@@ -171,10 +178,16 @@ public class ParameterizedPredicatesTest extends TestBase {
     }
   }
 
+  @After
+  public void restoreStdOutErr() {
+    TestUtils.restoreStdOutErr();
+  }
+
+  @SuppressWarnings("unchecked")
   public ParameterizedPredicatesTest(
       Object[] args
   ) {
-    this.predicate = (Predicate) args[0];
+    this.predicate = (Predicate<Object>) args[0];
     this.expectationForToString = (String) args[1];
     this.testItems = new LinkedList<TestItem>() {{
       for (int i = 2; i < args.length; i++) {

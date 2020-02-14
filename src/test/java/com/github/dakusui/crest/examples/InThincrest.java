@@ -339,7 +339,7 @@ public class InThincrest {
     Crest.assertThat(
         anIterator,
         // To check if its empty or not, type doesn't matter. Let's say 'Object'.
-        Crest.asObjectList((Iterator i) -> new LinkedList<Object>() {{
+        Crest.asObjectList((Iterator<?> i) -> new LinkedList<Object>() {{
           while (i.hasNext()) {
             add(i.next());
           }

@@ -555,10 +555,10 @@ public class CrestTest {
       assertThat(
           description.get().content,
           Matchers.containsString("Expected: not:[\n"
-              + "  x->stringify containsString[HELLO]\n"
+              + "  x containsString[HELLO]\n"
               + "]\n"
               + "     but: when x=\"HELLO\"; then not:[\n"
-              + "  x->stringify containsString[HELLO]\n"
+              + "  x containsString[HELLO]\n"
               + "]->false")
       );
     }
@@ -590,14 +590,13 @@ public class CrestTest {
           description.get().content,
           Matchers.containsString("\n"
               + "Expected: noneOf:[\n"
-              + "  x->stringify ~[WORLD]\n"
-              + "  x->stringify containsString[HELLO]\n"
+              + "  x ~[WORLD]\n"
+              + "  x containsString[HELLO]\n"
               + "]\n"
               + "     but: when x=\"HELLO\"; then noneOf:[\n"
-              + "  x->stringify ~[WORLD] was not met\n"
+              + "  x ~[WORLD] was not met\n"
               + "    x=\"HELLO\"\n"
-              + "    x->stringify=\"HELLO\"\n"
-              + "  x->stringify containsString[HELLO]\n"
+              + "  x containsString[HELLO]\n"
               + "]->false")
       );
     }
