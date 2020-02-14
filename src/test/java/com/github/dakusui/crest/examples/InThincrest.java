@@ -38,13 +38,18 @@ public class InThincrest {
   // (3)
   @Test
   public void qiita_2_3$thenFail() {
-    Crest.assertThat(
-        aList,
-        allOf(
-            asBoolean(isEmpty()).isTrue().matcher(),
-            asBoolean(isEmpty()).isFalse().matcher()
-        )
-    );
+    try {
+      Crest.assertThat(
+          aList,
+          allOf(
+              asBoolean(isEmpty()).isTrue().matcher(),
+              asBoolean(isEmpty()).isFalse().matcher()
+          )
+      );
+    } catch (Throwable t) {
+      t.printStackTrace();
+      throw t;
+    }
   }
 
   @Test

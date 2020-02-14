@@ -258,14 +258,11 @@ public interface Session<T> {
             (Function<T, ?>) pp.function(),
             TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
       } else {
-        this.mismatchWriter
-            .enter()
-            .appendLine(
-                "%s%s %s",
-                VARIABLE_NAME,
-                func,
-                p)
-            .leave();
+        if (func instanceof ChainedFunction)
+          this.mismatchWriter
+              .enter()
+              .appendLine("%s%s %s", VARIABLE_NAME, func, p)
+              .leave();
         explainFunction(value, func, VARIABLE_NAME, this.mismatchWriter);
       }
     }
