@@ -211,10 +211,9 @@ public enum Crest {
     return (S) new AsComparable<>(function);
   }
 
-  @SuppressWarnings("unchecked")
   public static <I, T extends Comparable<? super T>, S extends AsComparable<I, T, S>>
   S asComparableOf(Class<T> type, String methodName, Object... args) {
-    return (S) asComparable(Functions.invoke(methodName, (Object[]) args).<T>andThen(Functions.cast(type)));
+    return asComparable(Functions.invoke(methodName, args).<T>andThen(Functions.cast(type)));
   }
 
   public static <I> AsString<I> asString() {

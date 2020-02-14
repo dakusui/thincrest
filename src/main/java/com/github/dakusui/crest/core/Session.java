@@ -272,7 +272,6 @@ public interface Session<T> {
 
     private void appendMismatchSummary(T value, Function<T, ?> func, Predicate<?> p) {
       String formattedExpectation = formatExpectation(p, func);
-      String formattedFunction = formatFunction(func, VARIABLE_NAME);
       String formattedFunctionOutput = this.snapshotOf(func, value);
       if (fails(func, value)) {
         this.mismatchWriter.appendLine(
@@ -287,24 +286,7 @@ public interface Session<T> {
             this.snapshotOf(p, this.apply(func, value))
         );
       } else {
-        if (p instanceof TransformingPredicate) {
-          TransformingPredicate pp = (TransformingPredicate) p;
-          this.mismatchWriter.appendLine(
-              "%s was not met because (%s=%s)%s=%s",
-              formattedExpectation,
-              formattedFunction,
-              formattedFunctionOutput,
-              pp.function(),
-              this.snapshotOf(pp.function(), this.apply(func, value))
-          );
-        } else {
-          this.mismatchWriter.appendLine(
-              "%s was not met because %s=%s",
-              formattedExpectation,
-              formattedFunction,
-              formattedFunctionOutput
-          );
-        }
+        this.mismatchWriter.appendLine("%s was not met", formattedExpectation);
       }
     }
 

@@ -57,7 +57,7 @@ public class Issue27Test extends TestBase {
     } catch (ComparisonFailure e) {
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("was not met because (x.append(\"hello\").append(\"world\")=<helloworld>:StringBuilder).append(\"!\").append(\"!\").toString()=\"helloworld!!\"\n"
+          CoreMatchers.containsString("was not met\n"
               + "  x=<>:StringBuilder\n"
               + "  y=x.append(\"hello\").append(\"world\")\n"
               + "                    |               |\n"
@@ -91,9 +91,10 @@ public class Issue27Test extends TestBase {
               .equalTo("HelloWorld").$()
       );
     } catch (ComparisonFailure e) {
+      e.printStackTrace();
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("was not met because x.append(\"hello\").append(\"world\").toString()=\"helloworld\"\n"
+          CoreMatchers.containsString("was not met\n"
               + "  x=<>:StringBuilder\n"
               + "  x.append(\"hello\").append(\"world\").toString() equalTo[HelloWorld]\n"
               + "                  |               |          |\n"
@@ -122,7 +123,7 @@ public class Issue27Test extends TestBase {
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("(x.toLowerCase()=\"world\").toUpperCase().substring(2).charAt(1)=\"L\":Character\n"
+          CoreMatchers.containsString(""
               + "  x=\"WORLD\"\n"
               + "  y=x.toLowerCase()\n"
               + "    x.toLowerCase()=\"world\"\n"
@@ -156,7 +157,7 @@ public class Issue27Test extends TestBase {
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("was not met because (x.toLowerCase()=\"world\").toUpperCase().substring(2).charAt(1)=\"L\":Character\n"
+          CoreMatchers.containsString("was not met\n"
               + "    x=\"WORLD\"\n"
               + "    y=x.toLowerCase()\n"
               + "      x.toLowerCase()=\"world\"\n"
@@ -189,7 +190,7 @@ public class Issue27Test extends TestBase {
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("was not met because (x.toLowerCase()=\"world\").toUpperCase().substring(2).charAt(1)=\"L\":Character\n"
+          CoreMatchers.containsString("was not met\n"
               + "    x=\"WORLD\"\n"
               + "    y=x.toLowerCase()\n"
               + "      x.toLowerCase()=\"world\"\n"
@@ -244,7 +245,7 @@ public class Issue27Test extends TestBase {
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("was not met because (x.toLowerCase().substring(1)=\"orld\").replaceAll(\"d\",\"DDD\").concat(\"XYZ\")=\"orlDDDXYZ\"\n"
+          CoreMatchers.containsString("was not met\n"
               + "    x=\"WORLD\"\n"
               + "    y=x.toLowerCase().substring(1)\n"
               + "                    |            |\n"
