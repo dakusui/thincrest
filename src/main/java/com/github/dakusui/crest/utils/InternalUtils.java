@@ -370,4 +370,11 @@ public enum InternalUtils {
     return b.toString();
   }
 
+  public static String formatObject(Object value) {
+    if (value instanceof String)
+      return format("\"%s\"", value);
+    if (value instanceof Character)
+      return format("'%s'", value);
+    return format("%s", value);
+  }
 }
