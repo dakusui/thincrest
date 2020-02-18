@@ -40,7 +40,7 @@ public enum Crest {
   @SafeVarargs
   public static <T> Matcher<T> allOf(Matcher<? super T>... matchers) {
     requireArgument(matchers, isEmptyArray().negate());
-    return Matcher.Conjunctive.create(true, asList(matchers));
+    return Matcher.Conjunctive.create(asList(matchers));
   }
 
   /**
@@ -55,7 +55,7 @@ public enum Crest {
   @SafeVarargs
   public static <T> Matcher<T> anyOf(Matcher<? super T>... matchers) {
     requireArgument(matchers, isEmptyArray().negate());
-    return Matcher.Disjunctive.create(true, asList(matchers));
+    return Matcher.Disjunctive.create(asList(matchers));
   }
 
   public static <T> Matcher<T> not(Matcher<? super T> matcher) {
@@ -65,7 +65,7 @@ public enum Crest {
 
   @SuppressWarnings("unchecked")
   public static <T> Matcher<T> noneOf(@SuppressWarnings("rawtypes") Matcher... matcher) {
-    return new Matcher.Composite.Base<T>(true, Arrays.asList(matcher)) {
+    return new Matcher.Composite.Base<T>(Arrays.asList(matcher)) {
       @Override
       public String name() {
         return "noneOf";

@@ -42,11 +42,14 @@ public interface Session<T> {
     if (matcher.matches(value, session, new LinkedList<>())) {
       session.matched(true);
     } else {
+      session.describeActualValue(value);
       matcher.describeExpectation(session.matched(false));
       matcher.describeMismatch(value, session);
     }
     return session.report();
   }
+
+  void describeActualValue(T value);
 
   Report report();
 
@@ -94,8 +97,6 @@ public interface Session<T> {
   }
 
   class Impl<T> implements Session<T> {
-    private boolean variableExplained = false;
-
     static class Writer {
       private int          level  = 0;
       private List<String> buffer = new LinkedList<>();
@@ -205,6 +206,12 @@ public interface Session<T> {
     }
 
     @Override
+    public void describeActualValue(T value) {
+      this.expectationWriter.appendLine("%s=%s satisfies", VARIABLE_NAME, summarizeValue(value));
+      this.mismatchWriter.appendLine("%s=%s did not satisfy", VARIABLE_NAME, summarizeValue(value));
+    }
+
+    @Override
     public void describeExpectation(Matcher.Leaf<T> matcher) {
       describeExpectationTo(expectationWriter, matcher);
     }
@@ -228,12 +235,6 @@ public interface Session<T> {
       //    y    =  f(func(x))
       // -> In this case, how p worked can be broken down into p(y) side and
       //    f(func(x)) side.
-      if (!variableExplained) {
-        this.mismatchWriter.enter()
-            .appendLine("%s=%s", VARIABLE_NAME, snapshotOf(null, value))
-            .leave();
-        this.variableExplained = true;
-      }
       if (p instanceof TransformingPredicate && !fails(func, value)) {
         this.mismatchWriter
             .enter()
@@ -297,11 +298,7 @@ public interface Session<T> {
     }
 
     void beginMismatch(T value, Matcher.Composite<T> matcher) {
-      if (matcher.isTopLevel()) {
-        this.mismatchWriter.appendLine("when %s=%s; then %s:[", VARIABLE_NAME, summarizeValue(value), matcher.name());
-        this.variableExplained = true;
-      } else
-        this.mismatchWriter.appendLine("%s:[", matcher.name());
+      this.mismatchWriter.appendLine("%s:[", matcher.name());
       mismatchWriter.enter();
     }
 
