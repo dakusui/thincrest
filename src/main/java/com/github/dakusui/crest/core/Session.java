@@ -229,9 +229,9 @@ public interface Session<T> {
       // -> In this case, how p worked can be broken down into p(y) side and
       //    f(func(x)) side.
       if (!variableExplained) {
-        this.mismatchWriter.enter();
-        this.mismatchWriter.appendLine("%s=%s", VARIABLE_NAME, snapshotOf(null, value));
-        this.mismatchWriter.leave();
+        this.mismatchWriter.enter()
+            .appendLine("%s=%s", VARIABLE_NAME, snapshotOf(null, value))
+            .leave();
         this.variableExplained = true;
       }
       if (p instanceof TransformingPredicate && !fails(func, value)) {
@@ -299,6 +299,7 @@ public interface Session<T> {
     void beginMismatch(T value, Matcher.Composite<T> matcher) {
       if (matcher.isTopLevel()) {
         this.mismatchWriter.appendLine("when %s=%s; then %s:[", VARIABLE_NAME, summarizeValue(value), matcher.name());
+        this.variableExplained = true;
       } else
         this.mismatchWriter.appendLine("%s:[", matcher.name());
       mismatchWriter.enter();

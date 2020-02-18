@@ -92,7 +92,6 @@ public class Issue27Test extends TestBase {
               .equalTo("HelloWorld").$()
       );
     } catch (ComparisonFailure e) {
-      e.printStackTrace();
       Assert.assertThat(
           e.getMessage(),
           CoreMatchers.containsString("was not met\n"
@@ -159,7 +158,6 @@ public class Issue27Test extends TestBase {
       Assert.assertThat(
           e.getMessage(),
           CoreMatchers.containsString("was not met\n"
-              + "    x=\"WORLD\"\n"
               + "    y=x.toLowerCase()\n"
               + "      x.toLowerCase()=\"world\"\n"
               + "    y.toUpperCase().substring(2).charAt(1) equalTo[z]\n"
@@ -187,12 +185,12 @@ public class Issue27Test extends TestBase {
               ).$())
       );
     } catch (ComparisonFailure e) {
+      e.printStackTrace();
       System.out.println("ACTUAL:" + e.getActual());
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
           e.getMessage(),
           CoreMatchers.containsString("was not met\n"
-              + "    x=\"WORLD\"\n"
               + "    y=x.toLowerCase()\n"
               + "      x.toLowerCase()=\"world\"\n"
               + "    y.toUpperCase().substring(2).charAt(1) equalTo[z]\n"
@@ -278,7 +276,7 @@ public class Issue27Test extends TestBase {
       e.printStackTrace(System.out);
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("  x=\"WORLD\"\n"
+          CoreMatchers.containsString(""
               + "  y=x.toLowerCase().substring(1)\n"
               + "                  |            |\n"
               + "                  |            +-\"orld\"\n"
@@ -313,7 +311,7 @@ public class Issue27Test extends TestBase {
       e.printStackTrace(System.out);
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("  x=\"WORLD\"\n"
+          CoreMatchers.containsString(""
               + "  x.toLowerCase().substring(-1) .toUpperCase().substring(1).charAt(1) equalTo[z]\n"
               + "                |             |\n"
               + "                |             +-java.lang.StringIndexOutOfBoundsException(String index out of range: -1)\n"

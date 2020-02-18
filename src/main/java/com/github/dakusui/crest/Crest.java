@@ -237,7 +237,7 @@ public enum Crest {
   }
 
   public static <I extends Collection<E>, E> AsList<I, E> asListOf(Class<E> type) {
-    return asListOf(type, Functions.collectionToList());
+    return asListOf(type, trivial(Functions.collectionToList()));
   }
 
   public static <I, E> AsList<I, E> asListOf(@SuppressWarnings("unused") Class<E> type, Function<? super I, ? extends List<E>> function) {
