@@ -460,7 +460,7 @@ public interface Session<T> {
     private void explainFunction(T value, Function<T, ?> func, String variableName, Impl.Writer writer) {
       if (func instanceof ChainedFunction) {
         if (isAlreadyExplained(value, func, variableName)) {
-          writer.enter().appendLine("%s%s=(EXPLAINED)", variableName, func).leave();
+//          writer.enter().appendLine("%s%s=(EXPLAINED)", variableName, func).leave();
           return;
         }
         explainChainedFunction(value, (ChainedFunction<Object, Object>) func, variableName, writer);
