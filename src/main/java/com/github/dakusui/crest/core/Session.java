@@ -259,17 +259,16 @@ public interface Session<T> {
                 pp.function(),
                 pp.predicate())
             .leave();
-        explainFunction(
-            (T) apply(func, value),
-            (Function<T, ?>) pp.function(),
-            TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
+        explainFunction((T) apply(func, value), (Function<T, ?>) pp.function(), TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
       } else {
+        /*
         if (func instanceof ChainedFunction)
           this.mismatchWriter
               .enter()
               .appendLine("%s%s %s", VARIABLE_NAME, func, p)
               .leave();
-        explainFunction(value, func, VARIABLE_NAME, this.mismatchWriter);
+         */
+        explainFunction(value, func, VARIABLE_NAME, this.mismatchWriter, -3);
       }
     }
 
@@ -456,14 +455,18 @@ public interface Session<T> {
       this.explained.add(asList(value, func, variableName));
     }
 
-    @SuppressWarnings("unchecked")
     private void explainFunction(T value, Function<T, ?> func, String variableName, Impl.Writer writer) {
+      explainFunction(value, func, variableName, writer, -1);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void explainFunction(T value, Function<T, ?> func, String variableName, Impl.Writer writer, int adjustment) {
       if (func instanceof ChainedFunction) {
         if (isAlreadyExplained(value, func, variableName)) {
-//          writer.enter().appendLine("%s%s=(EXPLAINED)", variableName, func).leave();
+          //          writer.enter().appendLine("%s%s=(EXPLAINED)", variableName, func).leave();
           return;
         }
-        explainChainedFunction(value, (ChainedFunction<Object, Object>) func, variableName, writer);
+        explainChainedFunction(value, (ChainedFunction<Object, Object>) func, variableName, writer, adjustment);
       } else {
         if (!(func instanceof TrivialFunction)) {
           writer.enter();
@@ -478,7 +481,7 @@ public interface Session<T> {
     }
 
     @SuppressWarnings("unchecked")
-    private <I, O> void explainChainedFunction(I value, ChainedFunction<I, O> chained, String variableName, Impl.Writer writer) {
+    private <I, O> void explainChainedFunction(I value, ChainedFunction<I, O> chained, String variableName, Impl.Writer writer, int adjustment) {
       writer.enter();
       try {
         class Entry {
@@ -503,7 +506,7 @@ public interface Session<T> {
         String previousReplacement = "";
         for (Entry entry : workEntries) {
           String formattedFunctionName = entry.formattedFunctionName;
-          String replacement = previousReplacement + spaces(formattedFunctionName.length() - previousReplacement.length() - 1);
+          String replacement = previousReplacement + spaces(formattedFunctionName.length() - previousReplacement.length() + adjustment);
           work.add(String.format(
               "%s+-%s%s",
               replacement,
