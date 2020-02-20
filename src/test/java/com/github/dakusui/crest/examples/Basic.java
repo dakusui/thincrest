@@ -114,4 +114,27 @@ public class Basic {
       throw t;
     }
   }
+  @Test
+  public void example6b() {
+    // Acceptable strings
+    //   0123456
+    // - _Hello, World!
+    // - +HELLO, world!
+    // - -hello, WORLD!
+    // - -Hello,world!
+    try {
+      assertThat(
+          "*howdy, world",
+          allOf(
+              asString(call("substring", 1).andThen("toLowerCase").$())
+                  .check(call("toUpperCase").$(), startsWith("HELLO"))
+                  .$(),
+              asString(call("substring", 7).$())
+                  .check(call("toLowerCase").andThen("toLowerCase").$(), containsString("world!"))
+                  .$()));
+    } catch (Throwable t) {
+      t.printStackTrace();
+      throw t;
+    }
+  }
 }

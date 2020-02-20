@@ -58,21 +58,20 @@ public class Issue27Test extends TestBase {
       e.printStackTrace(System.out);
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("was not met\n"
-              + "  x=<>:StringBuilder\n"
-              + "  y=x.append(\"hello\").append(\"world\")\n"
-              + "                    |               |\n"
-              + "                    |               +-<helloworld>:StringBuilder\n"
-              + "                    |\n"
-              + "                    +-----------------<hello>:StringBuilder\n"
-              + "  y.append(\"!\").append(\"!\").toString() equalTo[HELLOWORLD!]\n"
-              + "              |           |          |\n"
-              + "              |           |          +-\"helloworld!!\"\n"
-              + "              |           |\n"
-              + "              |           +------------<helloworld!!>:StringBuilder\n"
-              + "              |\n"
-              + "              +------------------------<helloworld!>:StringBuilder"
-              + "]>"
+          CoreMatchers.containsString("x=<helloworld!!> [did not satisfy\n" +
+              "(y=x.append(\"hello\").append(\"world\")).append(\"!\").append(\"!\").toString() equalTo[\"HELLOWORLD!\"] was not met\n" +
+              "  y=x.append(\"hello\").append(\"world\")\n" +
+              "                    |               |\n" +
+              "                    |               +-<helloworld>:StringBuilder\n" +
+              "                    |\n" +
+              "                    +-----------------<hello>:StringBuilder\n" +
+              "  y.append(\"!\").append(\"!\").toString() equalTo[\"HELLOWORLD!\"]\n" +
+              "              |           |          |\n" +
+              "              |           |          +-\"helloworld!!\"\n" +
+              "              |           |\n" +
+              "              |           +------------<helloworld!!>:StringBuilder\n" +
+              "              |\n" +
+              "              +------------------------<helloworld!>:StringBuilder]"
           )
       );
       throw new IOException();
@@ -92,17 +91,18 @@ public class Issue27Test extends TestBase {
               .equalTo("HelloWorld").$()
       );
     } catch (ComparisonFailure e) {
+      e.printStackTrace(System.out);
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("was not met\n"
-              + "  x=<>:StringBuilder\n"
-              + "  x.append(\"hello\").append(\"world\").toString() equalTo[HelloWorld]\n"
-              + "                  |               |          |\n"
-              + "                  |               |          +-\"helloworld\"\n"
-              + "                  |               |\n"
-              + "                  |               +------------<helloworld>:StringBuilder\n"
-              + "                  |\n"
-              + "                  +----------------------------<hello>:StringBuilder")
+          CoreMatchers.containsString("x=<helloworld> [satisfies\n" +
+              "x.append(\"hello\").append(\"world\").toString() equalTo[\"HelloWorld\"]]> but was:<x=<helloworld> [did not satisfy\n" +
+              "x.append(\"hello\").append(\"world\").toString() equalTo[\"HelloWorld\"] was not met\n" +
+              "                |               |          |\n" +
+              "                |               |          +-\"helloworld\"\n" +
+              "                |               |\n" +
+              "                |               +------------<helloworld>:StringBuilder\n" +
+              "                |\n" +
+              "                +----------------------------<hello>:StringBuilder]")
       );
       throw new IOException();
     }
@@ -119,22 +119,24 @@ public class Issue27Test extends TestBase {
           ).$()
       );
     } catch (ComparisonFailure e) {
-      System.out.println("ACTUAL:" + e.getActual());
-      System.out.println("EXPECTED: " + e.getExpected());
-      Assert.assertThat(
+      System.out.println("ACTUAL   FROM CREST:" + e.getActual());
+      e.printStackTrace();
+      System.out.println("EXPECTED FROM ACTUAL: " + e.getExpected());
+      System.out.println("MESSAGE: " + e.getMessage());
+      Assert.assertEquals(
           e.getMessage(),
-          CoreMatchers.containsString(""
-              + "  x=\"WORLD\"\n"
-              + "  y=x.toLowerCase()\n"
-              + "    x.toLowerCase()=\"world\"\n"
-              + "  y.toUpperCase().substring(2).charAt(1) equalTo[z]\n"
-              + "                |            |         |\n"
-              + "                |            |         +-\"L\":Character\n"
-              + "                |            |\n"
-              + "                |            +-----------\"RLD\"\n"
-              + "                |\n"
-              + "                +------------------------\"WORLD\""
-          )
+          "expected:<x=\"WORLD\" [satisfies\n" +
+              "(y=x.toLowerCase()).toUpperCase().substring(2).charAt(1) equalTo['z']]> but was:<x=\"WORLD\" [did not satisfy\n" +
+              "(y=x.toLowerCase()).toUpperCase().substring(2).charAt(1) equalTo['z'] was not met\n" +
+              "  y=x.toLowerCase()\n" +
+              "    x.toLowerCase()=\"world\"\n" +
+              "  y.toUpperCase().substring(2).charAt(1) equalTo['z']\n" +
+              "                |            |         |\n" +
+              "                |            |         +-\"L\":Character\n" +
+              "                |            |\n" +
+              "                |            +-----------\"RLD\"\n" +
+              "                |\n" +
+              "                +------------------------\"WORLD\"]>"
       );
       throw new IOException();
     }
@@ -160,7 +162,7 @@ public class Issue27Test extends TestBase {
           CoreMatchers.containsString("was not met\n"
               + "    y=x.toLowerCase()\n"
               + "      x.toLowerCase()=\"world\"\n"
-              + "    y.toUpperCase().substring(2).charAt(1) equalTo[z]\n"
+              + "    y.toUpperCase().substring(2).charAt(1) equalTo['z']\n"
               + "                  |            |         |\n"
               + "                  |            |         +-\"L\":Character\n"
               + "                  |            |\n"
@@ -193,7 +195,7 @@ public class Issue27Test extends TestBase {
           CoreMatchers.containsString("was not met\n"
               + "    y=x.toLowerCase()\n"
               + "      x.toLowerCase()=\"world\"\n"
-              + "    y.toUpperCase().substring(2).charAt(1) equalTo[z]\n"
+              + "    y.toUpperCase().substring(2).charAt(1) equalTo['z']\n"
               + "                  |            |         |\n"
               + "                  |            |         +-\"L\":Character\n"
               + "                  |            |\n"
@@ -240,23 +242,26 @@ public class Issue27Test extends TestBase {
                   matchesRegex("xyz"))
               .$());
     } catch (ComparisonFailure e) {
+      System.out.println("MESSAGE: " + e.getMessage());
       System.out.println("ACTUAL:" + e.getActual());
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("was not met\n"
-              + "    x=\"WORLD\"\n"
-              + "    y=x.toLowerCase().substring(1)\n"
-              + "                    |            |\n"
-              + "                    |            +-\"orld\"\n"
-              + "                    |\n"
-              + "                    +--------------\"world\"\n"
-              + "    y.replaceAll(\"d\",\"DDD\").concat(\"XYZ\") matchesRegex[xyz]\n"
-              + "                          |             |\n"
-              + "                          |             +-\"orlDDDXYZ\"\n"
-              + "                          |\n"
-              + "                          +---------------\"orlDDD\"\n"
-              + "]->false")
+          CoreMatchers.containsString("did not satisfy\n" +
+              "and:[\n" +
+              "  (y=x.toLowerCase().substring(1)).toUpperCase().substring(2).charAt(1) equalTo['D']\n" +
+              "  (y=x.toLowerCase().substring(1)).replaceAll(\"d\",\"DDD\").concat(\"XYZ\") matchesRegex[\"xyz\"] was not met\n" +
+              "    y=x.toLowerCase().substring(1)\n" +
+              "                    |            |\n" +
+              "                    |            +-\"orld\"\n" +
+              "                    |\n" +
+              "                    +--------------\"world\"\n" +
+              "    y.replaceAll(\"d\",\"DDD\").concat(\"XYZ\") matchesRegex[\"xyz\"]\n" +
+              "                          |             |\n" +
+              "                          |             +-\"orlDDDXYZ\"\n" +
+              "                          |\n" +
+              "                          +---------------\"orlDDD\"\n" +
+              "]->false")
       );
       throw new IOException();
     }
@@ -273,22 +278,26 @@ public class Issue27Test extends TestBase {
                   equalTo('z'))
               .$());
     } catch (ExecutionFailure e) {
+      System.out.println("MESSAGE: " + e.getMessage());
       e.printStackTrace(System.out);
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString(""
-              + "  y=x.toLowerCase().substring(1)\n"
-              + "                  |            |\n"
-              + "                  |            +-\"orld\"\n"
-              + "                  |\n"
-              + "                  +--------------\"world\"\n"
-              + "  y.toUpperCase().substring(-2).charAt(1) equalTo[z]\n"
-              + "                |             |         |\n"
-              + "                |             |         +-java.lang.StringIndexOutOfBoundsException(String index out of range: -2)\n"
-              + "                |             |\n"
-              + "                |             +-----------java.lang.StringIndexOutOfBoundsException(String index out of range: -2)\n"
-              + "                |\n"
-              + "                +-------------------------\"ORLD\""
+          CoreMatchers.containsString("" +
+              "x=\"WORLD\" [did not satisfy\n" +
+              "(y=x.toLowerCase().substring(1)).toUpperCase().substring(-2).charAt(1) equalTo['z'] failed with java.lang.StringIndexOutOfBoundsException(String index out of range: -2)\n" +
+              "  y=x.toLowerCase().substring(1)\n" +
+              "                  |            |\n" +
+              "                  |            +-\"orld\"\n" +
+              "                  |\n" +
+              "                  +--------------\"world\"\n" +
+              "  y.toUpperCase().substring(-2).charAt(1) equalTo['z']\n" +
+              "                |             |         |\n" +
+              "                |             |         +-java.lang.StringIndexOutOfBoundsException(String index out of range: -2)\n" +
+              "                |             |\n" +
+              "                |             +-----------java.lang.StringIndexOutOfBoundsException(String index out of range: -2)\n" +
+              "                |\n" +
+              "                +-------------------------\"ORLD\"\n" +
+              "FAILED]>"
           )
       );
       throw new IOException(e);
@@ -312,12 +321,13 @@ public class Issue27Test extends TestBase {
       Assert.assertThat(
           e.getMessage(),
           CoreMatchers.containsString(""
-              + "  x.toLowerCase().substring(-1) .toUpperCase().substring(1).charAt(1) equalTo[z]\n"
-              + "                |             |\n"
-              + "                |             +-java.lang.StringIndexOutOfBoundsException(String index out of range: -1)\n"
-              + "                |\n"
-              + "                +---------------\"world\"\n"
-              + "FAILED")
+              + "but was:<x=\"WORLD\" [did not satisfy\n" +
+              "(y=x.toLowerCase().substring(-1)).toUpperCase().substring(1).charAt(1) equalTo['z'] failed with java.lang.StringIndexOutOfBoundsException(String index out of range: -1)\n" +
+              "              |             |\n" +
+              "              |             +-java.lang.StringIndexOutOfBoundsException(String index out of range: -1)\n" +
+              "              |\n" +
+              "              +---------------\"world\"\n" +
+              "FAILED]")
       );
       throw new IOException(e);
     }
@@ -336,9 +346,13 @@ public class Issue27Test extends TestBase {
       e.printStackTrace(System.out);
       Assert.assertThat(
           e.getMessage(),
-          CoreMatchers.containsString("[when x=\"HELLO\"; then not:[\n"
-              + "  x containsString[HELLO]\n"
-              + "]->false]")
+          CoreMatchers.containsString("x=\"HELLO\" [satisfies\n" +
+              "not:[\n" +
+              "  x containsString[\"HELLO\"]\n" +
+              "]]> but was:<x=\"HELLO\" [did not satisfy\n" +
+              "not:[\n" +
+              "  x containsString[\"HELLO\"]\n" +
+              "]->false]")
       );
       throw new IOException(e);
     }
