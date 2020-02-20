@@ -197,7 +197,7 @@ public interface Session<T> {
 
     @Override
     public void describeMismatch(T value, Matcher.Composite<T> matcher) {
-      beginMismatch(value, matcher);
+      beginMismatch(matcher);
       try {
         matcher.children().forEach(each -> each.describeMismatch(value, this));
       } finally {
@@ -283,7 +283,7 @@ public interface Session<T> {
       writer.appendLine("%s", formatExpectation(matcher.p(), matcher.func()));
     }
 
-    void beginMismatch(T value, Matcher.Composite<T> matcher) {
+    void beginMismatch(Matcher.Composite<T> matcher) {
       this.mismatchWriter.appendLine("%s:[", matcher.name());
       mismatchWriter.enter();
     }
