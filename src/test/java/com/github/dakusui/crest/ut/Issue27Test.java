@@ -74,8 +74,7 @@ public class Issue27Test extends TestBase {
               + "              +------------------------<helloworld!>:StringBuilder]>"
           )
       );
-      throw e;
-      //throw new IOException();
+      throw new IOException();
     }
   }
 

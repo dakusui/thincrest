@@ -138,8 +138,6 @@ public interface Session<T> {
     private              Map<Function<?, ?>, Function<?, ?>> memoizationMapForFunctions  = new HashMap<>();
     private              Map<Predicate<?>, Predicate<?>>     memoizationMapForPredicates = new HashMap<>();
     private              Map<List<Object>, String>           snapshots                   = new HashMap<>();
-    private              HashSet<List<Object>>               explained                   = new HashSet<>();
-
 
     Impl.Writer expectationWriter = new Impl.Writer();
     Impl.Writer mismatchWriter    = new Impl.Writer();
@@ -235,32 +233,7 @@ public interface Session<T> {
       //    y    =  f(func(x))
       // -> In this case, how p worked can be broken down into p(y) side and
       //    f(func(x)) side.
-      if (p instanceof TransformingPredicate && !fails(func, value)) {
-        this.mismatchWriter
-            .enter()
-            .appendLine(
-                "%s=%s%s",
-                TRANSFORMED_VARIABLE_NAME,
-                VARIABLE_NAME,
-                func);
-        try {
-          explainFunction(value, func, VARIABLE_NAME, this.mismatchWriter);
-        } finally {
-          this.mismatchWriter.leave();
-        }
-        TransformingPredicate<?, ?> pp = (TransformingPredicate<?, ?>) p;
-        this.mismatchWriter
-            .enter()
-            .appendLine(
-                "%s%s %s",
-                TRANSFORMED_VARIABLE_NAME,
-                pp.function(),
-                pp.predicate())
-            .leave();
-        explainFunction((T) apply(func, value), (Function<T, ?>) pp.function(), TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
-      } else {
-        explainFunction(value, func, VARIABLE_NAME, this.mismatchWriter, -3);
-      }
+      explainMatcherPredicate(value, func, p);
     }
 
     private void appendMismatchSummary(T value, Function<T, ?> func, Predicate<?> p) {
@@ -366,14 +339,12 @@ public interface Session<T> {
      * @param <I>   A type of {@code value} given to {@code pred}.
      * @return Result of {@code pred} with {@code value}.
      */
-    @SuppressWarnings("unchecked")
     @Override
     public <I> boolean test(Predicate<I> pred, I value) {
       Object ret = null;
       try {
         if (pred instanceof TransformingPredicate) {
-          Function<Object, Object> func = (Function<Object, Object>) ((TransformingPredicate<Object, Object>) pred).function();
-          ret = test(((TransformingPredicate<Object, Object>) pred).predicate(), apply(func, value));
+          ret = applyAndTest((TransformingPredicate<Object, Object>) pred, value);
           return (boolean) ret;
         }
         ret = memoizedPredicate(pred).test(value);
@@ -384,6 +355,11 @@ public interface Session<T> {
       } finally {
         snapshot(ret, pred, value);
       }
+    }
+
+    public <I> Object applyAndTest(TransformingPredicate<Object, Object> pred, I value) {
+      @SuppressWarnings("unchecked") Function<Object, Object> func = (Function<Object, Object>) pred.function();
+      return test(pred.predicate(), apply(func, value));
     }
 
     @Override
@@ -438,12 +414,29 @@ public interface Session<T> {
       ).getAsBoolean();
     }
 
-    private boolean isAlreadyExplained(T value, Function<T, ?> func, String variableName) {
-      return this.explained.contains(asList(value, func, variableName));
+    private void explainMatcherPredicate(T value, Function<T, ?> func, Predicate<?> p) {
+      if (p instanceof TransformingPredicate && !fails(func, value)) {
+        explainTransformingPredicate(value, func, (TransformingPredicate<?, ?>) p);
+      } else {
+        explainFunction(value, func, VARIABLE_NAME, this.mismatchWriter, -3);
+      }
     }
 
-    private void explained(T value, Function<T, ?> func, String variableName) {
-      this.explained.add(asList(value, func, variableName));
+    private void explainTransformingPredicate(T value, Function<T, ?> func, TransformingPredicate<?, ?> p) {
+      this.mismatchWriter
+          .enter()
+          .appendLine("%s=%s%s", TRANSFORMED_VARIABLE_NAME, VARIABLE_NAME, func);
+      try {
+        explainFunction(value, func, VARIABLE_NAME, this.mismatchWriter);
+      } finally {
+        this.mismatchWriter.leave();
+      }
+      this.mismatchWriter
+          .enter()
+          .appendLine("%s%s %s", TRANSFORMED_VARIABLE_NAME, p.function(), p.predicate())
+          .leave();
+      //noinspection unchecked
+      explainFunction((T) apply(func, value), (Function<T, ?>) p.function(), TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
     }
 
     private void explainFunction(T value, Function<T, ?> func, String variableName, Impl.Writer writer) {
@@ -453,9 +446,6 @@ public interface Session<T> {
     @SuppressWarnings("unchecked")
     private void explainFunction(T value, Function<T, ?> func, String variableName, Impl.Writer writer, int adjustment) {
       if (func instanceof ChainedFunction) {
-        if (isAlreadyExplained(value, func, variableName)) {
-          return;
-        }
         explainChainedFunction(value, (ChainedFunction<Object, Object>) func, variableName, writer, adjustment);
       } else {
         if (!(func instanceof TrivialFunction)) {
@@ -467,7 +457,6 @@ public interface Session<T> {
           }
         }
       }
-      explained(value, func, variableName);
     }
 
     @SuppressWarnings("unchecked")
@@ -519,7 +508,11 @@ public interface Session<T> {
         if (out instanceof String || out instanceof Throwable) {
           snapshots.put(key, String.format("%s", summarizeValue(out)));
         } else {
-          snapshots.put(key, String.format("%s:%s", summarizeValue(out), toSimpleClassName(out)));
+          String simpleClassName = toSimpleClassName(out);
+          if ("".equals(simpleClassName))
+            snapshots.put(key, String.format("%s", summarizeValue(out)));
+          else
+            snapshots.put(key, String.format("%s:%s", summarizeValue(out), simpleClassName));
         }
       }
     }
