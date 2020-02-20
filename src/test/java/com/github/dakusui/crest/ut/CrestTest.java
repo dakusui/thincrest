@@ -177,9 +177,9 @@ public class CrestTest {
               + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
               + "and:[\n"
               + "  x->size equalTo[3]\n"
-              + "  x->at[0] equalTo[\"hello\"] was not met\n"
+              + "  x->at[0] equalTo[\"hello\"]: NOT MET\n"
               + "    x->at[0]=\"Hello\"\n"
-              + "]->false",
+              + "]",
           description.orElseThrow(AssertionError::new).toString()
       );
     }
@@ -216,7 +216,7 @@ public class CrestTest {
                   + "  x->size failingCheck failed with java.lang.RuntimeException(FAILED)\n"
                   + "    x->size=<3>:Integer\n"
                   + "  x->at[0] equalTo[\"Hello\"]\n"
-                  + "]->false\n"
+                  + "]\n"
                   + "FAILED"
           ));
     }
@@ -253,7 +253,7 @@ public class CrestTest {
                   + "  x->failingTransform alwaysTrue failed with java.lang.RuntimeException(FAILED)\n"
                   + "    x->failingTransform=java.lang.RuntimeException(FAILED)\n"
                   + "  x->at[0] equalTo[\"Hello\"]\n"
-                  + "]->false\n"
+                  + "]\n"
                   + "FAILED"
           ));
     }
@@ -285,11 +285,11 @@ public class CrestTest {
               + "]\n"
               + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
               + "and:[\n"
-              + "  x->size equalTo[2] was not met\n"
+              + "  x->size equalTo[2]: NOT MET\n"
               + "    x->size=<3>:Integer\n"
-              + "  x->at[0] equalTo[\"hello\"] was not met\n"
+              + "  x->at[0] equalTo[\"hello\"]: NOT MET\n"
               + "    x->at[0]=\"Hello\"\n"
-              + "]->false",
+              + "]",
           description.orElseThrow(AssertionError::new).toString()
       );
     }
@@ -382,7 +382,7 @@ public class CrestTest {
               + "  x->size failingCheck failed with java.lang.RuntimeException(FAILED)\n"
               + "    x->size=<3>:Integer\n"
               + "  x->at[0] equalTo[\"Hello\"]\n"
-              + "]->false\n"
+              + "]\n"
               + "FAILED"
           )
       );
@@ -415,11 +415,11 @@ public class CrestTest {
               + "]\n"
               + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
               + "or:[\n"
-              + "  x->size equalTo[2] was not met\n"
+              + "  x->size equalTo[2]: NOT MET\n"
               + "    x->size=<3>:Integer\n"
-              + "  x->at[0] equalTo[\"hello\"] was not met\n"
+              + "  x->at[0] equalTo[\"hello\"]: NOT MET\n"
               + "    x->at[0]=\"Hello\"\n"
-              + "]->false",
+              + "]",
           description.orElseThrow(AssertionError::new).toString()
       );
     }
@@ -456,15 +456,15 @@ public class CrestTest {
               + "]\n"
               + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
               + "or:[\n"
-              + "  x->size equalTo[2] was not met\n"
+              + "  x->size equalTo[2]: NOT MET\n"
               + "    x->size=<3>:Integer\n"
               + "  and:[\n"
-              + "    x->at[0] equalTo[\"hello\"] was not met\n"
+              + "    x->at[0] equalTo[\"hello\"]: NOT MET\n"
               + "      x->at[0]=\"Hello\"\n"
-              + "    x->at[0] equalTo[\"HELLO\"] was not met\n"
+              + "    x->at[0] equalTo[\"HELLO\"]: NOT MET\n"
               + "      x->at[0]=\"Hello\"\n"
-              + "  ]->false\n"
-              + "]->false",
+              + "  ]\n"
+              + "]",
           description.orElseThrow(AssertionError::new).toString()
       );
     }
@@ -500,15 +500,15 @@ public class CrestTest {
                   + "]\n"
                   + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
                   + "and:[\n"
-                  + "  x->size equalTo[2] was not met\n"
+                  + "  x->size equalTo[2]: NOT MET\n"
                   + "    x->size=<3>:Integer\n"
                   + "  or:[\n"
-                  + "    x->at[0] equalTo[\"hello\"] was not met\n"
+                  + "    x->at[0] equalTo[\"hello\"]: NOT MET\n"
                   + "      x->at[0]=\"Hello\"\n"
-                  + "    x->at[0] equalTo[\"HELLO\"] was not met\n"
+                  + "    x->at[0] equalTo[\"HELLO\"]: NOT MET\n"
                   + "      x->at[0]=\"Hello\"\n"
-                  + "  ]->false\n"
-                  + "]->false"
+                  + "  ]\n"
+                  + "]"
           ));
     }
   }
@@ -564,7 +564,7 @@ public class CrestTest {
               + "     but: x=\"HELLO\" did not satisfy\n"
               + "not:[\n"
               + "  x containsString[\"HELLO\"]\n"
-              + "]->false")
+              + "]")
       );
     }
 
@@ -601,9 +601,9 @@ public class CrestTest {
               + "]\n"
               + "     but: x=\"HELLO\" did not satisfy\n"
               + "noneOf:[\n"
-              + "  x ~[\"WORLD\"] was not met\n"
+              + "  x ~[\"WORLD\"]: NOT MET\n"
               + "  x containsString[\"HELLO\"]\n"
-              + "]->false")
+              + "]")
       );
     }
 

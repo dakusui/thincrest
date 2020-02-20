@@ -18,11 +18,7 @@ public interface Session<T> {
     if (!report.isSuccessful()) {
       if (report.exceptions().isEmpty()) {
         Throwable exception = exceptionFactory.create(message, report, report.exceptions());
-        if (exception instanceof RuntimeException)
-          throw (RuntimeException) exception;
-        if (exception instanceof Error)
-          throw (Error) exception;
-        throw new RuntimeException(exception);
+        throw wrap(exception);
       }
       if (report.exceptions().get(0) instanceof AssertionFailedError)
         throw new ComparisonFailure(
@@ -32,6 +28,14 @@ public interface Session<T> {
         );
       throw new ExecutionFailure(message, report.expectation(), report.mismatch(), report.exceptions());
     }
+  }
+
+  static RuntimeException wrap(Throwable exception) {
+    if (exception instanceof RuntimeException)
+      throw (RuntimeException) exception;
+    if (exception instanceof Error)
+      throw (Error) exception;
+    throw new RuntimeException(exception);
   }
 
   static <T> Report perform(T value, Matcher<T> matcher) {
@@ -201,14 +205,14 @@ public interface Session<T> {
       try {
         matcher.children().forEach(each -> each.describeMismatch(value, this));
       } finally {
-        endMismatch(value, matcher);
+        endMismatch();
       }
     }
 
     @Override
     public void describeActualValue(T value) {
-      this.expectationWriter.appendLine("%s=%s satisfies", VARIABLE_NAME, summarizeValue(value));
-      this.mismatchWriter.appendLine("%s=%s did not satisfy", VARIABLE_NAME, summarizeValue(value));
+      this.expectationWriter.appendLine("%s=%s satisfies", VARIABLE_NAME, snapshotOf(null, value));
+      this.mismatchWriter.appendLine("%s=%s did not satisfy", VARIABLE_NAME, snapshotOf(null, value));
     }
 
     @Override
@@ -275,7 +279,7 @@ public interface Session<T> {
             this.snapshotOf(p, this.apply(func, value))
         );
       } else {
-        this.mismatchWriter.appendLine("%s was not met", formattedExpectation);
+        this.mismatchWriter.appendLine("%s: NOT MET", formattedExpectation);
       }
     }
 
@@ -288,8 +292,8 @@ public interface Session<T> {
       mismatchWriter.enter();
     }
 
-    void endMismatch(T value, Matcher.Composite<T> matcher) {
-      this.mismatchWriter.leave().appendLine("]->%s", matcher.matches(value, this, new LinkedList<>()));
+    void endMismatch() {
+      this.mismatchWriter.leave().appendLine("]");
     }
 
 
