@@ -226,10 +226,6 @@ public interface Session<T> {
       Function<T, ?> func = matcher.func();
       Predicate<?> p = matcher.p();
       appendMismatchSummary(value, func, p);
-      // if p is plain predicate
-      //    p(func(x)) == true
-      // -> In this case, no additional information can be printed for p
-
       // if p is transforming predicate
       //    p(y) == true
       //    y    =  f(func(x))
@@ -244,8 +240,6 @@ public interface Session<T> {
                 VARIABLE_NAME,
                 func);
         try {
-          // This doesn't give additional information if func isn't a chained function
-          // but still makes easier to read the output.
           explainFunction(value, func, VARIABLE_NAME, this.mismatchWriter);
         } finally {
           this.mismatchWriter.leave();
@@ -261,13 +255,6 @@ public interface Session<T> {
             .leave();
         explainFunction((T) apply(func, value), (Function<T, ?>) pp.function(), TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
       } else {
-        /*
-        if (func instanceof ChainedFunction)
-          this.mismatchWriter
-              .enter()
-              .appendLine("%s%s %s", VARIABLE_NAME, func, p)
-              .leave();
-         */
         explainFunction(value, func, VARIABLE_NAME, this.mismatchWriter, -3);
       }
     }
@@ -463,7 +450,6 @@ public interface Session<T> {
     private void explainFunction(T value, Function<T, ?> func, String variableName, Impl.Writer writer, int adjustment) {
       if (func instanceof ChainedFunction) {
         if (isAlreadyExplained(value, func, variableName)) {
-          //          writer.enter().appendLine("%s%s=(EXPLAINED)", variableName, func).leave();
           return;
         }
         explainChainedFunction(value, (ChainedFunction<Object, Object>) func, variableName, writer, adjustment);

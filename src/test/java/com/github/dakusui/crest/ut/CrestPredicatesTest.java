@@ -193,7 +193,7 @@ public class CrestPredicatesTest {
 
     @Test
     public void whenToString$thenLooksGood() {
-      assertEquals("matchesRegex[hello.]", Predicates.matchesRegex("hello.").toString());
+      assertEquals("matchesRegex[\"hello.\"]", Predicates.matchesRegex("hello.").toString());
     }
   }
 
@@ -210,7 +210,7 @@ public class CrestPredicatesTest {
 
     @Test
     public void whenToString$thenLooksGood() {
-      assertEquals("containsString[hello]", Predicates.containsString("hello").toString());
+      assertEquals("containsString[\"hello\"]", Predicates.containsString("hello").toString());
     }
   }
 }
