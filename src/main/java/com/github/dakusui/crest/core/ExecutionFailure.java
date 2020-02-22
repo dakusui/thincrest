@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.core;
 
-import org.junit.ComparisonFailure;
+import org.opentest4j.AssertionFailedError;
 
 import java.util.List;
 
@@ -21,20 +21,19 @@ import static java.util.Objects.requireNonNull;
  * where a database table is created and data set is loaded into it and then exercises
  * a test case for business logic. And before the exercise, it also verifies such
  * a fixture is sound and worth starting the actual test. In this situation, throwing
- * {@code AssumptionViolatedException} is not a good idea because it will be
- * silently ignored by testing framework (such as JUnit) but it still may suggest
- * some bug in SUT since such preparation is often implemented using functionalities
- * of the SUT.
+ * {@code TestAbortedException} or {@code AssumptionViolatedException} is not a good
+ * idea because it will be silently ignored by testing framework (such as JUnit) but
+ * it still may suggest some bug in SUT since such preparation is often implemented
+ * using functionalities of the SUT.
  */
-public class ExecutionFailure extends Error {
+public class ExecutionFailure extends AssertionFailedError {
   public ExecutionFailure(String message, String expected, String actual, List<Throwable> throwables) {
     super(
-        new ComparisonFailure(message, expected, actual).getMessage(),
+        message, expected, actual,
         requireNonNull(throwables).isEmpty()
             ? null
             : throwables.get(0)
     );
     throwables.stream().distinct().skip(1).forEach(this::addSuppressed);
   }
-
 }

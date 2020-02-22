@@ -6,8 +6,8 @@ import com.github.dakusui.crest.matcherbuilders.*;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
 import com.github.dakusui.crest.utils.printable.Functions;
 import com.github.dakusui.crest.utils.printable.Printable;
-import org.junit.AssumptionViolatedException;
-import org.junit.ComparisonFailure;
+import org.opentest4j.AssertionFailedError;
+import org.opentest4j.TestAbortedException;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -307,14 +307,14 @@ public enum Crest {
   public static <T> void assertThat(String message, T value, Matcher<? super T> matcher) {
     Session.perform(
         message, value, matcher,
-        (msg, r, causes) -> new ComparisonFailure(msg, r.expectation(), r.mismatch())
+        (msg, r, causes) -> new AssertionFailedError(msg, r.expectation(), r.mismatch())
     );
   }
 
   public static <T> void assumeThat(String message, T value, Matcher<? super T> matcher) {
     Session.perform(
         message, value, matcher,
-        (msg, r, causes) -> new AssumptionViolatedException(composeComparisonText(msg, r))
+        (msg, r, causes) -> new TestAbortedException(composeComparisonText(msg, r))
     );
   }
 

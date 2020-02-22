@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.utils.printable.Printable;
-import junit.framework.AssertionFailedError;
+import org.opentest4j.AssertionFailedError;
 
 import java.util.List;
 import java.util.function.Function;
@@ -40,7 +40,6 @@ public interface Eater<T /* Target*/, C /* Target container */> {
       this.finder = requireNonNull(finder);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Function<C, C> build() {
       return this.parent == null
