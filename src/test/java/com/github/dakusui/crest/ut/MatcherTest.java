@@ -27,7 +27,7 @@ public class MatcherTest {
   public void givenFailingNestedMatcher$whenAssertThat$thenFail() {
     assertThat(
         "Hello",
-        Matcher.Conjunctive.create(true, Arrays.<Matcher<? super Object>>asList(
+        Matcher.Conjunctive.create(Arrays.<Matcher<? super Object>>asList(
             Matcher.Leaf.create(wrap(Predicates.equalTo("hello")), wrap(Functions.identity())),
             Matcher.Leaf.create(wrap(Predicates.equalTo("hello")), wrap(Functions.identity()))
         )));
