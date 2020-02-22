@@ -24,20 +24,16 @@ public interface Matcher<T> {
       session.describeMismatch(value, this);
     }
 
-    boolean isTopLevel();
-
     List<Matcher<T>> children();
 
     String name();
 
     abstract class Base<T> implements Composite<T> {
       private final List<Matcher<T>> children;
-      private final boolean          topLevel;
 
       @SuppressWarnings("unchecked")
-      protected Base(boolean topLevel, List<Matcher<? super T>> children) {
+      protected Base(List<Matcher<? super T>> children) {
         this.children = (List<Matcher<T>>) Collections.<T>unmodifiableList((List<? extends T>) requireNonNull(children));
-        this.topLevel = topLevel;
       }
 
       @Override
@@ -48,11 +44,6 @@ public interface Matcher<T> {
           ret = op(ret, eachChild.matches(value, session, work));
         exceptions.addAll(work);
         return ret && work.isEmpty();
-      }
-
-      @Override
-      public boolean isTopLevel() {
-        return this.topLevel;
       }
 
       @Override
@@ -68,9 +59,8 @@ public interface Matcher<T> {
   }
 
   interface Conjunctive<T> extends Composite<T> {
-    @SuppressWarnings("unchecked")
-    static <T> Matcher<T> create(boolean topLevel, List<Matcher<? super T>> matchers) {
-      return new Conjunctive.Base<T>(topLevel, matchers) {
+    static <T> Matcher<T> create(List<Matcher<? super T>> matchers) {
+      return new Conjunctive.Base<T>(matchers) {
         @Override
         public String name() {
           return "and";
@@ -90,9 +80,8 @@ public interface Matcher<T> {
   }
 
   interface Disjunctive<T> extends Composite<T> {
-    @SuppressWarnings("unchecked")
-    static <T> Matcher<T> create(boolean topLevel, List<Matcher<? super T>> matchers) {
-      return new Composite.Base<T>(topLevel, matchers) {
+    static <T> Matcher<T> create(List<Matcher<? super T>> matchers) {
+      return new Composite.Base<T>(matchers) {
 
         @Override
         public String name() {
@@ -114,7 +103,7 @@ public interface Matcher<T> {
 
   interface Negative<T> extends Composite<T> {
     static <T> Matcher<T> create(Matcher<? super T> matcher) {
-      return new Composite.Base<T>(true, Collections.singletonList(matcher)) {
+      return new Composite.Base<T>(Collections.singletonList(matcher)) {
         @Override
         public String name() {
           return "not";

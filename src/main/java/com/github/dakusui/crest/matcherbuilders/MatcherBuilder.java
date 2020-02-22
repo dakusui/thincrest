@@ -17,14 +17,14 @@ public interface MatcherBuilder<IN, OUT, SELF extends MatcherBuilder<IN, OUT, SE
       @SuppressWarnings("unchecked")
       @Override
       <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers) {
-        return Matcher.Conjunctive.create(false, (List<Matcher<? super I>>) matchers);
+        return Matcher.Conjunctive.create((List<Matcher<? super I>>) matchers);
       }
     },
     OR {
       @SuppressWarnings("unchecked")
       @Override
       <I> Matcher<? super I> create(List<? extends Matcher<? super I>> matchers) {
-        return Matcher.Disjunctive.create(false, (List<Matcher<? super I>>) matchers);
+        return Matcher.Disjunctive.create((List<Matcher<? super I>>) matchers);
       }
     };
 
