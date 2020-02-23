@@ -6,11 +6,11 @@ import com.github.dakusui.crest.utils.TestBase;
 import com.github.dakusui.crest.utils.printable.Predicates;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
-import org.junit.AssumptionViolatedException;
-import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.opentest4j.AssertionFailedError;
+import org.opentest4j.TestAbortedException;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -630,7 +630,7 @@ public class CrestTest {
       );
     }
 
-    @Test(expected = ComparisonFailure.class)
+    @Test(expected = AssertionFailedError.class)
     public void givenAssertThat$whenFailOnComparison$thenComparisonFailureThrown() {
       Crest.assertThat(
           "Check 'hello'",
@@ -690,7 +690,7 @@ public class CrestTest {
             "hello",
             asString().equalTo("HELLO").$()
         );
-      } catch (AssumptionViolatedException e) {
+      } catch (TestAbortedException e) {
         // Wrap with IOException, which cannot happen in this test procedure to
         // make sure intended exception (AssumptionViolatedException) is really
         // thrown.
@@ -759,7 +759,7 @@ public class CrestTest {
 
     @Test
     public void printExample() {
-      Function func = Call.create("append", "hello").andThen("append", 1).andThen("append", "everyone").andThen("toString").$();
+      Function<?, ?> func = Call.create("append", "hello").andThen("append", 1).andThen("append", "everyone").andThen("toString").$();
       System.out.println(func.toString());
       Function<StringBuilder, String> func2 = (StringBuilder b) -> b.append("hello").append(1).append("world").append("everyone").toString();
       System.out.println(func2.toString());

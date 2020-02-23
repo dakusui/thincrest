@@ -3,8 +3,8 @@ package com.github.dakusui.crest.ut;
 import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.utils.printable.Functions;
 import com.github.dakusui.crest.utils.printable.Predicates;
-import org.junit.ComparisonFailure;
 import org.junit.Test;
+import org.opentest4j.AssertionFailedError;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -15,7 +15,7 @@ import static com.github.dakusui.crest.Crest.assertThat;
 
 
 public class MatcherTest {
-  @Test(expected = ComparisonFailure.class)
+  @Test(expected = AssertionFailedError.class)
   public void givenFailingMatcher$whenAssertThat$thenFail() {
     assertThat(
         "Hello",
@@ -23,7 +23,7 @@ public class MatcherTest {
     );
   }
 
-  @Test(expected = ComparisonFailure.class)
+  @Test(expected = AssertionFailedError.class)
   public void givenFailingNestedMatcher$whenAssertThat$thenFail() {
     assertThat(
         "Hello",

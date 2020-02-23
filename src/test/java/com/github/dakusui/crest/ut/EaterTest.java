@@ -2,9 +2,8 @@ package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.utils.TestBase;
-import junit.framework.AssertionFailedError;
-import org.junit.ComparisonFailure;
 import org.junit.Test;
+import org.opentest4j.AssertionFailedError;
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class EaterTest extends TestBase {
           targetContainer,
           asString(substringAfterRegex("ab.").after("d.f").after("XYZ").$()).equalTo("Z").$()
       );
-    } catch (ComparisonFailure e) {
+    } catch (AssertionFailedError e) {
       e.printStackTrace();
       throw new ExpectedException();
     }
@@ -87,7 +86,6 @@ public class EaterTest extends TestBase {
     );
   }
 
-  @SuppressWarnings("unchecked")
   @Test(expected = ExpectedException.class)
   public void test4() {
     List<String> targetContainer = asList("Z", "abc", "Z", "def", "Z", "xyz", "Z");
@@ -105,7 +103,6 @@ public class EaterTest extends TestBase {
     }
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void test5() {
     List<String> targetContainer = asList("Z", "abc", "Z", "def", "Z", "xyz", "Z");

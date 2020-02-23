@@ -2,8 +2,7 @@ package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.functions.TransformingPredicate;
 import com.github.dakusui.crest.utils.printable.TrivialFunction;
-import junit.framework.AssertionFailedError;
-import junit.framework.ComparisonFailure;
+import org.opentest4j.AssertionFailedError;
 
 import java.util.*;
 import java.util.function.*;
@@ -20,9 +19,10 @@ public interface Session<T> {
         Throwable exception = exceptionFactory.create(message, report, report.exceptions());
         throw wrap(exception);
       }
-      if (report.exceptions().get(0) instanceof AssertionFailedError)
-        throw new ComparisonFailure(
-            report.exceptions().get(0).getMessage(),
+      Throwable firstException = report.exceptions().get(0);
+      if (firstException instanceof AssertionFailedError)
+        throw new AssertionFailedError(
+            firstException.getMessage(),
             report.expectation(),
             report.mismatch()
         );
@@ -221,7 +221,7 @@ public interface Session<T> {
     @SuppressWarnings("unchecked")
     @Override
     public void describeMismatch(T value, Matcher.Leaf<T> matcher) {
-      if (this.matches(matcher, value, NOP)) {
+      if (this.matches(matcher, value, (Consumer<Throwable>) NOP)) {
         describeExpectationTo(mismatchWriter, matcher);
         return;
       }

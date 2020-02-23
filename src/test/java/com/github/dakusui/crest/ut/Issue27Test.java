@@ -6,9 +6,9 @@ import com.github.dakusui.crest.core.Session;
 import com.github.dakusui.crest.utils.TestBase;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
-import org.junit.ComparisonFailure;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opentest4j.AssertionFailedError;
 
 import java.io.IOException;
 
@@ -54,11 +54,13 @@ public class Issue27Test extends TestBase {
               )
               .$()
       );
-    } catch (ComparisonFailure e) {
+    } catch (ExecutionFailure e) {
+      throw e;
+    } catch (AssertionFailedError e) {
       e.printStackTrace(System.out);
       Assert.assertThat(
-          e.getMessage(),
-          CoreMatchers.containsString("x=<>:StringBuilder [did not satisfy\n"
+          String.valueOf(e.getActual()),
+          CoreMatchers.containsString("x=<>:StringBuilder did not satisfy\n"
               + "(y=x.append(\"hello\").append(\"world\")).append(\"!\").append(\"!\").toString() equalTo[\"HELLOWORLD!\"]: NOT MET\n"
               + "  y=x.append(\"hello\").append(\"world\")\n"
               + "                    |               |\n"
@@ -71,7 +73,7 @@ public class Issue27Test extends TestBase {
               + "              |           |\n"
               + "              |           +------------<helloworld!!>:StringBuilder\n"
               + "              |\n"
-              + "              +------------------------<helloworld!>:StringBuilder]>"
+              + "              +------------------------<helloworld!>:StringBuilder"
           )
       );
       throw new IOException();
@@ -90,20 +92,21 @@ public class Issue27Test extends TestBase {
                   .$())
               .equalTo("HelloWorld").$()
       );
-    } catch (ComparisonFailure e) {
+    } catch (ExecutionFailure e) {
+      throw e;
+    } catch (AssertionFailedError e) {
       e.printStackTrace(System.out);
       Assert.assertThat(
-          e.getMessage(),
-          CoreMatchers.containsString("expected:<x=<>:StringBuilder [satisfies\n"
-              + "x.append(\"hello\").append(\"world\").toString() equalTo[\"HelloWorld\"]]> but was:<x=<>:StringBuilder [did not satisfy\n"
-              + "x.append(\"hello\").append(\"world\").toString() equalTo[\"HelloWorld\"]: NOT MET\n"
-              + "                |               |          |\n"
-              + "                |               |          +-\"helloworld\"\n"
-              + "                |               |\n"
-              + "                |               +------------<helloworld>:StringBuilder\n"
-              + "                |\n"
-              + "                +----------------------------<hello>:StringBuilder]>")
-      );
+          String.valueOf(e.getActual()),
+          CoreMatchers.containsString(
+              "x=<>:StringBuilder did not satisfy\n"
+                  + "x.append(\"hello\").append(\"world\").toString() equalTo[\"HelloWorld\"]: NOT MET\n"
+                  + "                |               |          |\n"
+                  + "                |               |          +-\"helloworld\"\n"
+                  + "                |               |\n"
+                  + "                |               +------------<helloworld>:StringBuilder\n"
+                  + "                |\n"
+                  + "                +----------------------------<hello>:StringBuilder"));
       throw new IOException();
     }
   }
@@ -118,15 +121,16 @@ public class Issue27Test extends TestBase {
               equalTo('z')
           ).$()
       );
-    } catch (ComparisonFailure e) {
+    } catch (ExecutionFailure e) {
+      throw e;
+    } catch (AssertionFailedError e) {
       System.out.println("ACTUAL   FROM CREST:" + e.getActual());
       e.printStackTrace();
       System.out.println("EXPECTED FROM ACTUAL: " + e.getExpected());
       System.out.println("MESSAGE: " + e.getMessage());
-      Assert.assertEquals(
-          e.getMessage(),
-          "expected:<x=\"WORLD\" [satisfies\n" +
-              "(y=x.toLowerCase()).toUpperCase().substring(2).charAt(1) equalTo['z']]> but was:<x=\"WORLD\" [did not satisfy\n" +
+      Assert.assertThat(
+          String.valueOf(e.getActual()),
+          CoreMatchers.containsString("x=\"WORLD\" did not satisfy\n" +
               "(y=x.toLowerCase()).toUpperCase().substring(2).charAt(1) equalTo['z']: NOT MET\n" +
               "  y=x.toLowerCase()\n" +
               "    x.toLowerCase()=\"world\"\n" +
@@ -136,8 +140,8 @@ public class Issue27Test extends TestBase {
               "                |            |\n" +
               "                |            +-----------\"RLD\"\n" +
               "                |\n" +
-              "                +------------------------\"WORLD\"]>"
-      );
+              "                +------------------------\"WORLD\""
+          ));
       throw new IOException();
     }
   }
@@ -154,11 +158,13 @@ public class Issue27Test extends TestBase {
                   equalTo('z')
               ).$())
       );
-    } catch (ComparisonFailure e) {
+    } catch (ExecutionFailure e) {
+      throw e;
+    } catch (AssertionFailedError e) {
       System.out.println("ACTUAL:" + e.getActual());
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
-          e.getMessage(),
+          String.valueOf(e.getActual()),
           CoreMatchers.containsString("NOT MET\n"
               + "    y=x.toLowerCase()\n"
               + "      x.toLowerCase()=\"world\"\n"
@@ -186,12 +192,14 @@ public class Issue27Test extends TestBase {
                   equalTo('z')
               ).$())
       );
-    } catch (ComparisonFailure e) {
+    } catch (ExecutionFailure e) {
+      throw e;
+    } catch (AssertionFailedError e) {
       e.printStackTrace();
       System.out.println("ACTUAL:" + e.getActual());
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
-          e.getActual(),
+          String.valueOf(e.getActual()),
           CoreMatchers.containsString("and:[\n"
               + "  (y=x.toLowerCase()).toUpperCase().substring(2).charAt(1) equalTo['z']: NOT MET\n"
               + "    y=x.toLowerCase()\n"
@@ -242,13 +250,15 @@ public class Issue27Test extends TestBase {
                   call("replaceAll", "d", "DDD").andThen("concat", "XYZ").$(),
                   matchesRegex("xyz"))
               .$());
-    } catch (ComparisonFailure e) {
+    } catch (ExecutionFailure e) {
+      throw e;
+    } catch (AssertionFailedError e) {
       System.out.println("MESSAGE: " + e.getMessage());
       System.out.println("ACTUAL:" + e.getActual());
       System.out.println("EXPECTED: " + e.getExpected());
       Assert.assertThat(
-          e.getMessage(),
-          CoreMatchers.containsString("and:[\n"
+          String.valueOf(e.getActual()),
+          CoreMatchers.containsString(          "and:[\n"
               + "  (y=x.toLowerCase().substring(1)).toUpperCase().substring(2).charAt(1) equalTo['D']\n"
               + "  (y=x.toLowerCase().substring(1)).replaceAll(\"d\",\"DDD\").concat(\"XYZ\") matchesRegex[\"xyz\"]: NOT MET\n"
               + "    y=x.toLowerCase().substring(1)\n"
@@ -260,7 +270,8 @@ public class Issue27Test extends TestBase {
               + "                          |             |\n"
               + "                          |             +-\"orlDDDXYZ\"\n"
               + "                          |\n"
-              + "                          +---------------\"orlDDD\"]"));
+              + "                          +---------------\"orlDDD\""
+              + "\n]"));
       throw new IOException();
     }
   }
@@ -279,9 +290,9 @@ public class Issue27Test extends TestBase {
       System.out.println("MESSAGE: " + e.getMessage());
       e.printStackTrace(System.out);
       Assert.assertThat(
-          e.getMessage(),
+          String.valueOf(e.getActual()),
           CoreMatchers.containsString("" +
-              "x=\"WORLD\" [did not satisfy\n" +
+              "x=\"WORLD\" did not satisfy\n" +
               "(y=x.toLowerCase().substring(1)).toUpperCase().substring(-2).charAt(1) equalTo['z'] failed with java.lang.StringIndexOutOfBoundsException(String index out of range: -2)\n" +
               "  y=x.toLowerCase().substring(1)\n" +
               "                  |            |\n" +
@@ -295,7 +306,7 @@ public class Issue27Test extends TestBase {
               "                |             +-----------java.lang.StringIndexOutOfBoundsException(String index out of range: -2)\n" +
               "                |\n" +
               "                +-------------------------\"ORLD\"\n" +
-              "FAILED]>"
+              "FAILED"
           )
       );
       throw new IOException(e);
@@ -317,15 +328,15 @@ public class Issue27Test extends TestBase {
     } catch (ExecutionFailure e) {
       e.printStackTrace(System.out);
       Assert.assertThat(
-          e.getMessage(),
+          String.valueOf(e.getActual()),
           CoreMatchers.containsString(""
-              + "but was:<x=\"WORLD\" [did not satisfy\n" +
+              + "x=\"WORLD\" did not satisfy\n" +
               "(y=x.toLowerCase().substring(-1)).toUpperCase().substring(1).charAt(1) equalTo['z'] failed with java.lang.StringIndexOutOfBoundsException(String index out of range: -1)\n" +
               "              |             |\n" +
               "              |             +-java.lang.StringIndexOutOfBoundsException(String index out of range: -1)\n" +
               "              |\n" +
               "              +---------------\"world\"\n" +
-              "FAILED]")
+              "FAILED")
       );
       throw new IOException(e);
     }
@@ -340,11 +351,13 @@ public class Issue27Test extends TestBase {
               asString().containsString("HELLO").$()
           )
       );
-    } catch (ComparisonFailure e) {
+    } catch (ExecutionFailure e) {
+      throw e;
+    } catch (AssertionFailedError e) {
       e.printStackTrace(System.out);
       System.out.println("ACTUAL: " + e.getActual());
       Assert.assertThat(
-          e.getActual(),
+          String.valueOf(e.getActual()),
           CoreMatchers.containsString("not:[\n"
               + "  x containsString[\"HELLO\"]\n"
               + "]")

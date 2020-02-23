@@ -3,7 +3,7 @@ package com.github.dakusui.crest.utils;
 import com.github.dakusui.crest.core.Call.Arg;
 import com.github.dakusui.crest.core.Report;
 import com.github.dakusui.crest.utils.printable.Functions;
-import org.junit.ComparisonFailure;
+import org.opentest4j.AssertionFailedError;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -20,7 +20,7 @@ import static java.util.stream.Collectors.toList;
 public enum InternalUtils {
   ;
 
-  public static final Consumer     NOP                     = e -> {
+  public static final Consumer<?>     NOP                     = e -> {
   };
   public static final Class<?>[][] PRIMITIVE_WRAPPER_TABLE = {
       { boolean.class, Boolean.class },
@@ -112,12 +112,11 @@ public enum InternalUtils {
     return String.format("%s(%s)", throwable.getClass().getCanonicalName(), throwable.getMessage());
   }
 
-  @SuppressWarnings("unchecked")
   public static String summarize(Object value) {
     if (value == null)
       return "null";
     if (value instanceof Collection) {
-      Collection collection = (Collection) value;
+      Collection<?> collection = (Collection<?>) value;
       if (collection.size() < 4)
         return String.format("(%s)",
             String.join(
@@ -166,7 +165,7 @@ public enum InternalUtils {
   }
 
   @SuppressWarnings("unchecked")
-  public static <R> R invokeStaticMethod(Class klass, Object target, String methodName, Object[] args) {
+  public static <R> R invokeStaticMethod(Class<?> klass, Object target, String methodName, Object[] args) {
     try {
       Method m = findMethod(Objects.requireNonNull(klass), methodName, replaceTargetInArray(target, args));
       boolean accessible = m.isAccessible();
@@ -187,8 +186,7 @@ public enum InternalUtils {
     return format("%s%s", variableName, function.toString());
   }
 
-  @SuppressWarnings("unchecked")
-  public static boolean areArgsCompatible(Class[] formalParameters, Object[] args) {
+  public static boolean areArgsCompatible(Class<?>[] formalParameters, Object[] args) {
     if (formalParameters.length != args.length)
       return false;
     for (int i = 0; i < args.length; i++) {
@@ -229,12 +227,12 @@ public enum InternalUtils {
     if (value == null)
       return null;
     if (value instanceof Arg)
-      return ((Arg) value).type();
+      return ((Arg<?>) value).type();
     return value.getClass();
   }
 
   public static String toSimpleClassName(Object value) {
-    Class klass = toClass(value);
+    Class<?> klass = toClass(value);
     return klass == null
         ? null
         : klass.getSimpleName();
@@ -317,7 +315,7 @@ public enum InternalUtils {
   }
 
   public static String composeComparisonText(String message, Report report) {
-    return new ComparisonFailure(message, report.expectation(), report.mismatch()).getMessage();
+    return new AssertionFailedError(message, report.expectation(), report.mismatch()).getMessage();
   }
 
   public static RuntimeException rethrow(Throwable e) {
@@ -331,7 +329,7 @@ public enum InternalUtils {
   public static Object[] replaceArgInArray(Object[] args) {
     return Arrays.stream(args)
         .map(e -> e instanceof Arg
-            ? ((Arg) e).value()
+            ? ((Arg<?>) e).value()
             : e)
         .toArray();
   }
