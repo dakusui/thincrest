@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static com.github.dakusui.crest.utils.InternalUtils.throwIfBlacklisted;
 import static java.util.Objects.requireNonNull;
 
 public interface Matcher<T> {
@@ -153,6 +154,7 @@ public interface Matcher<T> {
           try {
             return session.matches(this, value, exceptions::add) && exceptions.isEmpty();
           } catch (Throwable e) {
+            throwIfBlacklisted(e);
             return false;
           }
         }

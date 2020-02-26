@@ -77,6 +77,7 @@ public interface Session<T> {
               value
           ));
     } catch (RuntimeException | Error exception) {
+      throwIfBlacklisted(exception);
       listener.accept(exception);
       addException(exception);
       return false;
@@ -282,6 +283,7 @@ public interface Session<T> {
         this.apply((Function<Object, Object>) func, value);
         return false;
       } catch (Throwable t) {
+        throwIfBlacklisted(t);
         return true;
       }
     }
@@ -292,6 +294,7 @@ public interface Session<T> {
         this.test((Predicate<Object>) p, value);
         return false;
       } catch (Throwable t) {
+        throwIfBlacklisted(t);
         return true;
       }
     }
@@ -386,6 +389,7 @@ public interface Session<T> {
               O result = function.apply(j);
               return () -> result;
             } catch (RuntimeException | Error e) {
+              throwIfBlacklisted(e);
               return () -> {
                 if (e instanceof RuntimeException)
                   throw (RuntimeException) e;
@@ -404,6 +408,7 @@ public interface Session<T> {
               boolean result = predicate.test(j);
               return () -> result;
             } catch (RuntimeException | Error e) {
+              throwIfBlacklisted(e);
               return () -> {
                 if (e instanceof RuntimeException)
                   throw (RuntimeException) e;
