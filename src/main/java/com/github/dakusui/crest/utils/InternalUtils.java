@@ -34,7 +34,7 @@ public enum InternalUtils {
       { double.class, Double.class },
   };
 
-  private static final List<Class<? extends Error>> blacklistedErrorTypes = singletonList(OutOfMemoryError.class);
+  private static final List<Class<? extends Error>> BLACKLISTED_ERROR_TYPES = singletonList(OutOfMemoryError.class);
 
   /**
    * Tries to find a method whose name is {@code methodName} from a given class {@code aClass}
@@ -242,7 +242,7 @@ public enum InternalUtils {
   }
 
   public static void throwIfBlacklisted(Throwable t) {
-    if (blacklistedErrorTypes.stream().anyMatch(i -> i.isInstance(t)))
+    if (BLACKLISTED_ERROR_TYPES.stream().anyMatch(i -> i.isInstance(t)))
       throw (Error) t;
   }
 
