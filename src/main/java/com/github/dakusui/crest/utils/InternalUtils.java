@@ -15,12 +15,13 @@ import java.util.function.Predicate;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 public enum InternalUtils {
   ;
 
-  public static final Consumer<?>     NOP                     = e -> {
+  public static final Consumer<?>  NOP                     = e -> {
   };
   public static final Class<?>[][] PRIMITIVE_WRAPPER_TABLE = {
       { boolean.class, Boolean.class },
@@ -32,6 +33,8 @@ public enum InternalUtils {
       { float.class, Float.class },
       { double.class, Double.class },
   };
+
+  private static final List<Class<? extends Error>> BLACKLISTED_ERROR_TYPES = singletonList(OutOfMemoryError.class);
 
   /**
    * Tries to find a method whose name is {@code methodName} from a given class {@code aClass}
@@ -236,6 +239,11 @@ public enum InternalUtils {
     return klass == null
         ? null
         : klass.getSimpleName();
+  }
+
+  public static void throwIfBlacklisted(Throwable t) {
+    if (BLACKLISTED_ERROR_TYPES.stream().anyMatch(i -> i.isInstance(t)))
+      throw (Error) t;
   }
 
   private static Class<?> toWrapperIfPrimitive(Class<?> in) {

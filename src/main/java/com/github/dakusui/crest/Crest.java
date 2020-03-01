@@ -14,8 +14,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.crest.utils.InternalUtils.composeComparisonText;
-import static com.github.dakusui.crest.utils.InternalUtils.requireArgument;
+import static com.github.dakusui.crest.utils.InternalUtils.*;
 import static com.github.dakusui.crest.utils.printable.Functions.trivial;
 import static com.github.dakusui.crest.utils.printable.Predicates.equalTo;
 import static com.github.dakusui.crest.utils.printable.Predicates.isEmptyArray;
@@ -299,7 +298,6 @@ public enum Crest {
     assumeThat("", actual, matcher);
   }
 
-
   public static <T> void requireThat(T actual, Matcher<? super T> matcher) {
     requireThat("", actual, matcher);
   }
@@ -323,6 +321,19 @@ public enum Crest {
         message, value, matcher,
         (msg, r, causes) -> new ExecutionFailure(msg, r.expectation(), r.mismatch(), causes)
     );
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T extends Throwable> T assertThrows(Class<T> expectedType, Executable executable) {
+    try {
+      executable.execute();
+    } catch (Throwable e) {
+      throwIfBlacklisted(e);
+      if (expectedType.isInstance(e))
+        return (T) e;
+      throw new AssertionFailedError("An exception of unexpected type was thrown.", expectedType, e);
+    }
+    throw new AssertionFailedError("An exception was expected to be thrown, but not.", expectedType, null);
   }
 
   public static <T, R> Function<T, R> function(String ss, Function<T, R> function) {
