@@ -3,7 +3,7 @@ package com.github.dakusui.crest.matcherbuilders;
 import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.utils.InternalUtils;
 import com.github.dakusui.crest.functions.TransformingPredicate;
-import com.github.dakusui.crest.utils.printable.Predicates;
+import com.github.dakusui.crest.functions.printable.Predicates;
 
 import java.util.Collection;
 import java.util.List;

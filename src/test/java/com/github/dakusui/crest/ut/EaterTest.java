@@ -8,7 +8,7 @@ import org.opentest4j.AssertionFailedError;
 import java.util.List;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.crest.utils.printable.Predicates.equalsIgnoreCase;
+import static com.github.dakusui.crest.functions.printable.Predicates.equalsIgnoreCase;
 import static java.util.Arrays.asList;
 
 public class EaterTest extends TestBase {

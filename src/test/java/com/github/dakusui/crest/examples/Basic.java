@@ -3,7 +3,7 @@ package com.github.dakusui.crest.examples;
 import org.junit.Test;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.crest.utils.printable.Predicates.*;
+import static com.github.dakusui.crest.functions.printable.Predicates.*;
 
 public class Basic {
   @Test

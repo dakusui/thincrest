@@ -1,4 +1,4 @@
-package com.github.dakusui.crest;
+package com.github.dakusui.crest.functions;
 
 @FunctionalInterface
 public interface Executable {

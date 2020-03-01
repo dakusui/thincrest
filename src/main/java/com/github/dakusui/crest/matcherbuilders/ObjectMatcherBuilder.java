@@ -2,7 +2,7 @@ package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.functions.TransformingPredicate;
-import com.github.dakusui.crest.utils.printable.Predicates;
+import com.github.dakusui.crest.functions.printable.Predicates;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.crest.utils.printable.Predicates.alwaysTrue;
+import static com.github.dakusui.crest.functions.printable.Predicates.alwaysTrue;
 
 public abstract class ObjectMatcherBuilder<IN, OUT, SELF extends ObjectMatcherBuilder<IN, OUT, SELF>> implements MatcherBuilder<IN, OUT, SELF> {
   private final Function<? super IN, ? extends OUT> function;

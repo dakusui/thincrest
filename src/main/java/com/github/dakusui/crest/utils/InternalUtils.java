@@ -1,8 +1,9 @@
 package com.github.dakusui.crest.utils;
 
 import com.github.dakusui.crest.core.Call.Arg;
+import com.github.dakusui.crest.core.MethodSelector;
 import com.github.dakusui.crest.core.Report;
-import com.github.dakusui.crest.utils.printable.Functions;
+import com.github.dakusui.crest.functions.printable.Functions;
 import org.opentest4j.AssertionFailedError;
 
 import java.lang.reflect.Array;
@@ -204,7 +205,7 @@ public enum InternalUtils {
     return true;
   }
 
-  static boolean withBoxingIsAssignableFrom(Class<?> a, Class<?> b) {
+  public static boolean withBoxingIsAssignableFrom(Class<?> a, Class<?> b) {
     if (a.isAssignableFrom(b))
       return true;
     return toWrapperIfPrimitive(a).isAssignableFrom(toWrapperIfPrimitive(b));

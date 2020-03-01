@@ -13,8 +13,8 @@ import org.opentest4j.AssertionFailedError;
 import java.io.IOException;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.crest.utils.printable.Predicates.equalTo;
-import static com.github.dakusui.crest.utils.printable.Predicates.matchesRegex;
+import static com.github.dakusui.crest.functions.printable.Predicates.equalTo;
+import static com.github.dakusui.crest.functions.printable.Predicates.matchesRegex;
 
 public class Issue27Test extends TestBase {
   @Test

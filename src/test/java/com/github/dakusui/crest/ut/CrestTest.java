@@ -3,7 +3,7 @@ package com.github.dakusui.crest.ut;
 import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.core.*;
 import com.github.dakusui.crest.utils.TestBase;
-import com.github.dakusui.crest.utils.printable.Predicates;
+import com.github.dakusui.crest.functions.printable.Predicates;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.crest.utils.printable.Functions.*;
-import static com.github.dakusui.crest.utils.printable.Predicates.equalTo;
+import static com.github.dakusui.crest.functions.printable.Functions.*;
+import static com.github.dakusui.crest.functions.printable.Predicates.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.*;
 
@@ -179,7 +179,7 @@ public class CrestTest {
               + "  x->size equalTo[3]\n"
               + "  x->at[0] equalTo[\"hello\"]: NOT MET\n"
               + "    x->at[0]=\"Hello\"\n"
-              + "]",
+              + "]: NOT MET",
           description.orElseThrow(AssertionError::new).toString()
       );
     }
@@ -216,7 +216,7 @@ public class CrestTest {
                   + "  x->size failingCheck failed with java.lang.RuntimeException(FAILED)\n"
                   + "    x->size=<3>:Integer\n"
                   + "  x->at[0] equalTo[\"Hello\"]\n"
-                  + "]\n"
+                  + "]: NOT MET\n"
                   + "FAILED"
           ));
     }
@@ -253,7 +253,7 @@ public class CrestTest {
                   + "  x->failingTransform alwaysTrue failed with java.lang.RuntimeException(FAILED)\n"
                   + "    x->failingTransform=java.lang.RuntimeException(FAILED)\n"
                   + "  x->at[0] equalTo[\"Hello\"]\n"
-                  + "]\n"
+                  + "]: NOT MET\n"
                   + "FAILED"
           ));
     }
@@ -289,7 +289,7 @@ public class CrestTest {
               + "    x->size=<3>:Integer\n"
               + "  x->at[0] equalTo[\"hello\"]: NOT MET\n"
               + "    x->at[0]=\"Hello\"\n"
-              + "]",
+              + "]: NOT MET",
           description.orElseThrow(AssertionError::new).toString()
       );
     }
@@ -382,7 +382,7 @@ public class CrestTest {
               + "  x->size failingCheck failed with java.lang.RuntimeException(FAILED)\n"
               + "    x->size=<3>:Integer\n"
               + "  x->at[0] equalTo[\"Hello\"]\n"
-              + "]\n"
+              + "]: NOT MET\n"
               + "FAILED"
           )
       );
@@ -419,7 +419,7 @@ public class CrestTest {
               + "    x->size=<3>:Integer\n"
               + "  x->at[0] equalTo[\"hello\"]: NOT MET\n"
               + "    x->at[0]=\"Hello\"\n"
-              + "]",
+              + "]: NOT MET",
           description.orElseThrow(AssertionError::new).toString()
       );
     }
@@ -463,8 +463,8 @@ public class CrestTest {
               + "      x->at[0]=\"Hello\"\n"
               + "    x->at[0] equalTo[\"HELLO\"]: NOT MET\n"
               + "      x->at[0]=\"Hello\"\n"
-              + "  ]\n"
-              + "]",
+              + "  ]: NOT MET\n"
+              + "]: NOT MET",
           description.orElseThrow(AssertionError::new).toString()
       );
     }
@@ -507,8 +507,8 @@ public class CrestTest {
                   + "      x->at[0]=\"Hello\"\n"
                   + "    x->at[0] equalTo[\"HELLO\"]: NOT MET\n"
                   + "      x->at[0]=\"Hello\"\n"
-                  + "  ]\n"
-                  + "]"
+                  + "  ]: NOT MET\n"
+                  + "]: NOT MET"
           ));
     }
   }
