@@ -243,7 +243,6 @@ public enum Crest {
     return new AsList<>(function);
   }
 
-  @SuppressWarnings("unchecked")
   public static <I extends Map<?, ?>, SELF extends AsMap<I, Object, Object, SELF>> SELF asObjectMap() {
     return asMapOf(Object.class, Object.class, trivial(function("mapToMap", HashMap::new)));
   }
