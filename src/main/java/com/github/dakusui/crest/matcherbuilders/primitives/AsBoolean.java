@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.matcherbuilders.primitives;
 
 import com.github.dakusui.crest.matcherbuilders.ObjectMatcherBuilder;
-import com.github.dakusui.crest.utils.printable.Predicates;
+import com.github.dakusui.crest.functions.printable.Predicates;
 
 import java.util.function.Function;
 

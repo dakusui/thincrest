@@ -1,4 +1,4 @@
-package com.github.dakusui.crest.utils;
+package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.core.Call.Arg;
 

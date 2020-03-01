@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.utils.ut;
 
-import com.github.dakusui.crest.utils.printable.Functions;
+import com.github.dakusui.crest.functions.printable.Functions;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.junit.Test;

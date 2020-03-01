@@ -3,7 +3,7 @@ package com.github.dakusui.crest.ut;
 import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.core.*;
 import com.github.dakusui.crest.utils.TestBase;
-import com.github.dakusui.crest.utils.printable.Predicates;
+import com.github.dakusui.crest.functions.printable.Predicates;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.crest.utils.printable.Functions.*;
-import static com.github.dakusui.crest.utils.printable.Predicates.equalTo;
+import static com.github.dakusui.crest.functions.printable.Functions.*;
+import static com.github.dakusui.crest.functions.printable.Predicates.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.*;
 

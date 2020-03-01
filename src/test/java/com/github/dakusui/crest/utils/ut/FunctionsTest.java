@@ -1,13 +1,13 @@
 package com.github.dakusui.crest.utils.ut;
 
-import com.github.dakusui.crest.utils.printable.Functions;
+import com.github.dakusui.crest.functions.printable.Functions;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import java.util.Collections;
 
-import static com.github.dakusui.crest.utils.printable.Functions.*;
+import static com.github.dakusui.crest.functions.printable.Functions.*;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;

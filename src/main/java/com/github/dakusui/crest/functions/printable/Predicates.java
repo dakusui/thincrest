@@ -1,4 +1,4 @@
-package com.github.dakusui.crest.utils.printable;
+package com.github.dakusui.crest.functions.printable;
 
 import com.github.dakusui.crest.utils.InternalUtils;
 

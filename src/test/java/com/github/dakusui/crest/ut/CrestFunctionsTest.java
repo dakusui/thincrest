@@ -2,7 +2,7 @@ package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.utils.TestBase;
-import com.github.dakusui.crest.utils.printable.Functions;
+import com.github.dakusui.crest.functions.printable.Functions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -12,8 +12,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.crest.utils.printable.Functions.*;
-import static com.github.dakusui.crest.utils.printable.Predicates.alwaysTrue;
+import static com.github.dakusui.crest.functions.printable.Functions.*;
+import static com.github.dakusui.crest.functions.printable.Predicates.alwaysTrue;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
