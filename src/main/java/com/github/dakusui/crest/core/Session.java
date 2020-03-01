@@ -103,7 +103,7 @@ public interface Session<T> {
 
   class Impl<T> implements Session<T> {
     static class Writer {
-      private int          level  = 0;
+      private int level = 0;
       private List<String> buffer = new LinkedList<>();
 
       Impl.Writer enter() {
@@ -134,16 +134,16 @@ public interface Session<T> {
       }
     }
 
-    private static final String                              VARIABLE_NAME               = "x";
-    private static final String                              TRANSFORMED_VARIABLE_NAME   = "y";
-    private              Map<Function<?, ?>, Function<?, ?>> memoizationMapForFunctions  = new HashMap<>();
-    private              Map<Predicate<?>, Predicate<?>>     memoizationMapForPredicates = new HashMap<>();
-    private              Map<List<Object>, String>           snapshots                   = new HashMap<>();
+    private static final String VARIABLE_NAME = "x";
+    private static final String TRANSFORMED_VARIABLE_NAME = "y";
+    private Map<Function<?, ?>, Function<?, ?>> memoizationMapForFunctions = new HashMap<>();
+    private Map<Predicate<?>, Predicate<?>> memoizationMapForPredicates = new HashMap<>();
+    private Map<List<Object>, String> snapshots = new HashMap<>();
 
     Impl.Writer expectationWriter = new Impl.Writer();
-    Impl.Writer mismatchWriter    = new Impl.Writer();
+    Impl.Writer mismatchWriter = new Impl.Writer();
 
-    private boolean         result;
+    private boolean result;
     private List<Throwable> exceptions = new LinkedList<>();
 
     @Override
@@ -267,7 +267,7 @@ public interface Session<T> {
     }
 
     void endMismatch() {
-      this.mismatchWriter.leave().appendLine("]");
+      this.mismatchWriter.leave().appendLine("]: NOT MET");
     }
 
 
