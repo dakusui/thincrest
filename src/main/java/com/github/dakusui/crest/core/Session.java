@@ -1,7 +1,6 @@
 package com.github.dakusui.crest.core;
 
-import com.github.dakusui.crest.functions.TransformingPredicate;
-import com.github.dakusui.crest.functions.printable.TrivialFunction;
+import com.github.dakusui.pcond.functions.TransformingPredicate;
 import org.opentest4j.AssertionFailedError;
 
 import java.util.*;

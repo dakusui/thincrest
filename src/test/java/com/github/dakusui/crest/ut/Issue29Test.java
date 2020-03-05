@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.crest.functions.printable.Functions.THIS;
+import static com.github.dakusui.pcond.functions.Functions.THIS;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 

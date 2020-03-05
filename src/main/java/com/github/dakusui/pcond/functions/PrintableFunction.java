@@ -1,4 +1,4 @@
-package com.github.dakusui.crest.functions.printable;
+package com.github.dakusui.pcond.functions;
 
 import java.util.Objects;
 import java.util.function.Function;

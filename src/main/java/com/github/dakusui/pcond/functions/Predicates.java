@@ -1,4 +1,4 @@
-package com.github.dakusui.crest.functions.printable;
+package com.github.dakusui.pcond.functions;
 
 import com.github.dakusui.crest.utils.InternalUtils;
 
@@ -14,24 +14,33 @@ import static java.util.Objects.requireNonNull;
 public enum Predicates {
   ;
 
+  public static final Predicate<?> ALWAYS_TRUE = Printable.predicate("alwaysTrue", t -> true);
+  public static final Predicate<Boolean> IS_TRUE = Printable.predicate("isTrue", (Boolean v) -> v);
+  public static final Predicate<Boolean> IS_FALSE = Printable.predicate("isFalse", (Boolean v) -> !v);
+  public static final Predicate<?> IS_NULL = Printable.predicate("isNull", Objects::isNull);
+  public static final Predicate<?> IS_NOT_NULL = Printable.predicate("isNotNull", Objects::nonNull);
+
+  @SuppressWarnings("unchecked")
   public static <T> Predicate<T> alwaysTrue() {
-    return Printable.predicate("alwaysTrue", t -> true);
+    return (Predicate<T>) ALWAYS_TRUE;
   }
 
   public static Predicate<? super Boolean> isTrue() {
-    return Printable.predicate("isTrue", (Boolean v) -> v);
+    return IS_TRUE;
   }
 
   public static Predicate<Boolean> isFalse() {
-    return Printable.predicate("isFalse", (Boolean v) -> !v);
+    return IS_FALSE;
   }
 
+  @SuppressWarnings("unchecked")
   public static <T> Predicate<T> isNull() {
-    return Printable.predicate("isNull", Objects::isNull);
+    return (Predicate<T>) IS_NULL;
   }
 
+  @SuppressWarnings("unchecked")
   public static <T> Predicate<T> isNotNull() {
-    return Printable.predicate("isNotNull", Objects::nonNull);
+    return (Predicate<T>) IS_NOT_NULL;
   }
 
   public static <T> Predicate<T> equalTo(T value) {
@@ -48,7 +57,6 @@ public enum Predicates {
     );
   }
 
-  @SuppressWarnings("unchecked")
   public static <T> Predicate<? super T> isInstanceOf(Class<?> value) {
     requireNonNull(value);
     //noinspection SimplifiableConditionalExpression
@@ -162,7 +170,7 @@ public enum Predicates {
     return Printable.predicate("isEmpty", objects -> objects.length == 0);
   }
 
-  public static Predicate<? super Collection> isEmpty() {
+  public static Predicate<? super Collection<?>> isEmpty() {
     return Printable.predicate("isEmpty", Collection::isEmpty);
   }
 

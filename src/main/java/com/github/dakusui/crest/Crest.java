@@ -2,11 +2,11 @@ package com.github.dakusui.crest;
 
 import com.github.dakusui.crest.core.*;
 import com.github.dakusui.crest.core.Call.Arg;
-import com.github.dakusui.crest.functions.Executable;
+import com.github.dakusui.crest.core.Executable;
 import com.github.dakusui.crest.matcherbuilders.*;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
-import com.github.dakusui.crest.functions.printable.Functions;
-import com.github.dakusui.crest.functions.printable.Printable;
+import com.github.dakusui.pcond.functions.Functions;
+import com.github.dakusui.pcond.functions.Printable;
 import org.opentest4j.AssertionFailedError;
 import org.opentest4j.TestAbortedException;
 
@@ -16,9 +16,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.utils.InternalUtils.*;
-import static com.github.dakusui.crest.functions.printable.Functions.trivial;
-import static com.github.dakusui.crest.functions.printable.Predicates.equalTo;
-import static com.github.dakusui.crest.functions.printable.Predicates.isEmptyArray;
+import static com.github.dakusui.pcond.functions.Functions.trivial;
+import static com.github.dakusui.pcond.functions.Predicates.equalTo;
+import static com.github.dakusui.pcond.functions.Predicates.isEmptyArray;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 

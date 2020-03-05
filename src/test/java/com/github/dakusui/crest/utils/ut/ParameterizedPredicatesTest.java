@@ -1,8 +1,8 @@
 package com.github.dakusui.crest.utils.ut;
 
 import com.github.dakusui.crest.utils.TestUtils;
-import com.github.dakusui.crest.functions.printable.Predicates;
-import com.github.dakusui.crest.functions.printable.Printable;
+import com.github.dakusui.pcond.functions.Predicates;
+import com.github.dakusui.pcond.functions.Printable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;

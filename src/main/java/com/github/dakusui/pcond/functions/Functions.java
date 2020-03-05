@@ -1,5 +1,6 @@
-package com.github.dakusui.crest.functions.printable;
+package com.github.dakusui.pcond.functions;
 
+import com.github.dakusui.crest.core.TrivialFunction;
 import com.github.dakusui.crest.utils.InternalUtils;
 
 import java.util.Arrays;

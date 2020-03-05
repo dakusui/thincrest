@@ -3,7 +3,7 @@ package com.github.dakusui.crest.utils;
 import com.github.dakusui.crest.core.Call.Arg;
 import com.github.dakusui.crest.core.MethodSelector;
 import com.github.dakusui.crest.core.Report;
-import com.github.dakusui.crest.functions.printable.Functions;
+import com.github.dakusui.pcond.functions.Functions;
 import org.opentest4j.AssertionFailedError;
 
 import java.lang.reflect.Array;

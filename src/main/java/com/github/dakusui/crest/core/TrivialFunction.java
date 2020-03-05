@@ -1,4 +1,4 @@
-package com.github.dakusui.crest.functions.printable;
+package com.github.dakusui.crest.core;
 
 import java.util.function.Function;
 

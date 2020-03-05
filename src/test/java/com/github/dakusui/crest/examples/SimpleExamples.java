@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.examples;
 
 import com.github.dakusui.crest.Crest;
-import com.github.dakusui.crest.functions.printable.Functions;
+import com.github.dakusui.pcond.functions.Functions;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -12,8 +12,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.crest.functions.printable.Functions.size;
-import static com.github.dakusui.crest.functions.printable.Predicates.eq;
+import static com.github.dakusui.pcond.functions.Functions.size;
+import static com.github.dakusui.pcond.functions.Predicates.eq;
 import static java.util.Arrays.asList;
 
 public class SimpleExamples {

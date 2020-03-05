@@ -1,9 +1,17 @@
-package com.github.dakusui.crest.functions;
+package com.github.dakusui.pcond.functions;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class TransformingPredicate<P, O> implements Predicate<O> {
+  public interface Factory<P, O> {
+    default TransformingPredicate<P, O> then(String condName, Predicate<? super P> cond){
+      return then(Printable.predicate(condName, cond));
+    }
+
+    TransformingPredicate<P, O> then(Predicate<? super P> cond);
+  }
+
   private final Predicate<? super P>             predicate;
   private final Function<? super O, ? extends P> function;
   private final String                           name;

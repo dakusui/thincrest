@@ -1,12 +1,12 @@
 package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.utils.InternalUtils;
-import com.github.dakusui.crest.functions.printable.Functions;
+import com.github.dakusui.pcond.functions.Functions;
 
 import java.util.Arrays;
 import java.util.function.Function;
 
-import static com.github.dakusui.crest.functions.printable.Functions.THIS;
+import static com.github.dakusui.pcond.functions.Functions.THIS;
 import static java.util.Objects.requireNonNull;
 
 /**

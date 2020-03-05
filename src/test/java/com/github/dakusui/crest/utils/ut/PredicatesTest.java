@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.utils.ut;
 
-import com.github.dakusui.crest.functions.printable.Predicates;
+import com.github.dakusui.pcond.functions.Predicates;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
