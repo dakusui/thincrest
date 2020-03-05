@@ -59,6 +59,6 @@ public enum Preconditions {
   }
 
   private static <T> String composeMessage(T value, Predicate<? super T> predicate) {
-    return String.format("value:'%s' violated precondition:[<value> %s]", value, predicate);
+    return String.format("value:%s violated precondition:value%s", value, predicate);
   }
 }
