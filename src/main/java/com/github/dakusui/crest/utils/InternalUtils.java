@@ -3,6 +3,7 @@ package com.github.dakusui.crest.utils;
 import com.github.dakusui.crest.core.Call.Arg;
 import com.github.dakusui.crest.core.MethodSelector;
 import com.github.dakusui.crest.core.Report;
+import com.github.dakusui.crest.core.TrivialFunction;
 import org.opentest4j.AssertionFailedError;
 
 import java.lang.reflect.Array;
@@ -186,6 +187,8 @@ public enum InternalUtils {
   }
 
   public static String formatFunction(@SuppressWarnings("SameParameterValue") String variableName, Function<?, ?> function) {
+    if (function instanceof TrivialFunction)
+      return variableName;
     return format("%s->%s", variableName, function.toString());
   }
 

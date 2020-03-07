@@ -13,7 +13,7 @@ public enum ReflectionUtils {
   public static <I, E> Function<? super I, ? extends E> invokeOn(Object on, String methodName, Object... args) {
     return Printable.function(
         on == THIS
-            ? () -> String.format(".%s%s", methodName, summarize(args))
+            ? () -> String.format("%s%s", methodName, summarize(args))
             : () -> String.format("->%s.%s%s", on, methodName, summarize(args)),
         (I target) -> InternalUtils.invokeMethod(
             InternalUtils.replaceTarget(on, target),

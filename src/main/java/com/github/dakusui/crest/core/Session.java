@@ -528,7 +528,7 @@ public interface Session<T> {
     private static String formatExpectation(Predicate<?> p, Function<?, ?> function) {
       if (p instanceof TransformingPredicate) {
         TransformingPredicate<?, ?> pp = (TransformingPredicate<?, ?>) p;
-        return String.format("(%s=%s->%s)%s %s", TRANSFORMED_VARIABLE_NAME, VARIABLE_NAME, function, pp.function(), pp.predicate());
+        return String.format("(%s=%s->%s)->%s %s", TRANSFORMED_VARIABLE_NAME, VARIABLE_NAME, function, pp.function(), pp.predicate());
       } else
         return format("%s->%s", formatFunction(VARIABLE_NAME, function), p);
     }

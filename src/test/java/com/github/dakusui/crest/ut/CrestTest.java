@@ -23,7 +23,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.pcond.functions.Functions.*;
+import static com.github.dakusui.pcond.functions.Functions.elementAt;
+import static com.github.dakusui.pcond.functions.Functions.size;
 import static com.github.dakusui.pcond.functions.Predicates.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.*;
@@ -255,6 +256,27 @@ public class CrestTest {
                   + "    x->failingTransform=java.lang.RuntimeException(FAILED)\n"
                   + "  x->at[0]->equalTo[\"Hello\"]\n"
                   + "]: NOT MET\n"
+                  + "FAILED"
+          ));
+    }
+
+    @Test
+    public void whenErrorOnTransformAndThenPassing$thenErrorThrownAndMessageAppropriate_2() {
+      List<String> aList = composeTestData();
+
+      Optional<Description> description = describeFailure(
+          aList,
+          Crest.asObject(FAILING_TRANSFORM).check(Predicates.alwaysTrue()).all());
+
+      System.out.println(description.orElse(null));
+      assertThat(
+          description.orElseThrow(AssertionError::new).toString(),
+          CoreMatchers.containsString(
+              "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
+                  + "x->failingTransform->alwaysTrue\n"
+                  + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
+                  + "x->failingTransform->alwaysTrue failed with java.lang.RuntimeException(FAILED)\n"
+                  + "  x->failingTransform=java.lang.RuntimeException(FAILED)\n"
                   + "FAILED"
           ));
     }
@@ -492,7 +514,7 @@ public class CrestTest {
           description.orElseThrow(AssertionError::new).toString(),
           CoreMatchers.containsString(
               "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n" +
-              "and:[\n"
+                  "and:[\n"
                   + "  x->size->equalTo[2]\n"
                   + "  or:[\n"
                   + "    x->at[0]->equalTo[\"hello\"]\n"
@@ -559,13 +581,13 @@ public class CrestTest {
           description.get().content,
           Matchers.containsString(
               "Expected: x=\"HELLO\" satisfies\n"
-              + "not:[\n"
-              + "  x containsString[\"HELLO\"]\n"
-              + "]\n"
-              + "     but: x=\"HELLO\" did not satisfy\n"
-              + "not:[\n"
-              + "  x containsString[\"HELLO\"]\n"
-              + "]")
+                  + "not:[\n"
+                  + "  x->containsString[\"HELLO\"]\n"
+                  + "]\n"
+                  + "     but: x=\"HELLO\" did not satisfy\n"
+                  + "not:[\n"
+                  + "  x->containsString[\"HELLO\"]\n"
+                  + "]")
       );
     }
 
@@ -597,14 +619,27 @@ public class CrestTest {
           Matchers.containsString("\n"
               + "Expected: x=\"HELLO\" satisfies\n"
               + "noneOf:[\n"
-              + "  x ~[\"WORLD\"]\n"
-              + "  x containsString[\"HELLO\"]\n"
+              + "  x->~[\"WORLD\"]\n"
+              + "  x->containsString[\"HELLO\"]\n"
               + "]\n"
               + "     but: x=\"HELLO\" did not satisfy\n"
               + "noneOf:[\n"
-              + "  x ~[\"WORLD\"]: NOT MET\n"
-              + "  x containsString[\"HELLO\"]\n"
+              + "  x->~[\"WORLD\"]: NOT MET\n"
+              + "  x->containsString[\"HELLO\"]\n"
               + "]")
+      );
+    }
+
+    @Test
+    public void given_NoneOfMatcher_$whenFailingTestPerformed$thenMessageCorrect_2() {
+      Optional<Description> description = describeFailure("HELLO", asString().eq("WORLD").$());
+      System.out.println(description.orElseThrow(RuntimeException::new));
+      assertThat(
+          description.get().content,
+          Matchers.containsString("HELLO\" satisfies\n"
+              + "x->~[\"WORLD\"]\n"
+              + "     but: x=\"HELLO\" did not satisfy\n"
+              + "x->~[\"WORLD\"]: NOT MET")
       );
     }
 

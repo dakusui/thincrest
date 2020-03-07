@@ -2,7 +2,6 @@ package com.github.dakusui.crest;
 
 import com.github.dakusui.crest.core.*;
 import com.github.dakusui.crest.core.Call.Arg;
-import com.github.dakusui.crest.core.Executable;
 import com.github.dakusui.crest.matcherbuilders.*;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
 import com.github.dakusui.crest.utils.ReflectiveFunctions;
@@ -338,7 +337,7 @@ public enum Crest {
   }
 
   public static <T, R> Function<T, R> function(String ss, Function<T, R> function) {
-    return Printable.function(String.format("->%s", requireNonNull(ss)), requireNonNull(function));
+    return Printable.function(String.format("%s", requireNonNull(ss)), requireNonNull(function));
   }
 
   public static <T> Predicate<T> predicate(String s, Predicate<T> predicate) {
