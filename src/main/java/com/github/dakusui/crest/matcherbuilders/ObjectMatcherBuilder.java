@@ -1,8 +1,8 @@
 package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.core.Matcher;
-import com.github.dakusui.pcond.functions.TransformingPredicate;
-import com.github.dakusui.pcond.functions.Predicates;
+import com.github.dakusui.thincrest_pcond.functions.TransformingPredicate;
+import com.github.dakusui.thincrest_pcond.functions.Predicates;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.pcond.functions.Predicates.alwaysTrue;
+import static com.github.dakusui.thincrest_pcond.functions.Predicates.alwaysTrue;
 
 public abstract class ObjectMatcherBuilder<IN, OUT, SELF extends ObjectMatcherBuilder<IN, OUT, SELF>> implements MatcherBuilder<IN, OUT, SELF> {
   private final Function<? super IN, ? extends OUT> function;

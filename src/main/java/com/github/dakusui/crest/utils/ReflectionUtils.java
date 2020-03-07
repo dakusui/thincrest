@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.utils;
 
 import com.github.dakusui.crest.core.TrivialFunction;
-import com.github.dakusui.pcond.functions.Printable;
+import com.github.dakusui.thincrest_pcond.functions.Printable;
 
 import java.util.function.Function;
 

@@ -15,7 +15,7 @@ function mangle_package() {
 function main() {
   local _out=./target/generated-sources/local
   mkdir -p "${_out}"
-  mvn-unpack com.github.dakusui:pcond:1.0-SNAPSHOT:jar:sources "${_out}"
+  mvn-unpack com.github.dakusui:pcond:1.0.0:jar:sources "${_out}"
   mangle_package "${_out}"
 }
 

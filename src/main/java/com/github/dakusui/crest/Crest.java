@@ -5,8 +5,8 @@ import com.github.dakusui.crest.core.Call.Arg;
 import com.github.dakusui.crest.matcherbuilders.*;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
 import com.github.dakusui.crest.utils.ReflectiveFunctions;
-import com.github.dakusui.pcond.functions.Functions;
-import com.github.dakusui.pcond.functions.Printable;
+import com.github.dakusui.thincrest_pcond.functions.Functions;
+import com.github.dakusui.thincrest_pcond.functions.Printable;
 import org.opentest4j.AssertionFailedError;
 import org.opentest4j.TestAbortedException;
 
@@ -17,8 +17,8 @@ import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.utils.InternalUtils.*;
 import static com.github.dakusui.crest.utils.ReflectionUtils.trivial;
-import static com.github.dakusui.pcond.functions.Predicates.equalTo;
-import static com.github.dakusui.pcond.functions.Predicates.isEmptyArray;
+import static com.github.dakusui.thincrest_pcond.functions.Predicates.equalTo;
+import static com.github.dakusui.thincrest_pcond.functions.Predicates.isEmptyArray;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 

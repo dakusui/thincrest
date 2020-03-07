@@ -8,8 +8,8 @@ import java.util.List;
 
 import static com.github.dakusui.crest.Crest.allOf;
 import static com.github.dakusui.crest.Crest.assertThat;
-import static com.github.dakusui.pcond.functions.Functions.*;
-import static com.github.dakusui.pcond.functions.Predicates.alwaysTrue;
+import static com.github.dakusui.thincrest_pcond.functions.Functions.*;
+import static com.github.dakusui.thincrest_pcond.functions.Predicates.alwaysTrue;
 import static java.util.Arrays.asList;
 
 public class CompilabilityTest {

@@ -32,7 +32,7 @@ public class ReflectiveFunctionsTest {
     @Test
     public void whenToString$thenLooksGood() {
       assertEquals(
-          ".equals(\"Hello, world\")",
+          "equals(\"Hello, world\")",
           ReflectiveFunctions.invoke("equals", "Hello, world").toString()
       );
     }

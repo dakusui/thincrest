@@ -1,6 +1,6 @@
 package com.github.dakusui.pcond.examples;
 
-import com.github.dakusui.pcond.Preconditions;
+import com.github.dakusui.thincrest_pcond.Preconditions;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -10,9 +10,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static com.github.dakusui.pcond.Preconditions.*;
-import static com.github.dakusui.pcond.functions.Functions.size;
-import static com.github.dakusui.pcond.functions.Predicates.gt;
+import static com.github.dakusui.thincrest_pcond.Preconditions.*;
+import static com.github.dakusui.thincrest_pcond.functions.Functions.size;
+import static com.github.dakusui.thincrest_pcond.functions.Predicates.gt;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class Example {

@@ -2,8 +2,8 @@ package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.utils.InternalUtils;
-import com.github.dakusui.pcond.functions.TransformingPredicate;
-import com.github.dakusui.pcond.functions.Predicates;
+import com.github.dakusui.thincrest_pcond.functions.TransformingPredicate;
+import com.github.dakusui.thincrest_pcond.functions.Predicates;
 
 import java.util.Collection;
 import java.util.List;

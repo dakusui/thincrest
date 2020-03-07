@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.utils;
 
-import com.github.dakusui.pcond.functions.Printable;
+import com.github.dakusui.thincrest_pcond.functions.Printable;
 
 import java.util.function.Predicate;
 

@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.examples;
 
 import com.github.dakusui.crest.Crest;
-import com.github.dakusui.pcond.functions.Functions;
+import com.github.dakusui.thincrest_pcond.functions.Functions;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.StringContains;
 import org.junit.Test;
@@ -9,9 +9,9 @@ import org.junit.Test;
 import java.util.*;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.pcond.functions.Functions.*;
-import static com.github.dakusui.pcond.functions.Predicates.eq;
-import static com.github.dakusui.pcond.functions.Predicates.isEmpty;
+import static com.github.dakusui.thincrest_pcond.functions.Functions.*;
+import static com.github.dakusui.thincrest_pcond.functions.Predicates.eq;
+import static com.github.dakusui.thincrest_pcond.functions.Predicates.isEmpty;
 
 /**
  * http://qiita.com/disc99/items/31fa7abb724f63602dc9

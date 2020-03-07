@@ -2,7 +2,7 @@ package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.core.Matcher;
 import com.github.dakusui.crest.utils.ReflectivePredicates;
-import com.github.dakusui.pcond.functions.Predicates;
+import com.github.dakusui.thincrest_pcond.functions.Predicates;
 
 import java.util.List;
 import java.util.function.Function;
