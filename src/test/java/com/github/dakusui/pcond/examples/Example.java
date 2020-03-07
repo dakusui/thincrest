@@ -1,5 +1,6 @@
-package com.github.dakusui.pcond;
+package com.github.dakusui.pcond.examples;
 
+import com.github.dakusui.pcond.Preconditions;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;

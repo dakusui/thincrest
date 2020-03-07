@@ -3,7 +3,6 @@ package com.github.dakusui.crest.utils;
 import com.github.dakusui.crest.core.Call.Arg;
 import com.github.dakusui.crest.core.MethodSelector;
 import com.github.dakusui.crest.core.Report;
-import com.github.dakusui.pcond.functions.Functions;
 import org.opentest4j.AssertionFailedError;
 
 import java.lang.reflect.Array;
@@ -186,8 +185,8 @@ public enum InternalUtils {
     }
   }
 
-  public static String formatFunction(Function<?, ?> function, @SuppressWarnings("SameParameterValue") String variableName) {
-    return format("%s%s", variableName, function.toString());
+  public static String formatFunction(@SuppressWarnings("SameParameterValue") String variableName, Function<?, ?> function) {
+    return format("%s->%s", variableName, function.toString());
   }
 
   public static boolean areArgsCompatible(Class<?>[] formalParameters, Object[] args) {
@@ -349,7 +348,7 @@ public enum InternalUtils {
   }
 
   public static <I> Object replaceTarget(Object on, I target) {
-    return on == Functions.THIS ?
+    return on == ReflectiveFunctions.THIS ?
         target :
         on instanceof Object[] ?
             replaceTargetInArray(target, (Object[]) on) :

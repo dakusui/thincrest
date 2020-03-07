@@ -1,6 +1,7 @@
 package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.core.Matcher;
+import com.github.dakusui.crest.utils.ReflectivePredicates;
 import com.github.dakusui.pcond.functions.Predicates;
 
 import java.util.List;
@@ -48,7 +49,7 @@ public interface MatcherBuilder<IN, OUT, SELF extends MatcherBuilder<IN, OUT, SE
   <MEDIUM> SELF check(Function<? super OUT, ? extends MEDIUM> function, Predicate<? super MEDIUM> predicate);
 
   default SELF check(String methodName, Object... args) {
-    return check(Predicates.invoke(methodName, args));
+    return check(ReflectivePredicates.invoke(methodName, args));
   }
 
   default SELF equalTo(OUT value) {

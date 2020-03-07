@@ -4,24 +4,12 @@ import com.github.dakusui.crest.core.TrivialFunction;
 import com.github.dakusui.pcond.functions.Printable;
 
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.utils.InternalUtils.summarize;
-import static com.github.dakusui.pcond.functions.Functions.THIS;
+import static com.github.dakusui.crest.utils.ReflectiveFunctions.THIS;
 
-public enum Reflections {
+public enum ReflectionUtils {
   ;
-  public static <T> Predicate<? super T> invoke(String methodName, Object... args) {
-    return Printable.predicate(
-        () -> String.format(".%s%s", methodName, String.join(",", summarize(args))),
-        (Object target) -> InternalUtils.invokeMethod(target, methodName, args)
-    );
-  }
-
-  public static <I, E> Function<? super I, ? extends E> invoke(String methodName, Object... args) {
-    return invokeOn(THIS, methodName, args);
-  }
-
   public static <I, E> Function<? super I, ? extends E> invokeOn(Object on, String methodName, Object... args) {
     return Printable.function(
         on == THIS

@@ -2,6 +2,7 @@ package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.Crest;
 import com.github.dakusui.crest.core.*;
+import com.github.dakusui.crest.utils.ReflectiveFunctions;
 import com.github.dakusui.crest.utils.TestBase;
 import com.github.dakusui.pcond.functions.Predicates;
 import org.hamcrest.CoreMatchers;
@@ -171,13 +172,13 @@ public class CrestTest {
           "\n"
               + "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
               + "and:[\n"
-              + "  x->size equalTo[3]\n"
-              + "  x->at[0] equalTo[\"hello\"]\n"
+              + "  x->size->equalTo[3]\n"
+              + "  x->at[0]->equalTo[\"hello\"]\n"
               + "]\n"
               + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
               + "and:[\n"
-              + "  x->size equalTo[3]\n"
-              + "  x->at[0] equalTo[\"hello\"]: NOT MET\n"
+              + "  x->size->equalTo[3]\n"
+              + "  x->at[0]->equalTo[\"hello\"]: NOT MET\n"
               + "    x->at[0]=\"Hello\"\n"
               + "]: NOT MET",
           description.orElseThrow(AssertionError::new).toString()
@@ -208,14 +209,14 @@ public class CrestTest {
               "\n"
                   + "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
                   + "and:[\n"
-                  + "  x->size failingCheck\n"
-                  + "  x->at[0] equalTo[\"Hello\"]\n"
+                  + "  x->size->failingCheck\n"
+                  + "  x->at[0]->equalTo[\"Hello\"]\n"
                   + "]\n"
                   + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
                   + "and:[\n"
-                  + "  x->size failingCheck failed with java.lang.RuntimeException(FAILED)\n"
+                  + "  x->size->failingCheck failed with java.lang.RuntimeException(FAILED)\n"
                   + "    x->size=<3>:Integer\n"
-                  + "  x->at[0] equalTo[\"Hello\"]\n"
+                  + "  x->at[0]->equalTo[\"Hello\"]\n"
                   + "]: NOT MET\n"
                   + "FAILED"
           ));
@@ -245,14 +246,14 @@ public class CrestTest {
               "\n"
                   + "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
                   + "and:[\n"
-                  + "  x->failingTransform alwaysTrue\n"
-                  + "  x->at[0] equalTo[\"Hello\"]\n"
+                  + "  x->failingTransform->alwaysTrue\n"
+                  + "  x->at[0]->equalTo[\"Hello\"]\n"
                   + "]\n"
                   + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
                   + "and:[\n"
-                  + "  x->failingTransform alwaysTrue failed with java.lang.RuntimeException(FAILED)\n"
+                  + "  x->failingTransform->alwaysTrue failed with java.lang.RuntimeException(FAILED)\n"
                   + "    x->failingTransform=java.lang.RuntimeException(FAILED)\n"
-                  + "  x->at[0] equalTo[\"Hello\"]\n"
+                  + "  x->at[0]->equalTo[\"Hello\"]\n"
                   + "]: NOT MET\n"
                   + "FAILED"
           ));
@@ -280,14 +281,14 @@ public class CrestTest {
           "\n"
               + "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
               + "and:[\n"
-              + "  x->size equalTo[2]\n"
-              + "  x->at[0] equalTo[\"hello\"]\n"
+              + "  x->size->equalTo[2]\n"
+              + "  x->at[0]->equalTo[\"hello\"]\n"
               + "]\n"
               + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
               + "and:[\n"
-              + "  x->size equalTo[2]: NOT MET\n"
+              + "  x->size->equalTo[2]: NOT MET\n"
               + "    x->size=<3>:Integer\n"
-              + "  x->at[0] equalTo[\"hello\"]: NOT MET\n"
+              + "  x->at[0]->equalTo[\"hello\"]: NOT MET\n"
               + "    x->at[0]=\"Hello\"\n"
               + "]: NOT MET",
           description.orElseThrow(AssertionError::new).toString()
@@ -374,14 +375,14 @@ public class CrestTest {
           CoreMatchers.startsWith("\n"
               + "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
               + "or:[\n"
-              + "  x->size failingCheck\n"
-              + "  x->at[0] equalTo[\"Hello\"]\n"
+              + "  x->size->failingCheck\n"
+              + "  x->at[0]->equalTo[\"Hello\"]\n"
               + "]\n"
               + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
               + "or:[\n"
-              + "  x->size failingCheck failed with java.lang.RuntimeException(FAILED)\n"
+              + "  x->size->failingCheck failed with java.lang.RuntimeException(FAILED)\n"
               + "    x->size=<3>:Integer\n"
-              + "  x->at[0] equalTo[\"Hello\"]\n"
+              + "  x->at[0]->equalTo[\"Hello\"]\n"
               + "]: NOT MET\n"
               + "FAILED"
           )
@@ -410,14 +411,14 @@ public class CrestTest {
           "\n"
               + "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
               + "or:[\n"
-              + "  x->size equalTo[2]\n"
-              + "  x->at[0] equalTo[\"hello\"]\n"
+              + "  x->size->equalTo[2]\n"
+              + "  x->at[0]->equalTo[\"hello\"]\n"
               + "]\n"
               + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
               + "or:[\n"
-              + "  x->size equalTo[2]: NOT MET\n"
+              + "  x->size->equalTo[2]: NOT MET\n"
               + "    x->size=<3>:Integer\n"
-              + "  x->at[0] equalTo[\"hello\"]: NOT MET\n"
+              + "  x->at[0]->equalTo[\"hello\"]: NOT MET\n"
               + "    x->at[0]=\"Hello\"\n"
               + "]: NOT MET",
           description.orElseThrow(AssertionError::new).toString()
@@ -448,20 +449,20 @@ public class CrestTest {
           "\n"
               + "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
               + "or:[\n"
-              + "  x->size equalTo[2]\n"
+              + "  x->size->equalTo[2]\n"
               + "  and:[\n"
-              + "    x->at[0] equalTo[\"hello\"]\n"
-              + "    x->at[0] equalTo[\"HELLO\"]\n"
+              + "    x->at[0]->equalTo[\"hello\"]\n"
+              + "    x->at[0]->equalTo[\"HELLO\"]\n"
               + "  ]\n"
               + "]\n"
               + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
               + "or:[\n"
-              + "  x->size equalTo[2]: NOT MET\n"
+              + "  x->size->equalTo[2]: NOT MET\n"
               + "    x->size=<3>:Integer\n"
               + "  and:[\n"
-              + "    x->at[0] equalTo[\"hello\"]: NOT MET\n"
+              + "    x->at[0]->equalTo[\"hello\"]: NOT MET\n"
               + "      x->at[0]=\"Hello\"\n"
-              + "    x->at[0] equalTo[\"HELLO\"]: NOT MET\n"
+              + "    x->at[0]->equalTo[\"HELLO\"]: NOT MET\n"
               + "      x->at[0]=\"Hello\"\n"
               + "  ]: NOT MET\n"
               + "]: NOT MET",
@@ -492,20 +493,20 @@ public class CrestTest {
           CoreMatchers.containsString(
               "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n" +
               "and:[\n"
-                  + "  x->size equalTo[2]\n"
+                  + "  x->size->equalTo[2]\n"
                   + "  or:[\n"
-                  + "    x->at[0] equalTo[\"hello\"]\n"
-                  + "    x->at[0] equalTo[\"HELLO\"]\n"
+                  + "    x->at[0]->equalTo[\"hello\"]\n"
+                  + "    x->at[0]->equalTo[\"HELLO\"]\n"
                   + "  ]\n"
                   + "]\n"
                   + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
                   + "and:[\n"
-                  + "  x->size equalTo[2]: NOT MET\n"
+                  + "  x->size->equalTo[2]: NOT MET\n"
                   + "    x->size=<3>:Integer\n"
                   + "  or:[\n"
-                  + "    x->at[0] equalTo[\"hello\"]: NOT MET\n"
+                  + "    x->at[0]->equalTo[\"hello\"]: NOT MET\n"
                   + "      x->at[0]=\"Hello\"\n"
-                  + "    x->at[0] equalTo[\"HELLO\"]: NOT MET\n"
+                  + "    x->at[0]->equalTo[\"HELLO\"]: NOT MET\n"
                   + "      x->at[0]=\"Hello\"\n"
                   + "  ]: NOT MET\n"
                   + "]: NOT MET"
@@ -711,7 +712,7 @@ public class CrestTest {
   public static class CallMechanismTest extends TestBase {
     @Test
     public void givenStaticCall$whenToString$thenWorksRight() {
-      Function<Object, String> func = call(String.class, "format", "<me=%s, %s>", args(THIS, "hello")).$();
+      Function<Object, String> func = call(String.class, "format", "<me=%s, %s>", args(ReflectiveFunctions.THIS, "hello")).$();
 
       System.out.println(func.toString());
       System.out.println(func.apply("world"));
@@ -744,7 +745,7 @@ public class CrestTest {
 
     @Test
     public void givenInstanceCall$whenToString$thenWorksRight() {
-      Function<Object, String> func = callOn("Hello world", "indexOf", THIS).andThen("toString").$();
+      Function<Object, String> func = callOn("Hello world", "indexOf", ReflectiveFunctions.THIS).andThen("toString").$();
 
       System.out.println(func.toString());
       System.out.println(func.apply("world"));
