@@ -3,7 +3,7 @@
     <groupId>com.github.dakusui</groupId>
     <artifactId>thincrest</artifactId>
     <packaging>jar</packaging>
-    <version>5.0.0</version>
+    <version>5.0.1-SNAPSHOT</version>
     <description>Yet another assertion library</description>
 
     <name>thincrest</name>
@@ -22,7 +22,7 @@
         <developerConnection>scm:git:git@github.com:dakusui/thincrest.git
         </developerConnection>
         <url>http://dakusui.github.io/thincrest</url>
-        <tag>thincrest-5.0.0</tag>
+        <tag>thincrest-5.0.x</tag>
     </scm>
 
     <developers>
