@@ -1,12 +1,13 @@
 package com.github.dakusui.crest.core;
 
 import com.github.dakusui.crest.utils.InternalUtils;
-import com.github.dakusui.crest.functions.printable.Functions;
+import com.github.dakusui.crest.utils.ReflectionUtils;
+import com.github.dakusui.crest.utils.ReflectiveFunctions;
 
 import java.util.Arrays;
 import java.util.function.Function;
 
-import static com.github.dakusui.crest.functions.printable.Functions.THIS;
+import static com.github.dakusui.crest.utils.ReflectiveFunctions.THIS;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -119,7 +120,7 @@ public interface Call {
    * @param methodName A name to specify a method to be invoked
    * @param args       Argument values with which the method is invoked
    * @return A result of the invocation.
-   * @see Functions#THIS
+   * @see ReflectiveFunctions#THIS
    * @see InternalUtils#findMethod(Class, String, Object[])
    */
   static Call createOn(Object object, String methodName, Object... args) {
@@ -193,12 +194,12 @@ public interface Call {
           : this.parent.build().andThen(toFunction());
     }
 
-    @SuppressWarnings({ "unchecked", "RedundantCast" })
+    @SuppressWarnings({ "unchecked", "RedundantCast", "rawtypes" })
     private Function toFunction() {
       return ChainedFunction.create(
           this.object instanceof Class
-              ? (Function) Functions.invokeStatic((Class) this.object, methodName, args)
-              : (Function) Functions.invokeOn(this.object, methodName, args)
+              ? (Function) ReflectionUtils.invokeStatic((Class<?>) this.object, methodName, args)
+              : (Function) ReflectionUtils.invokeOn(this.object, methodName, args)
       );
     }
   }

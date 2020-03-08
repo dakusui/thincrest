@@ -2,11 +2,11 @@ package com.github.dakusui.crest;
 
 import com.github.dakusui.crest.core.*;
 import com.github.dakusui.crest.core.Call.Arg;
-import com.github.dakusui.crest.functions.Executable;
 import com.github.dakusui.crest.matcherbuilders.*;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
-import com.github.dakusui.crest.functions.printable.Functions;
-import com.github.dakusui.crest.functions.printable.Printable;
+import com.github.dakusui.crest.utils.ReflectiveFunctions;
+import com.github.dakusui.thincrest_pcond.functions.Functions;
+import com.github.dakusui.thincrest_pcond.functions.Printable;
 import org.opentest4j.AssertionFailedError;
 import org.opentest4j.TestAbortedException;
 
@@ -16,9 +16,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.utils.InternalUtils.*;
-import static com.github.dakusui.crest.functions.printable.Functions.trivial;
-import static com.github.dakusui.crest.functions.printable.Predicates.equalTo;
-import static com.github.dakusui.crest.functions.printable.Predicates.isEmptyArray;
+import static com.github.dakusui.crest.utils.ReflectionUtils.trivial;
+import static com.github.dakusui.thincrest_pcond.functions.Predicates.equalTo;
+import static com.github.dakusui.thincrest_pcond.functions.Predicates.isEmptyArray;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -88,7 +88,7 @@ public enum Crest {
   }
 
   public static <I, O> AsObject<I, O> asObject(String methodName, Object... args) {
-    return new AsObject<>(Functions.<I, O>invoke(methodName, args));
+    return new AsObject<>(ReflectiveFunctions.<I, O>invoke(methodName, args));
   }
 
   public static <I, O> AsObject<I, O> asObject(Function<? super I, ? extends O> function) {
@@ -100,7 +100,7 @@ public enum Crest {
   }
 
   public static <I> AsBoolean<I> asBoolean(String methodName, Object... args) {
-    return asBoolean(Functions.invoke(methodName, args).andThen(Functions.cast(Boolean.class)));
+    return asBoolean(ReflectiveFunctions.invoke(methodName, args).andThen(Functions.cast(Boolean.class)));
   }
 
   public static <I> AsBoolean<I> asBoolean(Predicate<? super I> predicate) {
@@ -117,7 +117,7 @@ public enum Crest {
   }
 
   public static <I> AsByte<I> asByte(String methodName, Object... args) {
-    return asByte(Functions.invoke(methodName, args).andThen(Functions.cast(Byte.class)));
+    return asByte(ReflectiveFunctions.invoke(methodName, args).andThen(Functions.cast(Byte.class)));
   }
 
   public static AsByte<Byte> asByte() {
@@ -129,7 +129,7 @@ public enum Crest {
   }
 
   public static <I> AsChar<I> asChar(String methodName, Object... args) {
-    return asChar(Functions.invoke(methodName, args).andThen(Functions.cast(Character.class)));
+    return asChar(ReflectiveFunctions.invoke(methodName, args).andThen(Functions.cast(Character.class)));
   }
 
   public static AsChar<Character> asChar() {
@@ -141,7 +141,7 @@ public enum Crest {
   }
 
   public static <I> AsShort<I> asShort(String methodName, Object... args) {
-    return asShort(Functions.invoke(methodName, args).andThen(Functions.cast(Short.class)));
+    return asShort(ReflectiveFunctions.invoke(methodName, args).andThen(Functions.cast(Short.class)));
   }
 
   public static AsShort<Short> asShort() {
@@ -153,7 +153,7 @@ public enum Crest {
   }
 
   public static <I> AsInteger<I> asInteger(String methodName, Object... args) {
-    return asInteger(Functions.invoke(methodName, args).andThen(Functions.cast(Integer.class)));
+    return asInteger(ReflectiveFunctions.invoke(methodName, args).andThen(Functions.cast(Integer.class)));
   }
 
   public static AsInteger<Integer> asInteger() {
@@ -165,7 +165,7 @@ public enum Crest {
   }
 
   public static <I> AsLong<I> asLong(String methodName, Object... args) {
-    return asLong(Functions.invoke(methodName, args).andThen(Functions.cast(Long.class)));
+    return asLong(ReflectiveFunctions.invoke(methodName, args).andThen(Functions.cast(Long.class)));
   }
 
   public static AsLong<Long> asLong() {
@@ -177,7 +177,7 @@ public enum Crest {
   }
 
   public static <I> AsFloat<I> asFloat(String methodName, Object... args) {
-    return asFloat(Functions.invoke(methodName, args).andThen(Functions.cast(Float.class)));
+    return asFloat(ReflectiveFunctions.invoke(methodName, args).andThen(Functions.cast(Float.class)));
   }
 
   public static AsFloat<Float> asFloat() {
@@ -189,7 +189,7 @@ public enum Crest {
   }
 
   public static <I> AsDouble<I> asDouble(String methodName, Object... args) {
-    return asDouble(Functions.invoke(methodName, args).andThen(Functions.cast(Double.class)));
+    return asDouble(ReflectiveFunctions.invoke(methodName, args).andThen(Functions.cast(Double.class)));
   }
 
   public static AsDouble<Double> asDouble() {
@@ -212,7 +212,7 @@ public enum Crest {
 
   public static <I, T extends Comparable<? super T>, S extends AsComparable<I, T, S>>
   S asComparableOf(Class<T> type, String methodName, Object... args) {
-    return asComparable(Functions.invoke(methodName, args).<T>andThen(Functions.cast(type)));
+    return asComparable(ReflectiveFunctions.invoke(methodName, args).<T>andThen(Functions.cast(type)));
   }
 
   public static <I> AsString<I> asString() {
@@ -225,7 +225,7 @@ public enum Crest {
 
   @SuppressWarnings({ "RedundantCast", "unchecked" })
   public static <I> AsString<I> asString(String methodName, Object... args) {
-    return asString((Function<? super I, ? extends String>) Functions.invoke(methodName, args));
+    return asString((Function<? super I, ? extends String>) ReflectiveFunctions.invoke(methodName, args));
   }
 
   public static <I extends Collection<?>> AsList<? super I, ?> asObjectList() {
@@ -337,7 +337,7 @@ public enum Crest {
   }
 
   public static <T, R> Function<T, R> function(String ss, Function<T, R> function) {
-    return Printable.function(String.format("->%s", requireNonNull(ss)), requireNonNull(function));
+    return Printable.function(String.format("%s", requireNonNull(ss)), requireNonNull(function));
   }
 
   public static <T> Predicate<T> predicate(String s, Predicate<T> predicate) {

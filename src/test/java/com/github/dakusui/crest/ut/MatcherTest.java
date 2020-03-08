@@ -1,8 +1,8 @@
 package com.github.dakusui.crest.ut;
 
 import com.github.dakusui.crest.core.Matcher;
-import com.github.dakusui.crest.functions.printable.Functions;
-import com.github.dakusui.crest.functions.printable.Predicates;
+import com.github.dakusui.thincrest_pcond.functions.Functions;
+import com.github.dakusui.thincrest_pcond.functions.Predicates;
 import org.junit.Test;
 import org.opentest4j.AssertionFailedError;
 

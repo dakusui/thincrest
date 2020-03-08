@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.core;
 
-import com.github.dakusui.crest.functions.printable.Printable;
+import com.github.dakusui.thincrest_pcond.functions.Printable;
 import org.opentest4j.AssertionFailedError;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.github.dakusui.crest.functions.printable.Predicates.equalTo;
+import static com.github.dakusui.thincrest_pcond.functions.Predicates.equalTo;
 import static java.util.Objects.requireNonNull;
 
 public interface Eater<T /* Target*/, C /* Target container */> {

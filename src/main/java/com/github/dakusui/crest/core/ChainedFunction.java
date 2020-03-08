@@ -67,7 +67,6 @@ public interface ChainedFunction<T, R> extends Function<T, R> {
       this.func = requireNonNull(func);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public R apply(T t) {
       return this.chained().apply(this.previous().apply(t));
@@ -92,7 +91,7 @@ public interface ChainedFunction<T, R> extends Function<T, R> {
 
     @Override
     public String toString() {
-      return previous().toString() + chained().toString();
+      return previous().toString() + "." + chained().toString();
     }
   }
 }

@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.examples;
 
 import com.github.dakusui.crest.utils.TestBase;
-import com.github.dakusui.crest.functions.printable.Predicates;
+import com.github.dakusui.thincrest_pcond.functions.Predicates;
 import org.junit.Test;
 
 import java.util.stream.Stream;

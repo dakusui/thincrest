@@ -1,7 +1,6 @@
 package com.github.dakusui.crest.core;
 
-import com.github.dakusui.crest.functions.TransformingPredicate;
-import com.github.dakusui.crest.functions.printable.TrivialFunction;
+import com.github.dakusui.thincrest_pcond.functions.TransformingPredicate;
 import org.opentest4j.AssertionFailedError;
 
 import java.util.*;
@@ -28,14 +27,6 @@ public interface Session<T> {
         );
       throw new ExecutionFailure(message, report.expectation(), report.mismatch(), report.exceptions());
     }
-  }
-
-  static RuntimeException wrap(Throwable exception) {
-    if (exception instanceof RuntimeException)
-      throw (RuntimeException) exception;
-    if (exception instanceof Error)
-      throw (Error) exception;
-    throw new RuntimeException(exception);
   }
 
   static <T> Report perform(T value, Matcher<T> matcher) {
@@ -430,7 +421,7 @@ public interface Session<T> {
     private void explainTransformingPredicate(T value, Function<T, ?> func, TransformingPredicate<?, ?> p) {
       this.mismatchWriter
           .enter()
-          .appendLine("%s=%s%s", TRANSFORMED_VARIABLE_NAME, VARIABLE_NAME, func);
+          .appendLine("%s=%s->%s", TRANSFORMED_VARIABLE_NAME, VARIABLE_NAME, func);
       try {
         explainFunction(value, func, VARIABLE_NAME, this.mismatchWriter);
       } finally {
@@ -438,7 +429,7 @@ public interface Session<T> {
       }
       this.mismatchWriter
           .enter()
-          .appendLine("%s%s %s", TRANSFORMED_VARIABLE_NAME, p.function(), p.predicate())
+          .appendLine("%s->%s %s", TRANSFORMED_VARIABLE_NAME, p.function(), p.predicate())
           .leave();
       //noinspection unchecked
       explainFunction((T) apply(func, value), (Function<T, ?>) p.function(), TRANSFORMED_VARIABLE_NAME, this.mismatchWriter);
@@ -456,7 +447,7 @@ public interface Session<T> {
         if (!(func instanceof TrivialFunction)) {
           writer.enter();
           try {
-            writer.appendLine("%s%s=%s", variableName, func, this.snapshotOf(func, value));
+            writer.appendLine("%s->%s=%s", variableName, func, this.snapshotOf(func, value));
           } finally {
             writer.leave();
           }
@@ -482,7 +473,7 @@ public interface Session<T> {
              c != null;
              c = (ChainedFunction<Object, Object>) c.previous()) {
           workEntries.add(0, new Entry(
-              formatFunction(c, variableName),
+              formatFunction(variableName, c),
               snapshotOf(c, value)
           ));
         }
@@ -529,9 +520,9 @@ public interface Session<T> {
     private static String formatExpectation(Predicate<?> p, Function<?, ?> function) {
       if (p instanceof TransformingPredicate) {
         TransformingPredicate<?, ?> pp = (TransformingPredicate<?, ?>) p;
-        return String.format("(%s=%s%s)%s %s", TRANSFORMED_VARIABLE_NAME, VARIABLE_NAME, function, pp.function(), pp.predicate());
+        return String.format("(%s=%s->%s)->%s %s", TRANSFORMED_VARIABLE_NAME, VARIABLE_NAME, function, pp.function(), pp.predicate());
       } else
-        return format("%s %s", formatFunction(function, VARIABLE_NAME), p);
+        return format("%s->%s", formatFunction(VARIABLE_NAME, function), p);
     }
   }
 }

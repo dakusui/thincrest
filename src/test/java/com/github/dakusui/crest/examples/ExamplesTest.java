@@ -1,6 +1,5 @@
 package com.github.dakusui.crest.examples;
 
-import com.github.dakusui.crest.ComparablesExample;
 import com.github.dakusui.crest.utils.TestBase;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;

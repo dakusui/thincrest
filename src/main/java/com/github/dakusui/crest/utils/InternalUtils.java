@@ -3,7 +3,7 @@ package com.github.dakusui.crest.utils;
 import com.github.dakusui.crest.core.Call.Arg;
 import com.github.dakusui.crest.core.MethodSelector;
 import com.github.dakusui.crest.core.Report;
-import com.github.dakusui.crest.functions.printable.Functions;
+import com.github.dakusui.crest.core.TrivialFunction;
 import org.opentest4j.AssertionFailedError;
 
 import java.lang.reflect.Array;
@@ -13,10 +13,10 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 public enum InternalUtils {
@@ -35,7 +35,7 @@ public enum InternalUtils {
       { double.class, Double.class },
   };
 
-  private static final List<Class<? extends Error>> BLACKLISTED_ERROR_TYPES = singletonList(OutOfMemoryError.class);
+  private static final List<Class<? extends Error>> BLACKLISTED_ERROR_TYPES = asList(OutOfMemoryError.class, StackOverflowError.class);
 
   /**
    * Tries to find a method whose name is {@code methodName} from a given class {@code aClass}
@@ -123,10 +123,7 @@ public enum InternalUtils {
       Collection<?> collection = (Collection<?>) value;
       if (collection.size() < 4)
         return String.format("(%s)",
-            String.join(
-                ",",
-                (List<String>) collection.stream().map(InternalUtils::summarize).collect(toList())
-            ));
+            collection.stream().map(InternalUtils::summarize).collect(Collectors.joining(",")));
       Iterator<?> i = collection.iterator();
       return format("(%s,%s,%s...;%s)",
           summarize(i.next()),
@@ -186,8 +183,10 @@ public enum InternalUtils {
     }
   }
 
-  public static String formatFunction(Function<?, ?> function, @SuppressWarnings("SameParameterValue") String variableName) {
-    return format("%s%s", variableName, function.toString());
+  public static String formatFunction(@SuppressWarnings("SameParameterValue") String variableName, Function<?, ?> function) {
+    if (function instanceof TrivialFunction)
+      return variableName;
+    return format("%s->%s", variableName, function.toString());
   }
 
   public static boolean areArgsCompatible(Class<?>[] formalParameters, Object[] args) {
@@ -349,7 +348,7 @@ public enum InternalUtils {
   }
 
   public static <I> Object replaceTarget(Object on, I target) {
-    return on == Functions.THIS ?
+    return on == ReflectiveFunctions.THIS ?
         target :
         on instanceof Object[] ?
             replaceTargetInArray(target, (Object[]) on) :
@@ -377,11 +376,11 @@ public enum InternalUtils {
     return b.toString();
   }
 
-  public static String formatObject(Object value) {
-    if (value instanceof String)
-      return format("\"%s\"", value);
-    if (value instanceof Character)
-      return format("'%s'", value);
-    return format("%s", value);
+  public static RuntimeException wrap(Throwable exception) {
+    if (exception instanceof RuntimeException)
+      throw (RuntimeException) exception;
+    if (exception instanceof Error)
+      throw (Error) exception;
+    throw new RuntimeException(exception);
   }
 }
