@@ -375,4 +375,12 @@ public enum InternalUtils {
       b.append(c);
     return b.toString();
   }
+
+  public static RuntimeException wrap(Throwable exception) {
+    if (exception instanceof RuntimeException)
+      throw (RuntimeException) exception;
+    if (exception instanceof Error)
+      throw (Error) exception;
+    throw new RuntimeException(exception);
+  }
 }

@@ -29,14 +29,6 @@ public interface Session<T> {
     }
   }
 
-  static RuntimeException wrap(Throwable exception) {
-    if (exception instanceof RuntimeException)
-      throw (RuntimeException) exception;
-    if (exception instanceof Error)
-      throw (Error) exception;
-    throw new RuntimeException(exception);
-  }
-
   static <T> Report perform(T value, Matcher<T> matcher) {
     return perform(value, matcher, create());
   }
