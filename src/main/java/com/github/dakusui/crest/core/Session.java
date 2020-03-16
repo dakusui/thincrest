@@ -1,6 +1,6 @@
 package com.github.dakusui.crest.core;
 
-import com.github.dakusui.thincrest_pcond.functions.TransformingPredicate;
+import com.github.dakusui.thincrest_pcond.internals.TransformingPredicate;
 import org.opentest4j.AssertionFailedError;
 
 import java.util.*;

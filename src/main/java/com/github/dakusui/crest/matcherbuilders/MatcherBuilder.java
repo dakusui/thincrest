@@ -53,7 +53,7 @@ public interface MatcherBuilder<IN, OUT, SELF extends MatcherBuilder<IN, OUT, SE
   }
 
   default SELF equalTo(OUT value) {
-    return this.check(Predicates.equalTo(value));
+    return this.check(Predicates.isEqualTo(value));
   }
 
   Matcher<? super IN> all();

@@ -19,7 +19,7 @@ public class MatcherTest {
   public void givenFailingMatcher$whenAssertThat$thenFail() {
     assertThat(
         "Hello",
-        Matcher.Leaf.<Object, Object>create(wrap(Predicates.equalTo("hello")), wrap(Functions.identity()))
+        Matcher.Leaf.<Object, Object>create(wrap(Predicates.isEqualTo("hello")), wrap(Functions.identity()))
     );
   }
 
@@ -28,8 +28,8 @@ public class MatcherTest {
     assertThat(
         "Hello",
         Matcher.Conjunctive.create(Arrays.<Matcher<? super Object>>asList(
-            Matcher.Leaf.create(wrap(Predicates.equalTo("hello")), wrap(Functions.identity())),
-            Matcher.Leaf.create(wrap(Predicates.equalTo("hello")), wrap(Functions.identity()))
+            Matcher.Leaf.create(wrap(Predicates.isEqualTo("hello")), wrap(Functions.identity())),
+            Matcher.Leaf.create(wrap(Predicates.isEqualTo("hello")), wrap(Functions.identity()))
         )));
   }
 

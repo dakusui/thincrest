@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 import static com.github.dakusui.crest.Crest.*;
 import static com.github.dakusui.thincrest_pcond.functions.Functions.elementAt;
 import static com.github.dakusui.thincrest_pcond.functions.Functions.size;
-import static com.github.dakusui.thincrest_pcond.functions.Predicates.equalTo;
+import static com.github.dakusui.thincrest_pcond.functions.Predicates.isEqualTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.*;
 
@@ -81,12 +81,12 @@ public class CrestTest {
               Crest.asObject(
                   elementAt(0)
               ).check(
-                  equalTo("Hello")).all()
+                  isEqualTo("Hello")).all()
               ,
               Crest.asObject(
                   size()
               ).check(
-                  equalTo(3)
+                  isEqualTo(3)
               ).all()
           ));
 
@@ -125,7 +125,7 @@ public class CrestTest {
                     public boolean test(String s) {
                       try {
                         if (firstTime)
-                          return equalTo("Hello").test(s);
+                          return isEqualTo("Hello").test(s);
                         else
                           throw new Error();
                       } finally {
@@ -138,7 +138,7 @@ public class CrestTest {
               Crest.asObject(
                   size()
               ).check(
-                  equalTo(3)
+                  isEqualTo(3)
               ).all()
           ));
 
@@ -161,10 +161,10 @@ public class CrestTest {
           aList,
           allOf(
               Crest.asObject(size())
-                  .check(equalTo(3))
+                  .check(isEqualTo(3))
                   .all(),
               Crest.asObject(elementAt(0))
-                  .check(equalTo("hello"))
+                  .check(isEqualTo("hello"))
                   .all()
           ));
 
@@ -173,13 +173,13 @@ public class CrestTest {
           "\n"
               + "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
               + "and:[\n"
-              + "  x->size->equalTo[3]\n"
-              + "  x->at[0]->equalTo[\"hello\"]\n"
+              + "  x->size->isEqualTo[3]\n"
+              + "  x->at[0]->isEqualTo[\"hello\"]\n"
               + "]\n"
               + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
               + "and:[\n"
-              + "  x->size->equalTo[3]\n"
-              + "  x->at[0]->equalTo[\"hello\"]: NOT MET\n"
+              + "  x->size->isEqualTo[3]\n"
+              + "  x->at[0]->isEqualTo[\"hello\"]: NOT MET\n"
               + "    x->at[0]=\"Hello\"\n"
               + "]: NOT MET",
           description.orElseThrow(AssertionError::new).toString()
@@ -200,7 +200,7 @@ public class CrestTest {
           aList,
           allOf(
               Crest.asObject(size()).check(FAILING_CHECK).all(),
-              Crest.asObject(elementAt(0)).check(equalTo("Hello")).all()
+              Crest.asObject(elementAt(0)).check(isEqualTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -211,13 +211,13 @@ public class CrestTest {
                   + "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
                   + "and:[\n"
                   + "  x->size->failingCheck\n"
-                  + "  x->at[0]->equalTo[\"Hello\"]\n"
+                  + "  x->at[0]->isEqualTo[\"Hello\"]\n"
                   + "]\n"
                   + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
                   + "and:[\n"
                   + "  x->size->failingCheck failed with java.lang.RuntimeException(FAILED)\n"
                   + "    x->size=<3>:Integer\n"
-                  + "  x->at[0]->equalTo[\"Hello\"]\n"
+                  + "  x->at[0]->isEqualTo[\"Hello\"]\n"
                   + "]: NOT MET\n"
                   + "FAILED"
           ));
@@ -237,7 +237,7 @@ public class CrestTest {
           aList,
           allOf(
               Crest.asObject(FAILING_TRANSFORM).check(Predicates.alwaysTrue()).all(),
-              Crest.asObject(elementAt(0)).check(equalTo("Hello")).all()
+              Crest.asObject(elementAt(0)).check(isEqualTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -248,13 +248,13 @@ public class CrestTest {
                   + "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
                   + "and:[\n"
                   + "  x->failingTransform->alwaysTrue\n"
-                  + "  x->at[0]->equalTo[\"Hello\"]\n"
+                  + "  x->at[0]->isEqualTo[\"Hello\"]\n"
                   + "]\n"
                   + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
                   + "and:[\n"
                   + "  x->failingTransform->alwaysTrue failed with java.lang.RuntimeException(FAILED)\n"
                   + "    x->failingTransform=java.lang.RuntimeException(FAILED)\n"
-                  + "  x->at[0]->equalTo[\"Hello\"]\n"
+                  + "  x->at[0]->isEqualTo[\"Hello\"]\n"
                   + "]: NOT MET\n"
                   + "FAILED"
           ));
@@ -294,8 +294,8 @@ public class CrestTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              Crest.asObject(size()).check(equalTo(2)).all(),
-              Crest.asObject(elementAt(0)).check(equalTo("hello")).all()
+              Crest.asObject(size()).check(isEqualTo(2)).all(),
+              Crest.asObject(elementAt(0)).check(isEqualTo("hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -303,14 +303,14 @@ public class CrestTest {
           "\n"
               + "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
               + "and:[\n"
-              + "  x->size->equalTo[2]\n"
-              + "  x->at[0]->equalTo[\"hello\"]\n"
+              + "  x->size->isEqualTo[2]\n"
+              + "  x->at[0]->isEqualTo[\"hello\"]\n"
               + "]\n"
               + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
               + "and:[\n"
-              + "  x->size->equalTo[2]: NOT MET\n"
+              + "  x->size->isEqualTo[2]: NOT MET\n"
               + "    x->size=<3>:Integer\n"
-              + "  x->at[0]->equalTo[\"hello\"]: NOT MET\n"
+              + "  x->at[0]->isEqualTo[\"hello\"]: NOT MET\n"
               + "    x->at[0]=\"Hello\"\n"
               + "]: NOT MET",
           description.orElseThrow(AssertionError::new).toString()
@@ -342,8 +342,8 @@ public class CrestTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.asObject(size()).check(equalTo(3)).all(),
-              Crest.asObject(elementAt(0)).check(equalTo("Hello")).all()
+              Crest.asObject(size()).check(isEqualTo(3)).all(),
+              Crest.asObject(elementAt(0)).check(isEqualTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -364,8 +364,8 @@ public class CrestTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.asObject(size()).check(equalTo(3)).all(),
-              Crest.asObject(elementAt(0)).check(equalTo("hello")).all()
+              Crest.asObject(size()).check(isEqualTo(3)).all(),
+              Crest.asObject(elementAt(0)).check(isEqualTo("hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -388,7 +388,7 @@ public class CrestTest {
           aList,
           anyOf(
               Crest.asObject(size()).check(FAILING_CHECK).all(),
-              Crest.asObject(elementAt(0)).check(equalTo("Hello")).all()
+              Crest.asObject(elementAt(0)).check(isEqualTo("Hello")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -398,13 +398,13 @@ public class CrestTest {
               + "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
               + "or:[\n"
               + "  x->size->failingCheck\n"
-              + "  x->at[0]->equalTo[\"Hello\"]\n"
+              + "  x->at[0]->isEqualTo[\"Hello\"]\n"
               + "]\n"
               + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
               + "or:[\n"
               + "  x->size->failingCheck failed with java.lang.RuntimeException(FAILED)\n"
               + "    x->size=<3>:Integer\n"
-              + "  x->at[0]->equalTo[\"Hello\"]\n"
+              + "  x->at[0]->isEqualTo[\"Hello\"]\n"
               + "]: NOT MET\n"
               + "FAILED"
           )
@@ -424,8 +424,8 @@ public class CrestTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.asObject(size()).check(equalTo(2)).matcher(),
-              Crest.asObject(elementAt(0)).check(equalTo("hello")).matcher()
+              Crest.asObject(size()).check(isEqualTo(2)).matcher(),
+              Crest.asObject(elementAt(0)).check(isEqualTo("hello")).matcher()
           ));
 
       System.out.println(description.orElse(null));
@@ -433,14 +433,14 @@ public class CrestTest {
           "\n"
               + "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
               + "or:[\n"
-              + "  x->size->equalTo[2]\n"
-              + "  x->at[0]->equalTo[\"hello\"]\n"
+              + "  x->size->isEqualTo[2]\n"
+              + "  x->at[0]->isEqualTo[\"hello\"]\n"
               + "]\n"
               + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
               + "or:[\n"
-              + "  x->size->equalTo[2]: NOT MET\n"
+              + "  x->size->isEqualTo[2]: NOT MET\n"
               + "    x->size=<3>:Integer\n"
-              + "  x->at[0]->equalTo[\"hello\"]: NOT MET\n"
+              + "  x->at[0]->isEqualTo[\"hello\"]: NOT MET\n"
               + "    x->at[0]=\"Hello\"\n"
               + "]: NOT MET",
           description.orElseThrow(AssertionError::new).toString()
@@ -462,8 +462,8 @@ public class CrestTest {
       Optional<Description> description = describeFailure(
           aList,
           anyOf(
-              Crest.asObject(size()).check(equalTo(2)).all(),
-              Crest.asObject(elementAt(0)).check(equalTo("hello")).check(equalTo("HELLO")).all()
+              Crest.asObject(size()).check(isEqualTo(2)).all(),
+              Crest.asObject(elementAt(0)).check(isEqualTo("hello")).check(isEqualTo("HELLO")).all()
           ));
 
       System.out.println(description.orElse(null));
@@ -471,20 +471,20 @@ public class CrestTest {
           "\n"
               + "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
               + "or:[\n"
-              + "  x->size->equalTo[2]\n"
+              + "  x->size->isEqualTo[2]\n"
               + "  and:[\n"
-              + "    x->at[0]->equalTo[\"hello\"]\n"
-              + "    x->at[0]->equalTo[\"HELLO\"]\n"
+              + "    x->at[0]->isEqualTo[\"hello\"]\n"
+              + "    x->at[0]->isEqualTo[\"HELLO\"]\n"
               + "  ]\n"
               + "]\n"
               + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
               + "or:[\n"
-              + "  x->size->equalTo[2]: NOT MET\n"
+              + "  x->size->isEqualTo[2]: NOT MET\n"
               + "    x->size=<3>:Integer\n"
               + "  and:[\n"
-              + "    x->at[0]->equalTo[\"hello\"]: NOT MET\n"
+              + "    x->at[0]->isEqualTo[\"hello\"]: NOT MET\n"
               + "      x->at[0]=\"Hello\"\n"
-              + "    x->at[0]->equalTo[\"HELLO\"]: NOT MET\n"
+              + "    x->at[0]->isEqualTo[\"HELLO\"]: NOT MET\n"
               + "      x->at[0]=\"Hello\"\n"
               + "  ]: NOT MET\n"
               + "]: NOT MET",
@@ -505,30 +505,30 @@ public class CrestTest {
       Optional<Description> description = describeFailure(
           aList,
           allOf(
-              Crest.asObject(size()).check(equalTo(2)).all(),
-              Crest.asObject(elementAt(0)).check(equalTo("hello")).check(equalTo("HELLO")).any()
+              Crest.asObject(size()).check(isEqualTo(2)).all(),
+              Crest.asObject(elementAt(0)).check(isEqualTo("hello")).check(isEqualTo("HELLO")).any()
           ));
 
       System.out.println(description.orElse(null));
       assertThat(
           description.orElseThrow(AssertionError::new).toString(),
           CoreMatchers.containsString(
-              "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n" +
-                  "and:[\n"
-                  + "  x->size->equalTo[2]\n"
+              "Expected: x=<(\"Hello\",\"world\",\"!\")> satisfies\n"
+                  + "and:[\n"
+                  + "  x->size->isEqualTo[2]\n"
                   + "  or:[\n"
-                  + "    x->at[0]->equalTo[\"hello\"]\n"
-                  + "    x->at[0]->equalTo[\"HELLO\"]\n"
+                  + "    x->at[0]->isEqualTo[\"hello\"]\n"
+                  + "    x->at[0]->isEqualTo[\"HELLO\"]\n"
                   + "  ]\n"
                   + "]\n"
                   + "     but: x=<(\"Hello\",\"world\",\"!\")> did not satisfy\n"
                   + "and:[\n"
-                  + "  x->size->equalTo[2]: NOT MET\n"
+                  + "  x->size->isEqualTo[2]: NOT MET\n"
                   + "    x->size=<3>:Integer\n"
                   + "  or:[\n"
-                  + "    x->at[0]->equalTo[\"hello\"]: NOT MET\n"
+                  + "    x->at[0]->isEqualTo[\"hello\"]: NOT MET\n"
                   + "      x->at[0]=\"Hello\"\n"
-                  + "    x->at[0]->equalTo[\"HELLO\"]: NOT MET\n"
+                  + "    x->at[0]->isEqualTo[\"HELLO\"]: NOT MET\n"
                   + "      x->at[0]=\"Hello\"\n"
                   + "  ]: NOT MET\n"
                   + "]: NOT MET"
@@ -619,14 +619,14 @@ public class CrestTest {
           Matchers.containsString("\n"
               + "Expected: x=\"HELLO\" satisfies\n"
               + "noneOf:[\n"
-              + "  x->~[\"WORLD\"]\n"
+              + "  x->=[\"WORLD\"]\n"
               + "  x->containsString[\"HELLO\"]\n"
               + "]\n"
               + "     but: x=\"HELLO\" did not satisfy\n"
               + "noneOf:[\n"
-              + "  x->~[\"WORLD\"]: NOT MET\n"
+              + "  x->=[\"WORLD\"]: NOT MET\n"
               + "  x->containsString[\"HELLO\"]\n"
-              + "]")
+              + "]: NOT MET")
       );
     }
 
@@ -636,10 +636,10 @@ public class CrestTest {
       System.out.println(description.orElseThrow(RuntimeException::new));
       assertThat(
           description.get().content,
-          Matchers.containsString("HELLO\" satisfies\n"
-              + "x->~[\"WORLD\"]\n"
+          Matchers.containsString("\"HELLO\" satisfies\n"
+              + "x->=[\"WORLD\"]\n"
               + "     but: x=\"HELLO\" did not satisfy\n"
-              + "x->~[\"WORLD\"]: NOT MET")
+              + "x->=[\"WORLD\"]: NOT MET")
       );
     }
 

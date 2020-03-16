@@ -31,7 +31,7 @@ public class BankAccountExample extends TestBase {
             asListOf(BankAccount.Record.class, call("getHistory").$())
                 .check(
                     call("get", 0).andThen("getType").$(),
-                    Predicates.equalTo(BankAccount.Record.Type.DEPOSIT)
+                    Predicates.isEqualTo(BankAccount.Record.Type.DEPOSIT)
                 ).$()
         )
     );

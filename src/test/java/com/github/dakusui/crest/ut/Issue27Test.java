@@ -14,7 +14,7 @@ import org.opentest4j.ValueWrapper;
 import java.io.IOException;
 
 import static com.github.dakusui.crest.Crest.*;
-import static com.github.dakusui.thincrest_pcond.functions.Predicates.equalTo;
+import static com.github.dakusui.thincrest_pcond.functions.Predicates.isEqualTo;
 import static com.github.dakusui.thincrest_pcond.functions.Predicates.matchesRegex;
 
 public class Issue27Test extends TestBase {
@@ -34,7 +34,7 @@ public class Issue27Test extends TestBase {
                 .$())
             .check(
                 call("append", "!").andThen("append", "!").andThen("toString").$(),
-                equalTo("HELLOWORLD!")
+                isEqualTo("HELLOWORLD!")
             )
             .$()
     );
@@ -51,7 +51,7 @@ public class Issue27Test extends TestBase {
                   .$())
               .check(
                   call("append", "!").andThen("append", "!").andThen("toString").$(),
-                  equalTo("HELLOWORLD!")
+                  isEqualTo("HELLOWORLD!")
               )
               .$()
       );
@@ -59,13 +59,13 @@ public class Issue27Test extends TestBase {
       throw e;
     } catch (AssertionFailedError e) {
       String expected = "x=<>:StringBuilder did not satisfy\n"
-          + "(y=x->append(\"hello\").append(\"world\"))->append(\"!\").append(\"!\").toString() equalTo[\"HELLOWORLD!\"]: NOT MET\n"
+          + "(y=x->append(\"hello\").append(\"world\"))->append(\"!\").append(\"!\").toString() isEqualTo[\"HELLOWORLD!\"]: NOT MET\n"
           + "  y=x->append(\"hello\").append(\"world\")\n"
           + "                     |               |\n"
           + "                     |               +-<helloworld>:StringBuilder\n"
           + "                     |\n"
           + "                     +-----------------<hello>:StringBuilder\n"
-          + "  y->append(\"!\").append(\"!\").toString() equalTo[\"HELLOWORLD!\"]\n"
+          + "  y->append(\"!\").append(\"!\").toString() isEqualTo[\"HELLOWORLD!\"]\n"
           + "               |           |          |\n"
           + "               |           |          +-\"helloworld!!\"\n"
           + "               |           |\n"
@@ -100,7 +100,7 @@ public class Issue27Test extends TestBase {
       throw e;
     } catch (AssertionFailedError e) {
       String expected = "x=<>:StringBuilder did not satisfy\n"
-          + "x->append(\"hello\").append(\"world\").toString()->equalTo[\"HelloWorld\"]: NOT MET\n"
+          + "x->append(\"hello\").append(\"world\").toString()->isEqualTo[\"HelloWorld\"]: NOT MET\n"
           + "                 |               |          |\n"
           + "                 |               |          +-\"helloworld\"\n"
           + "                 |               |\n"
@@ -122,7 +122,7 @@ public class Issue27Test extends TestBase {
           "WORLD",
           asString("toLowerCase").check(
               call("toUpperCase").andThen("substring", 2).andThen("charAt", 1).$(),
-              equalTo('z')
+              isEqualTo('z')
           ).$()
       );
     } catch (ExecutionFailure e) {
@@ -130,10 +130,10 @@ public class Issue27Test extends TestBase {
     } catch (AssertionFailedError e) {
       ValueWrapper actual = e.getActual();
       String expected = "x=\"WORLD\" did not satisfy\n"
-          + "(y=x->toLowerCase())->toUpperCase().substring(2).charAt(1) equalTo[z]: NOT MET\n"
+          + "(y=x->toLowerCase())->toUpperCase().substring(2).charAt(1) isEqualTo[z]: NOT MET\n"
           + "  y=x->toLowerCase()\n"
           + "    x->toLowerCase()=\"world\"\n"
-          + "  y->toUpperCase().substring(2).charAt(1) equalTo[z]\n"
+          + "  y->toUpperCase().substring(2).charAt(1) isEqualTo[z]\n"
           + "                 |            |         |\n"
           + "                 |            |         +-\"L\":Character\n"
           + "                 |            |\n"
@@ -159,7 +159,7 @@ public class Issue27Test extends TestBase {
           allOf(
               asString("toLowerCase").check(
                   call("toUpperCase").andThen("substring", 2).andThen("charAt", 1).$(),
-                  equalTo('z')
+                  isEqualTo('z')
               ).$())
       );
     } catch (ExecutionFailure e) {
@@ -168,10 +168,10 @@ public class Issue27Test extends TestBase {
       ValueWrapper actual = e.getActual();
       String expected = "x=\"WORLD\" did not satisfy\n"
           + "and:[\n"
-          + "  (y=x->toLowerCase())->toUpperCase().substring(2).charAt(1) equalTo[z]: NOT MET\n"
+          + "  (y=x->toLowerCase())->toUpperCase().substring(2).charAt(1) isEqualTo[z]: NOT MET\n"
           + "    y=x->toLowerCase()\n"
           + "      x->toLowerCase()=\"world\"\n"
-          + "    y->toUpperCase().substring(2).charAt(1) equalTo[z]\n"
+          + "    y->toUpperCase().substring(2).charAt(1) isEqualTo[z]\n"
           + "                   |            |         |\n"
           + "                   |            |         +-\"L\":Character\n"
           + "                   |            |\n"
@@ -198,18 +198,19 @@ public class Issue27Test extends TestBase {
           allOf(
               asString("toLowerCase").check(
                   call("toUpperCase").andThen("substring", 2).andThen("charAt", 1).$(),
-                  equalTo('z')
+                  isEqualTo('z')
               ).$())
       );
     } catch (ExecutionFailure e) {
       throw e;
     } catch (AssertionFailedError e) {
       e.printStackTrace();
-      String expectationInExceptionMessage = "and:[\n"
-          + "  (y=x->toLowerCase())->toUpperCase().substring(2).charAt(1) equalTo[z]: NOT MET\n"
+      String expectationInExceptionMessage = "x=\"WORLD\" did not satisfy\n"
+          + "and:[\n"
+          + "  (y=x->toLowerCase())->toUpperCase().substring(2).charAt(1) isEqualTo[z]: NOT MET\n"
           + "    y=x->toLowerCase()\n"
           + "      x->toLowerCase()=\"world\"\n"
-          + "    y->toUpperCase().substring(2).charAt(1) equalTo[z]\n"
+          + "    y->toUpperCase().substring(2).charAt(1) isEqualTo[z]\n"
           + "                   |            |         |\n"
           + "                   |            |         +-\"L\":Character\n"
           + "                   |            |\n"
@@ -241,7 +242,7 @@ public class Issue27Test extends TestBase {
                     matchesRegex("xyz"))
                 .check(
                     call("toUpperCase").andThen("substring", 2).andThen("charAt", 1).$(),
-                    equalTo('D'))
+                    isEqualTo('D'))
                 .$(),
             asInteger("length").equalTo(5).$()
         )
@@ -256,7 +257,7 @@ public class Issue27Test extends TestBase {
           asString(call("toLowerCase").andThen("substring", 1).$())
               .check(
                   call("toUpperCase").andThen("substring", 2).andThen("charAt", 1).$(),
-                  equalTo('D'))
+                  isEqualTo('D'))
               .check(
                   call("replaceAll", "d", "DDD").andThen("concat", "XYZ").$(),
                   matchesRegex("xyz"))
@@ -267,7 +268,7 @@ public class Issue27Test extends TestBase {
       ValueWrapper actual = e.getActual();
       String expected = "x=\"WORLD\" did not satisfy\n"
           + "and:[\n"
-          + "  (y=x->toLowerCase().substring(1))->toUpperCase().substring(2).charAt(1) equalTo[D]\n"
+          + "  (y=x->toLowerCase().substring(1))->toUpperCase().substring(2).charAt(1) isEqualTo[D]\n"
           + "  (y=x->toLowerCase().substring(1))->replaceAll(\"d\",\"DDD\").concat(\"XYZ\") matchesRegex[\"xyz\"]: NOT MET\n"
           + "    y=x->toLowerCase().substring(1)\n"
           + "                     |            |\n"
@@ -295,19 +296,19 @@ public class Issue27Test extends TestBase {
           asString(call("toLowerCase").andThen("substring", 1).$())
               .check(
                   call("toUpperCase").andThen("substring", -2).andThen("charAt", 1).$(),
-                  equalTo('z'))
+                  isEqualTo('z'))
               .$());
     } catch (ExecutionFailure e) {
       System.out.println("MESSAGE: " + e.getMessage());
       e.printStackTrace(System.out);
       String expected = "x=\"WORLD\" did not satisfy\n"
-          + "(y=x->toLowerCase().substring(1))->toUpperCase().substring(-2).charAt(1) equalTo[z] failed with java.lang.StringIndexOutOfBoundsException(String index out of range: -2)\n"
+          + "(y=x->toLowerCase().substring(1))->toUpperCase().substring(-2).charAt(1) isEqualTo[z] failed with java.lang.StringIndexOutOfBoundsException(String index out of range: -2)\n"
           + "  y=x->toLowerCase().substring(1)\n"
           + "                   |            |\n"
           + "                   |            +-\"orld\"\n"
           + "                   |\n"
           + "                   +--------------\"world\"\n"
-          + "  y->toUpperCase().substring(-2).charAt(1) equalTo[z]\n"
+          + "  y->toUpperCase().substring(-2).charAt(1) isEqualTo[z]\n"
           + "                 |             |         |\n"
           + "                 |             |         +-java.lang.StringIndexOutOfBoundsException(String index out of range: -2)\n"
           + "                 |             |\n"
@@ -336,12 +337,12 @@ public class Issue27Test extends TestBase {
               .check(call("toUpperCase")
                       .andThen("substring", 1)
                       .andThen("charAt", 1).$(),
-                  equalTo('z')
+                  isEqualTo('z')
               ).$());
     } catch (ExecutionFailure e) {
       ValueWrapper actual = e.getActual();
       String expected = "x=\"WORLD\" did not satisfy\n"
-          + "(y=x->toLowerCase().substring(-1))->toUpperCase().substring(1).charAt(1) equalTo[z] failed with java.lang.StringIndexOutOfBoundsException(String index out of range: -1)\n"
+          + "(y=x->toLowerCase().substring(-1))->toUpperCase().substring(1).charAt(1) isEqualTo[z] failed with java.lang.StringIndexOutOfBoundsException(String index out of range: -1)\n"
           + "               |             |\n"
           + "               |             +-java.lang.StringIndexOutOfBoundsException(String index out of range: -1)\n"
           + "               |\n"

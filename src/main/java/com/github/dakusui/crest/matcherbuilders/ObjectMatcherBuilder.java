@@ -1,8 +1,8 @@
 package com.github.dakusui.crest.matcherbuilders;
 
 import com.github.dakusui.crest.core.Matcher;
-import com.github.dakusui.thincrest_pcond.functions.TransformingPredicate;
 import com.github.dakusui.thincrest_pcond.functions.Predicates;
+import com.github.dakusui.thincrest_pcond.internals.TransformingPredicate;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -41,8 +41,8 @@ public abstract class ObjectMatcherBuilder<IN, OUT, SELF extends ObjectMatcherBu
     return this.check(Predicates.isNotNull());
   }
 
-  public SELF isSameAs(OUT value) {
-    return this.check(Predicates.isSameAs(value));
+  public SELF isSameReferenceAs(OUT value) {
+    return this.check(Predicates.isSameReferenceAs(value));
   }
 
   public SELF isInstanceOf(Class<?> value) {

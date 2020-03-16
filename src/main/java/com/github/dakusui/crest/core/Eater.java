@@ -1,6 +1,7 @@
 package com.github.dakusui.crest.core;
 
-import com.github.dakusui.thincrest_pcond.functions.Printable;
+import com.github.dakusui.thincrest_pcond.functions.Predicates;
+import com.github.dakusui.thincrest_pcond.functions.Printables;
 import org.opentest4j.AssertionFailedError;
 
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.github.dakusui.thincrest_pcond.functions.Predicates.equalTo;
 import static java.util.Objects.requireNonNull;
 
 public interface Eater<T /* Target*/, C /* Target container */> {
@@ -49,7 +49,7 @@ public interface Eater<T /* Target*/, C /* Target container */> {
 
     Function<C, C> toFunction() {
       return ChainedFunction.create(
-          Printable.function(
+          Printables.function(
               describeFunction(),
               createFunction()
           ));
@@ -113,7 +113,7 @@ public interface Eater<T /* Target*/, C /* Target container */> {
     }
 
     public ListEater<T> afterElement(T target) {
-      return new ListEater<>(this, equalTo(target));
+      return new ListEater<>(this, Predicates.isEqualTo(target));
     }
 
     int findTarget(List<T> container) {

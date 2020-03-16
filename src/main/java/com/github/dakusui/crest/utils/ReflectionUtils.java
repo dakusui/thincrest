@@ -1,7 +1,7 @@
 package com.github.dakusui.crest.utils;
 
 import com.github.dakusui.crest.core.TrivialFunction;
-import com.github.dakusui.thincrest_pcond.functions.Printable;
+import com.github.dakusui.thincrest_pcond.functions.Printables;
 
 import java.util.function.Function;
 
@@ -11,7 +11,7 @@ import static com.github.dakusui.crest.utils.ReflectiveFunctions.THIS;
 public enum ReflectionUtils {
   ;
   public static <I, E> Function<? super I, ? extends E> invokeOn(Object on, String methodName, Object... args) {
-    return Printable.function(
+    return Printables.function(
         on == THIS
             ? () -> String.format("%s%s", methodName, summarize(args))
             : () -> String.format("->%s.%s%s", on, methodName, summarize(args)),
@@ -23,7 +23,7 @@ public enum ReflectionUtils {
   }
 
   public static <I, E> Function<? super I, ? extends E> invokeStatic(Class<?> klass, String methodName, Object... args) {
-    return Printable.function(
+    return Printables.function(
         () -> String.format("->%s.%s%s", klass.getSimpleName(), methodName, summarize(args)),
         (I target) -> InternalUtils.invokeStaticMethod(
             klass,

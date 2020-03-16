@@ -105,7 +105,7 @@ public class InThincrest {
         aList,
         allOf(
             asObjectList().isInstanceOf(LinkedList.class).matcher(),
-            asObjectList().isSameAs(Collections.emptyList()).matcher()
+            asObjectList().isSameReferenceAs(Collections.emptyList()).matcher()
         )
     );
     CoreMatchers.containsString("");

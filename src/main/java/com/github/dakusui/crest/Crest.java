@@ -6,7 +6,7 @@ import com.github.dakusui.crest.matcherbuilders.*;
 import com.github.dakusui.crest.matcherbuilders.primitives.*;
 import com.github.dakusui.crest.utils.ReflectiveFunctions;
 import com.github.dakusui.thincrest_pcond.functions.Functions;
-import com.github.dakusui.thincrest_pcond.functions.Printable;
+import com.github.dakusui.thincrest_pcond.functions.Printables;
 import org.opentest4j.AssertionFailedError;
 import org.opentest4j.TestAbortedException;
 
@@ -17,8 +17,8 @@ import java.util.function.Predicate;
 
 import static com.github.dakusui.crest.utils.InternalUtils.*;
 import static com.github.dakusui.crest.utils.ReflectionUtils.trivial;
-import static com.github.dakusui.thincrest_pcond.functions.Predicates.equalTo;
 import static com.github.dakusui.thincrest_pcond.functions.Predicates.isEmptyArray;
+import static com.github.dakusui.thincrest_pcond.functions.Predicates.isEqualTo;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -337,11 +337,11 @@ public enum Crest {
   }
 
   public static <T, R> Function<T, R> function(String ss, Function<T, R> function) {
-    return Printable.function(String.format("%s", requireNonNull(ss)), requireNonNull(function));
+    return Printables.function(String.format("%s", requireNonNull(ss)), requireNonNull(function));
   }
 
   public static <T> Predicate<T> predicate(String s, Predicate<T> predicate) {
-    return Printable.predicate(s, predicate);
+    return Printables.predicate(s, predicate);
   }
 
   public static Eater.RegexEater substringAfterRegex(String regex) {
@@ -349,7 +349,7 @@ public enum Crest {
   }
 
   public static <T> Eater.ListEater<T> sublistAfterElement(T element) {
-    return sublistAfter(equalTo(element));
+    return sublistAfter(isEqualTo(element));
   }
 
   public static <T> Eater.ListEater<T> sublistAfter(Predicate<T> predicate) {
