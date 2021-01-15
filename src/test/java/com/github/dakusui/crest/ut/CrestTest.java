@@ -12,6 +12,7 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.opentest4j.AssertionFailedError;
 import org.opentest4j.TestAbortedException;
+import org.opentest4j.TestSkippedException;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -726,12 +727,17 @@ public class CrestTest {
             "hello",
             asString().equalTo("HELLO").$()
         );
-      } catch (TestAbortedException e) {
+      } catch (TestSkippedException e) {
         // Wrap with IOException, which cannot happen in this test procedure to
-        // make sure intended exception (AssumptionViolatedException) is really
+        // make sure intended exception (TestSkippedException) is really
         // thrown.
         throw new IOException(e);
       }
+    }
+
+    @Test
+    public void testSkipped() {
+      throw new TestSkippedException();
     }
 
     @Test(expected = ExecutionFailure.class)

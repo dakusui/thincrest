@@ -9,6 +9,7 @@ import com.github.dakusui.thincrest_pcond.functions.Functions;
 import com.github.dakusui.thincrest_pcond.functions.Printable;
 import org.opentest4j.AssertionFailedError;
 import org.opentest4j.TestAbortedException;
+import org.opentest4j.TestSkippedException;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -312,7 +313,7 @@ public enum Crest {
   public static <T> void assumeThat(String message, T value, Matcher<? super T> matcher) {
     Session.perform(
         message, value, matcher,
-        (msg, r, causes) -> new TestAbortedException(composeComparisonText(msg, r))
+        (msg, r, causes) -> new TestSkippedException(composeComparisonText(msg, r))
     );
   }
 
