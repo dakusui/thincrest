@@ -16,7 +16,7 @@ function main() {
   local _out=./target/generated-sources/local
   if [[ ! -e "${_out}/.done" ]]; then
     mkdir -p "${_out}"
-    mvn-unpack com.github.dakusui:pcond:1.0.1:jar:sources "${_out}"
+    mvn-unpack com.github.dakusui:pcond:4.0.0-beta-6-SNAPSHOT:jar:sources "${_out}"
     mangle_package "${_out}"
     touch "${_out}/.done"
   fi
