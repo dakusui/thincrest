@@ -7,7 +7,7 @@
     <packaging>jar</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <description>Yet another assertion library powered by "pcond"</description>
-    <name>thincrest-pcond</name>
+    <name>thincrest</name>
     <url>https://github.com/dakusui/thincrest</url>
 
     <licenses>
@@ -19,11 +19,12 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com/dakusui/thincrest.git</connection>
-        <developerConnection>scm:git:git@github.com:dakusui/thincrest.git
+        <connection>scm:git:git@github.com/dakusui/${project.name}.git
+        </connection>
+        <developerConnection>scm:git:git@github.com:dakusui/${project.name}.git
         </developerConnection>
-        <url>http://dakusui.github.io/thincrest</url>
-        <tag>thincrest-pcond-${project.version}</tag>
+        <url>http://dakusui.github.io/${project.name}</url>
+        <tag>${project.artifactId}-${project.version}</tag>
     </scm>
 
     <developers>
@@ -35,37 +36,42 @@
     </developers>
 
     <properties>
+        <!-- project variables -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <opentest4j.version>1.2.0</opentest4j.version>
+        <env.GEM_PATH>${project.basedir}/generated/build/gems</env.GEM_PATH>
+        <maven-compiler-plugin.source>1.8</maven-compiler-plugin.source>
+        <maven-compiler-plugin.target>1.8</maven-compiler-plugin.target>
+        <!-- unit testing -->
         <junit.version>4.13.2</junit.version>
+        <opentest4j.version>1.2.0</opentest4j.version>
+        <hamcrest-junit.version>2.0.0.0</hamcrest-junit.version>
+        <assertj-core.version>3.6.1</assertj-core.version>
+        <!-- project documentation -->
         <asciidoclet.version>1.5.6</asciidoclet.version>
         <asciidoctor.maven.plugin.version>2.0.0-RC.1
         </asciidoctor.maven.plugin.version>
         <asciidoctorj.version>2.2.0</asciidoctorj.version>
         <asciidoctorj.diagram.version>2.0.1</asciidoctorj.diagram.version>
         <jruby.version>9.2.12.0</jruby.version>
+        <!-- coverage reporting -->
+        <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
-        <hamcrest-junit.version>2.0.0.0</hamcrest-junit.version>
-        <assertj-core.version>3.6.1</assertj-core.version>
+        <pitest-maven.version>1.7.3</pitest-maven.version>
+        <!-- project execution -->
+        <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
         <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
-        <maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
+        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>2.20.1</maven-surefire-plugin.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
+        <maven-site-plugin.version>3.8.2</maven-site-plugin.version>
         <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
         <maven-install-plugin.version>2.5.2</maven-install-plugin.version>
         <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
-        <maven-site-plugin.version>3.8.2</maven-site-plugin.version>
-        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven-release-plugin.version>2.5</maven-release-plugin.version>
         <build-helper-maven-plugin.version>3.0.0
         </build-helper-maven-plugin.version>
-        <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
-        <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
-        <maven-release-plugin.version>2.5</maven-release-plugin.version>
-        <pitest-maven.version>1.1.7</pitest-maven.version>
-        <maven-compiler-plugin.source>1.8</maven-compiler-plugin.source>
-        <maven-compiler-plugin.target>1.8</maven-compiler-plugin.target>
-        <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
-        <env.GEM_PATH>${project.basedir}/generated/build/gems</env.GEM_PATH>
     </properties>
 
     <dependencies>
@@ -155,23 +161,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven-javadoc-plugin.version}</version>
-                    <configuration>
-                        <doclet>org.asciidoctor.Asciidoclet</doclet>
-                        <docletArtifact>
-                            <groupId>org.asciidoctor</groupId>
-                            <artifactId>asciidoclet</artifactId>
-                            <version>${asciidoclet.version}</version>
-                        </docletArtifact>
-                        <overview>src/main/javadoc/overview.adoc</overview>
-                        <additionalparam>
-                            --base-dir ${project.basedir}
-                            --attribute "name=${project.name}"
-                            --attribute "version=${project.version}"
-                            --require asciidoctor-diagram
-                            --gem-path ${env.GEM_PATH}
-                            --attribute data-uri
-                        </additionalparam>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -336,7 +325,8 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${basedir}/src/main/build_tools/import-pcond.sh
+                            <executable>
+                                ${basedir}/src/main/build_tools/import-pcond.sh
                             </executable>
                         </configuration>
                     </execution>
@@ -390,6 +380,23 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <doclet>org.asciidoctor.Asciidoclet</doclet>
+                    <docletArtifact>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoclet</artifactId>
+                        <version>${asciidoclet.version}</version>
+                    </docletArtifact>
+                    <overview>src/main/javadoc/overview.adoc</overview>
+                    <additionalparam>
+                        --base-dir ${project.basedir}
+                        --attribute "name=${project.name}"
+                        --attribute "version=${project.version}"
+                        --require asciidoctor-diagram
+                        --gem-path ${env.GEM_PATH}
+                        --attribute data-uri
+                    </additionalparam>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
