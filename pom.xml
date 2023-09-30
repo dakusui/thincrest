@@ -116,8 +116,18 @@
                     <version>${maven-resources-plugin.version}</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${maven-compiler-plugin.source}</source>
+                        <target>${maven-compiler-plugin.target}</target>
+                        <compilerArgs>
+                            <!--
+                            <arg>-Xlint:all,-options,-path</arg>
+                            -->
+                        </compilerArgs>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -136,6 +146,7 @@
                     <version>${maven-deploy-plugin.version}</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>${maven-source-plugin.version}</version>
                 </plugin>
@@ -272,16 +283,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>${maven-compiler-plugin.source}</source>
-                    <target>${maven-compiler-plugin.target}</target>
-                    <compilerArgs>
-                        <!--
-                        <arg>-Xlint:all,-options,-path</arg>
-                        -->
-                    </compilerArgs>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
