@@ -130,8 +130,28 @@
                     </configuration>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
+                    <!-- configuration>
+                        <argLine>-ea</argLine>
+                    </configuration -->
+                    <executions>
+                        <execution>
+                            <phase>integration-test</phase>
+                            <goals>
+                                <goal>test</goal>
+                            </goals>
+                            <configuration>
+                                <excludes>
+                                    <exclude>none</exclude>
+                                </excludes>
+                                <includes>
+                                    <include>**/*IT</include>
+                                </includes>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
@@ -272,6 +292,38 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>${maven-site-plugin.version}</version>
+                    <dependencies>
+                        <!-- Comment this section to use the default jruby artifact provided by the plugin -->
+                        <dependency>
+                            <groupId>org.jruby</groupId>
+                            <artifactId>jruby-complete</artifactId>
+                            <version>${jruby.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.asciidoctor</groupId>
+                            <artifactId>asciidoctor-maven-plugin</artifactId>
+                            <version>${asciidoctor.maven.plugin.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <!-- disable generateReports if you don't want to include the built-in reports -->
+                        <generateReports>true</generateReports>
+                        <generateSitemap>true</generateSitemap>
+                        <relativizeDecorationLinks>false</relativizeDecorationLinks>
+                        <locales>en</locales>
+                        <inputEncoding>UTF-8</inputEncoding>
+                        <outputEncoding>UTF-8</outputEncoding>
+                        <skipDeploy>false</skipDeploy>
+                        <!-- asciidoc -->
+                        <!-- optional site-wide AsciiDoc attributes -->
+                        <!-- attributes>
+                            <icons>font</icons>
+                            <source-highlighter>coderay</source-highlighter>
+                            <coderay-css>style</coderay-css>
+                            <toclevels>2</toclevels>
+                        </attributes>
+                    </asciidoc -->
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -376,25 +428,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <!-- configuration>
-                    <argLine>-ea</argLine>
-                </configuration -->
-                <executions>
-                    <execution>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>none</exclude>
-                            </excludes>
-                            <includes>
-                                <include>**/*IT</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.pitest</groupId>
@@ -497,38 +530,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <dependencies>
-                    <!-- Comment this section to use the default jruby artifact provided by the plugin -->
-                    <dependency>
-                        <groupId>org.jruby</groupId>
-                        <artifactId>jruby-complete</artifactId>
-                        <version>${jruby.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctor-maven-plugin</artifactId>
-                        <version>${asciidoctor.maven.plugin.version}</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <!-- disable generateReports if you don't want to include the built-in reports -->
-                    <generateReports>true</generateReports>
-                    <generateSitemap>true</generateSitemap>
-                    <relativizeDecorationLinks>false</relativizeDecorationLinks>
-                    <locales>en</locales>
-                    <inputEncoding>UTF-8</inputEncoding>
-                    <outputEncoding>UTF-8</outputEncoding>
-                    <skipDeploy>false</skipDeploy>
-                    <!-- asciidoc -->
-                    <!-- optional site-wide AsciiDoc attributes -->
-                    <!-- attributes>
-                        <icons>font</icons>
-                        <source-highlighter>coderay</source-highlighter>
-                        <coderay-css>style</coderay-css>
-                        <toclevels>2</toclevels>
-                    </attributes>
-                </asciidoc -->
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
