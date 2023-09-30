@@ -11,6 +11,9 @@ function convert_package_info_adoc_to_package_info_java() {
   echo "/**" >> ${_out}
   while IFS= read -r _i
   do
+    _i="${_i//>/&gt;}"
+    _i="${_i//</&lt;}"
+    _i="${_i//&/&amp;}"
     echo " * ${_i}" >> ${_out}
   done < <(cat "${_base_dir}/${_rel_dir}/package-info.adoc" <(echo ""))
 
