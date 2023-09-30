@@ -3,6 +3,9 @@
         <menu name="Documents">
             <item href="quickstart.html" name="Quick Start"/>
         </menu>
+        <menu name="Documents">
+            <item href="what-is-pcond.html" name="What is thincrest-pcond?"/>
+        </menu>
         <menu ref="reports" inherit="top"/>
         <menu ref="modules"/>
     </body>
