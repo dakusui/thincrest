@@ -264,31 +264,6 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>${jacoco-maven-plugin.version}</version>
-                    <configuration>
-                        <includes>
-                            <include>com.github.dakusui.thincrest</include>
-                        </includes>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>prepare-agent</goal>
-                            </goals>
-                        </execution>
-                        <!-- attached to Maven test phase -->
-                        <execution>
-                            <id>report</id>
-                            <phase>pre-site</phase>
-                            <goals>
-                                <goal>report</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>${maven-site-plugin.version}</version>
@@ -347,6 +322,7 @@
                             --attribute "name=${project.name}"
                             --attribute "version=${project.version}"
                             --attribute "imagesoutdir=.asciidoctor/diagram"
+                            --attribute "imagesdir=.asciidoctor/diagram"
                             --require asciidoctor-diagram
                             --gem-path ${env.GEM_PATH}
                             --attribute data-uri
@@ -399,9 +375,9 @@
                     <version>${cobertura-maven-plugin.version}</version>
                     <configuration>
                         <instrumentation>
-                            <ignores>
-                                <ignore>com.github.dakusui.thincrest_pcond.*</ignore>
-                            </ignores>
+                            <excludes>
+                                <exclude>com/github/dakusui/thincrest_pcond/**/*.class</exclude>
+                            </excludes>
                         </instrumentation>
                         <formats>
                             <format>html</format>
@@ -409,6 +385,31 @@
                         </formats>
                         <check/>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-maven-plugin.version}</version>
+                    <configuration>
+                        <includes>
+                            <include>com/github/dakusui/thincrest/**/*.class</include>
+                        </includes>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <!-- attached to Maven test phase -->
+                        <execution>
+                            <id>report</id>
+                            <phase>pre-site</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>

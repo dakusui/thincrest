@@ -24,7 +24,7 @@ public interface IoContext<I, O> {
     ;
     
     public static <I, O> Function<Dataset<I>, Ongoing<I, O>> toContextFunction(String contextName, String outputContextName) {
-      return Printables.function("open:" + contextName, input -> new Ongoing.Impl<>(contextName, input, outputContextName));
+      return Printables.function("begin:" + contextName, input -> new Ongoing.Impl<>(contextName, input, outputContextName));
     }
     
     public static <I, O> Function<Ongoing<I, O>, Ongoing<I, O>> toContextEndomorphicFunction(Function<IoContext<I, O>, Function<I, O>> mapper, int numItems, IntFunction<String> variableNameFormatter) {
@@ -58,7 +58,7 @@ public interface IoContext<I, O> {
     
     public static <I, O> Function<Ongoing<I, O>, IoContext<I, O>> toCloseFunction(String contextName) {
       // close
-      return ((PrintableFunction<Ongoing<I, O>, IoContext<I, O>>) Printables.<Ongoing<I, O>, IoContext<I, O>>function(() -> "close:" + contextName, Ongoing::close)).makeTrivial();
+      return ((PrintableFunction<Ongoing<I, O>, IoContext<I, O>>) Printables.<Ongoing<I, O>, IoContext<I, O>>function(() -> "end:" + contextName, Ongoing::close)).makeTrivial();
     }
     
     public static <I, O> Function<IoContext<I, O>, Dataset<O>> toOutputExtractorFunction(String contextName) {
