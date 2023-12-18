@@ -391,9 +391,9 @@
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>${jacoco-maven-plugin.version}</version>
                     <configuration>
-                        <includes>
-                            <include>com/github/dakusui/thincrest/**/*.class</include>
-                        </includes>
+                        <excludes>
+                            <exclude>com/github/dakusui/thincrest_pcond/**/*.class</exclude>
+                        </excludes>
                     </configuration>
                     <executions>
                         <execution>
