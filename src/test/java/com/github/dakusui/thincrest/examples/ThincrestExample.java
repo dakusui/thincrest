@@ -4,20 +4,55 @@ import com.github.dakusui.thincrest.utils.metatest.TestClassExpectation;
 import com.github.dakusui.thincrest.utils.metatest.TestClassExpectation.EnsureJUnitResult;
 import com.github.dakusui.thincrest.utils.metatest.TestClassExpectation.ResultPredicateFactory.*;
 import com.github.dakusui.thincrest.utils.metatest.TestMethodExpectation;
+import com.github.dakusui.thincrest_pcond.forms.Functions;
+import com.github.dakusui.thincrest_pcond.forms.Predicates;
+import com.github.dakusui.thincrest_pcond.forms.Printables;
 import org.junit.Test;
 
+import java.util.Objects;
+
+import static com.github.dakusui.thincrest.TestAssertions.assertThat;
 import static com.github.dakusui.thincrest.TestFluents.*;
 import static com.github.dakusui.thincrest.utils.metatest.TestMethodExpectation.Result.*;
 import static com.github.dakusui.thincrest_pcond.fluent.Statement.objectValue;
+import static com.github.dakusui.thincrest_pcond.forms.Functions.identity;
+import static com.github.dakusui.thincrest_pcond.forms.Predicates.isEqualTo;
+import static com.github.dakusui.thincrest_pcond.forms.Predicates.transform;
+import static java.util.Arrays.asList;
 
 @TestClassExpectation(value = {
     @EnsureJUnitResult(type = WasNotSuccessful.class, args = {}),
-    @EnsureJUnitResult(type = RunCountIsEqualTo.class, args = "6"),
+    @EnsureJUnitResult(type = RunCountIsEqualTo.class, args = "9"),
     @EnsureJUnitResult(type = IgnoreCountIsEqualTo.class, args = "0"),
-    @EnsureJUnitResult(type = AssumptionFailureCountIsEqualTo.class, args = "2"),
-    @EnsureJUnitResult(type = SizeOfFailuresIsEqualTo.class, args = "2")
+    @EnsureJUnitResult(type = AssumptionFailureCountIsEqualTo.class, args = "3"),
+    @EnsureJUnitResult(type = SizeOfFailuresIsEqualTo.class, args = "4")
 })
 public class ThincrestExample {
+  @TestMethodExpectation(FAILURE)
+  @Test
+  public void testString() {
+    assertThat(
+        "helloWorld",
+        transform(
+            identity()
+                .andThen(Printables.function("toUpperCase", o -> Objects.toString(o).toUpperCase()))
+                .andThen(identity())
+                .andThen(identity())
+                .andThen(identity()))
+            .check(isEqualTo("hello"))
+    );
+  }
+
+  @TestMethodExpectation(FAILURE)
+  @Test
+  public void testStream() {
+    assertThat(
+        asList("Hello", "world"),
+        transform(Functions.<String>stream()
+            .andThen(stream -> stream.map(String::toLowerCase)))
+            .check(Predicates.anyMatch(Predicates.endsWith("X"))));
+  }
+
   @TestMethodExpectation(FAILURE)
   @Test
   public void assertAllSalutes() {
@@ -58,6 +93,18 @@ public class ThincrestExample {
             .length()
             .then()
             .greaterThan(0));
+  }
+
+  @TestMethodExpectation(ASSUMPTION_FAILURE)
+  @Test
+  public void assumeSalute() {
+    assumeStatement(
+            objectValue(new Salute())
+                    .invoke("inJapanese")
+                    .asString()
+                    .length()
+                    .then()
+                    .greaterThan(100));
   }
 
   @TestMethodExpectation(ASSUMPTION_FAILURE)

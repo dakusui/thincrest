@@ -1,19 +1,14 @@
-= `pcond`: The Printable {pre,post}-conditions
+= `thincrest`: The Best Test Assertion Library Ever
 
-The `pcond` is a multi-purposes predicate library for "Design by Contract" style programming and test assertions.
-You can replace Guava's `Preconditions` class, Apache Common's `Validate` class, and test assertion libraries with this.
+`thincrest` is a test assertion library, which aims at overcoming drawbacks in existing ones, such as Hamcrest, AssertJ, or Google Truth.
+It also equips a feature for "Metamorphic testing".
 
 == Design Goals
 
 Following is a list of goals that the `pcond` library tries to achieve.
 
-* **Unified Support for Value Check, DbC, Test Assertion programming:**  Input/status value checking, user input validation, Checks in Design by Contract, and test assertions have similar concerns, however, completely different solutions are provided footnote:[Valid4J is the only example to the best knowledge of author of `pcond` library.
-It offers a style that unifies test assertions and DbC programming based on the Hamcrest library.].
-The `pcond` tries to offer a unified solution to those use cases.
 * **More Programmer-Friendly Readability and Writability:** Test assertion libraries have more and more focused on writability of code from readability of code and output.
 The `pcond` makes one step further by addressing remaining pain points.
-** **Easy to handle custom types:** Test assertion libraries require users to implement custom value verifier (`Matcher` in Hamcrest, `Assert` in AssertJ, `Subject` in Google Truth) classes.
-This is a significant work by itself, and it may also impede refactorings of the software under test.
 ** **Remove repeating the same fact twice in the failure message and the predicate:** More or less similar to Google Guava's `Preconditions` class, a human needs to describe the condition to be checked twice.
 One is in a natural language to print what condition is violated.
 And the other is in Java programming language to define what check should be done for a given value.
@@ -23,170 +18,29 @@ This is more important for programmers than printing a nice message on a failure
 Programmers needed to call `assert`, `assertEquals`, etc. multiple times from inside one test method.
 This was causing a situation, where they need to repeat fail->fix->run->fail->fix->run... loop, once an assert method call fails.
 Ensuring a good way to write a test method with only a single assertion method call is important.
-** **Not having to go back-and-force between source code and output:** When a check fails, making a full description of the failure available is important.
-Otherwise, you will need to go back-and-forth between the code and the log (or test report).
+** **Easy to handle custom types:** Test assertion libraries require users to implement custom value verifier (`Matcher` in Hamcrest, `Assert` in AssertJ, `Subject` in Google Truth) classes.
+This is a significant work by itself, and it may also impede refactorings of the software under test.
 ** **Human-analyzable output:** A readable message is essential to understand what happened when a check fails.
 However, the `pcond` interprets it in a slightly different way from other existing assertion libraries.
 It focuses more on making a failure report self-sufficient and structured.
 Rather than making it look "natural" as if it were written by a human, it focuses on make it readable for *programmers*.
 Not for general English-speaking human.
 * **Make custom verifiers composable:** Instead of let a user define a custom verifier for every type, `pcond` offers a way to compose a verifier for a user type from already provided functions and predicates.
-* **Configurable:** There are customization points for a general purpose library like `pcond`.
-For instance a failure report format, an exception type for a combination of a certain context and a certain use case, A message template for a failure, etc.
-Providing a good way to customize these configurations at runtime is important.
-
 
 == Design
 
-To achieve the goals, the `pcond` library equips the following mechanisms.
-
-* **Predicates and function for value checking:** Instead of custom verifier classes like `Matcher`, `Assert`, or `Subject`, use conventional`Function` and `Predicate` so that it can be used not only for test assertions but also for DbC, general value checking, etc.
-** **Transform and Check mechanism:** Decompose a verification process into two steps: "Transform" function and "Check" predicate.
-** **`Printable` mechanism:** Make functions and predicates "printable".
-** **`Identifiable` mechanism:** It's preferable to be able to "identify" two predicates are equal, if they are meant to be the same.
-* **`Context` and `Currying` mechanism:** Sometimes we need to handle functions and predicates that have more than one parameter.
-The `Context` and `Currying` are designed for such functions.
-* **"Fluent" style support mechanism:** Nowadays, "fluent" style is more and more preferred in test assertions.
-`pcond` also supports the style.
-* **Configurable `ValueChecker` mechanism:** To use the library with various testing frameworks, `pcond` has a configurable mechanism called `ValueChecker`.
-You can configure it for your own testing framework.
-It supports JUnit4 and JUnit5 out-of-box.
+`thincrest` employs `pcond` for composing human-readable error messages.
 
 
-=== "Transform and Check"
-
-The most fundamental idea of the `pcond` library is to use `Predicate` s, not special classes like `Matcher` s (Hamcrest), `AbstractAssert` (AssertJ), or `Subject` (Google Truth).
-
-A basis of the design of the `pcond` library is an observation that we almost always can convert a given value into a type, which is convenient for verification, and then we can do the final verification.
-
-For instance, if we have a custom typed value, we can convert it to a string, for which we can think of a lot of ways to verify if the value matches our expectation and to report how it didn't match the expectation.
-
-In the step one, we transform a value into a type for which we have a method to verify it.
-Then we will check it with the intended method.
-
-[ditaa]
-[.text-center]
-.Value Verification in a Test
-----
-    T                                    R
-           +------=------------------------------------------------+
-           |      f                                          p     |
- +-----+   |  /---------\       +-----------------+       /-----\  |    +------+
- |Value|<-----+Transform+-----=>|Transformed Value|<------+Check+-----=>|Result|
- +-----+   |  \---------/       +-----------------+       \-----/  |    +------+
-           +------=------------------------------------------------+
-                                         q
-                                                        /-\    /-\
-                                                        |A+--->|B| A reads from B
-                                                        \-/    \-/
-
-                                                        /-\    /-\
-                                                        |A+--=>|B|  A writes to B
-                                                        \-/    \-/
-----
-
-"Convenient" types for verification `pcond` chose are `Object`, `String`, `List`, and numbers (`int`, `long`, `double`, ...), as of now.
-
-This entire step stem:[q] can be considered one `Predicate` for a value of type `T`.
-stem:[p] is a predicate for verification of a convenient type value.
-stem:[f] is a function to transform a given value to a convenient type.
-
-[stem]
-[.text-center]
-++++
-q(v) = p(f(v))
-++++
-
-For stem:[p], we only need to support a limited number of predicates because, programmers will always convert a given value into some handy types.
-So, we don't need to come up with a nicely readable messages for every method you define in your custom matchers.
-Instead, the `pcond` library composes it from the transformation function stem:[f] and stem:[p] 's string representations.
-
-Following is a small example code, which examines if a given value `yourName` satisfies required conditions.
-
-[source,java]
-----
-public class ExampleDbC {
-  public static void main(String[] args) {
-    System.out.println(hello("JohnDoe"));
-  }
-
-  public static String hello(String yourName) {
-    // <2>
-    requireArgument(yourName, and(isNotNull(),
-                                  transform(length()).check(gt(0)),
-                                  containsString(" ")));
-    String ret = String.format("Hello, %s", NameUtils.firstNameOf(yourName));
-    // <3>
-    return ensureNonNull(ret);
-  }
-}
-----
-
-This prints the following output.
-
-----
-Exception in thread "main" java.lang.IllegalArgumentException: value:<"JohnDoe"> violated precondition:value (isNotNull&&length >[0]&&containsString[" "])
-"JohnDoe"->&&                   ->false
-             isNotNull          ->true
-             transform
-               length           ->7
-7        ->  check
-               >[0]             ->true
-"JohnDoe"->  containsString[" "]->false
-----
-
-It might not be 100% natural English text, but still very easily understandable for programmers.
-The author of the library believes it is  more useful and reliable for developers.
-
-=== `Printable` mechanism
-
-To implement library like above, it's necessary to format a predicate into a human-understandable format.
-Unfortunately, it is not sufficient and not straight forward to override the `toString` method.
-Because:
-
-1. In the "transform and check" style requires `Function` s, not only `Predicate` s.
-2. It is not possible to override `toString` method in an interface.
-3. `Predicate` and `Function` interfaces have a few methods that return a newly created `Predicate` and `Function` (`Predicate#and`, `Function#compose`, for instances ).
-These returned objects also need to have overridden version of `toString`.
-4. Overriding `toString` is a cumbersome manual task.
-
-The `pcond` library provides a solution to these problems by offering its own base classes for `Predicate` and `Function`.
-
-The implementation of this feature is provided by the link:com/github/dakusui/pcond/core/printable/package-summary.html[`com.github.dakusui.pcond.core.printable`] package.
-
-
-=== `Identifiable` mechanism
-
-The `pcond` has a mechanism to create a "parameterized" predicate, such as `Predicates.containsString(String)`.
-If you call this method twice, two different predicate objects are returned.
-However, should those return make `Objects.equals(Object,Object)` return `false`?
-
-[source,java]
-----
-class Example{
-  public static void main(String... args) {
-    Predicate<String> p1 = Predicates.containsString("hello");
-    Predicate<String> p2 = Predicates.containsString("hello");
-    System.out.println(p1.equals(p2));
-  }
-}
-----
-
-`pcond` is designed to return `true` for this check.
-
-The implementation of this feature is provided by the link:com/github/dakusui/pcond/core/identifieable/package-summary.html[`com.github.dakusui.pcond.core.identifieable`] package.
 
 == Entry points
 
-The package link:com/github/dakusui/pcond/package-summary.html:[`com.github.dakusui.pcond`] holds entry point classes of the `pcond` library.
+The package link:com/github/dakusui/thincrest/package-summary.html:[`com.github.dakusui.pcond`] holds entry point classes of the `pcond` library.
 
-=== (Test) Assertion Library
-
-The other usage of the `pcond` library is an assertion library.
 It supports two styles.
 One is traditional "Hamcrest" like style and the other is more recently fashioned "fluent" style like AssertJ or Google Truth.
 
-==== Hamcrest Style
+=== Hamcrest Style
 
 Hamcrest [<<hamcrest>>] is the first popular assertion library.
 The style JUnit itself presented at the time Hamcrest was published is to call `assertEquals`, `assertTrue`, `assertFalse` methods.
@@ -290,8 +144,7 @@ You will notice the only last predicate `startsWith["Y"]` was not satisfied by t
 
 While you will need to analyze which part of the `Expected` was not satisfied by the input value `""` and how by yourself from the Hamcrest's report.
 
-
-==== Fluent Style (Experimental)
+=== Fluent Style (Experimental)
 
 The next challenge assertion libraries faced was the explosion of the static methods to be imported.
 There is a bunch of static methods to be imported and classes to which they belong.
@@ -378,52 +231,8 @@ This leads to the following report.:
 
 Thus, we can keep both the code and report human-readable.
 
-=== As a Helper Library for Design by Contract programming
-
-The `pcond` can be used as a library for Design by Contract style programming in Java.
-There is a couple of ways for this usage.
-
-==== With `assert` statement
-
-With this style, you can benefit the good old feature of Java: `assert`.
-
-[source,java]
-----
-public class Example {
-  public void example(String arg) {
-    assert precondition(arg, isNotNull().and(not(isEmpty())));
-    System.out.println("Hello, " + arg + "!");
-  }
-}
-----
-
-You will see a human-readable and analyzable output, when an assertion fails.
-At the same time, once the assertion is disabled by the VM option `-da`, you will see no performance penalty for the feature.
-
-Aside from the `precondition` method, `that` method is prepared for checking an invariant condition and `postcondition` method is prepared for what the name suggests.
-
-==== With `requireXyz` and `ensureXyz` methods
-
-That said, you may want to force your code to conduct a check for input value.
-
-[source,java]
-----
-public class Example {
-  public static String hello(String yourName) {
-    // <2>
-    requireArgument(yourName, and(isNotNull(), transform(length()).check(gt(0)), containsString(" ")));
-    String ret = String.format("Hello, %s", NameUtils.firstNameOf(yourName));
-    // <3>
-    return ensureNonNull(ret);
-  }
-}
-----
-
-
 == Related Works
 
-
-- [[valid4j, 1]] Valid4J https://www.valid4j.org/[valid4j]: 2015
 - [[hamcrest, 2]] Hamcrest, Matchers that can be combined to create flexible expressions of intent https://hamcrest.org/[Hamcrest]: 2019
 - [[hamcrest-tutorial, 3]] Hamcrest, Hamcrest Tutorial https://hamcrest.org/JavaHamcrest/tutorial[Hamcrest Tutorial]: 2019
 - [[assertj, 4]] AssertJ, Fluent assertions for java https://joel-costigliola.github.io/assertj/[AssertJ]: 2022
