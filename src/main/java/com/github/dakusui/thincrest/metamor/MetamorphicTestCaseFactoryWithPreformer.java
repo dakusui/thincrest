@@ -5,6 +5,8 @@ import com.github.dakusui.thincrest.metamor.internals.InternalUtils;
 import com.github.dakusui.thincrest_pcond.forms.Printables;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
@@ -32,7 +34,7 @@ public interface MetamorphicTestCaseFactoryWithPreformer<X, I, O, P, R> extends 
 
   default Function<IoContext<IoPair<I, O>, P>, Function<IoPair<I, O>, P>> metamorphicPreformerToIoContextCallback(Function<IoPair<I, O>, P> preformer) {
     return Printables.function(
-        () -> "preform:" + preformer,
+        () -> "  " + preformer,
         c -> Printables.function(
             () -> String.format("preform[%s]:%s", c, preformer),
             preformer));
@@ -172,7 +174,7 @@ public interface MetamorphicTestCaseFactoryWithPreformer<X, I, O, P, R> extends 
     }
 
     public MetamorphicTestCaseFactory<X, I, O, Proposition> proposition(String propositionName, Predicate<Dataset<P>> p) {
-      return this.proposition(args -> MessageFormat.format(propositionName, args), p);
+      return this.proposition(args -> MessageFormat.format(propositionName, Arrays.stream(args).map(Objects::toString).toArray()), p);
     }
 
     public MetamorphicTestCaseFactoryWithPreformer<X, I, O, P, R> build() {

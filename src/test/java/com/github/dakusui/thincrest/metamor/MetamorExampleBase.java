@@ -4,33 +4,21 @@ import com.github.dakusui.thincrest.TestAssertions;
 import com.github.dakusui.thincrest_pcond.core.Evaluator;
 import com.github.dakusui.thincrest_pcond.core.printable.PrintableFunction;
 import com.github.dakusui.thincrest_pcond.forms.Functions;
-import com.github.dakusui.thincrest_pcond.forms.Predicates;
 import com.github.dakusui.thincrest_pcond.forms.Printables;
 import com.github.dakusui.thincrest_pcond.validator.Validator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.github.dakusui.thincrest_pcond.forms.Functions.identity;
-import static com.github.dakusui.thincrest_pcond.forms.Predicates.isEqualTo;
-import static com.github.dakusui.thincrest_pcond.forms.Predicates.transform;
-import static java.util.Arrays.asList;
-
-public class MetamorSandbox {
+public abstract class MetamorExampleBase {
 
   @BeforeClass
   public static void beforeAll() {
     Validator.reconfigure(b -> b.reportComposer(new MetamorphicReportComposer()));
-  }
-
-  @Test
-  public void main() {
-    TestAssertions.assertThat("XHello", transform(createFunction()).check(createPredicate()));
   }
 
   @Test
@@ -41,11 +29,11 @@ public class MetamorSandbox {
             .fut(Printables.function(() -> "Math::sin", Math::sin))
             .addInputResolvers(
                 b -> b.function((x) -> String.format("%s", x), x -> x)
-                    .function((x) -> String.format("πー%s", x), x -> Math.PI - x - 0.0001)
+                    .function((x) -> String.format("πー%s", x), x -> Math.PI - x - ERROR)
                     .build())
             .preformer("output", IoPair::output)
             .reduce("[0] - [1]", (Dataset<Double> ds) -> ds.get(0) - ds.get(1))
-            .check(Predicates.equalTo(0.0))
+            .check(isCloseTo(0.0, acceptableError()))
             .toMetamorphicTestPredicate());
   }
 
@@ -57,11 +45,11 @@ public class MetamorSandbox {
             .fut(Printables.function(() -> "Math::sin", Math::sin))
             .addInputResolvers(
                 b -> b.function((x) -> String.format("%s", x), x -> x)
-                    .function((x) -> String.format("πー%s", x), x -> Math.PI - x - 0.0001)
+                    .function((x) -> String.format("πー%s", x), x -> Math.PI - x - ERROR)
                     .build())
             .preformer("output", IoPair::output)
             .reduce("[0] - [1]", (Dataset<Double> ds) -> ds.get(0) - ds.get(1))
-            .check(Predicates.equalTo(0.0))
+            .check(isCloseTo(0.0, acceptableError()))
             .toMetamorphicTestPredicate());
   }
 
@@ -73,10 +61,10 @@ public class MetamorSandbox {
             .inputResolverSequenceFactory(
                 new InputResolver.Sequence.Factory.Builder<Double, Double, Double>("input", "x")
                     .function((x) -> String.format("%s", x), x -> x)
-                    .function((x) -> String.format("πー%s", x), x -> Math.PI - x - 0.0001)
+                    .function((x) -> String.format("πー%s", x), x -> Math.PI - x - ERROR)
                     .build())
             .transformer(Printables.function(() -> "[0] - [1]", (Dataset<IoPair<Double, Double>> ds) -> ds.get(0).output() - ds.get(1).output()))
-            .checker(Predicates.equalTo(0.0))
+            .checker(isCloseTo(0.0, acceptableError()))
             .build()
             .toMetamorphicTestPredicate());
   }
@@ -89,10 +77,10 @@ public class MetamorSandbox {
             .inputResolverSequenceFactory(
                 new InputResolver.Sequence.Factory.Builder<Double, Double, Double>("input", "x")
                     .function((x) -> String.format("%s", x), x -> x)
-                    .function((x) -> String.format("πー%s", x), x -> Math.PI - x - 0.0001)
+                    .function((x) -> String.format("πー%s", x), x -> Math.PI - x - ERROR)
                     .build())
             .preformer(Printables.function("output", IoPair::output))
-            .propositionFactory(Proposition.Factory.create((Dataset<Double> ds) -> Objects.equals(ds.get(0), ds.get(1)), args -> MessageFormat.format("{0}={1}", args), i -> "x[" + i + "]", 2))
+            .propositionFactory(Proposition.Factory.create((Dataset<Double> ds) -> areCloseToEachOther(ds.get(0), ds.get(1), acceptableError()), (Object[] args) -> String.format("%s = %s", args), i -> "x[" + i + "]", 2))
             .build().toMetamorphicTestPredicate());
   }
 
@@ -104,9 +92,9 @@ public class MetamorSandbox {
             .inputResolverSequenceFactory(
                 new InputResolver.Sequence.Factory.Builder<Double, Double, Double>("input", "x")
                     .function((x) -> String.format("%s", x), x -> x)
-                    .function((x) -> String.format("πー%s", x), x -> Math.PI - x - 0.0001)
+                    .function((x) -> String.format("πー%s", x), x -> Math.PI - x - ERROR)
                     .build())
-            .proposition("output({0})=output({1})", (Dataset<IoPair<Double, Double>> ds) -> Objects.equals(ds.get(0).output(), ds.get(1).output()))
+            .proposition("output({0})=output({1})", (Dataset<IoPair<Double, Double>> ds) -> areCloseToEachOther(ds.get(0).output(), ds.get(1).output(), acceptableError()))
             .toMetamorphicTestPredicate());
   }
 
@@ -114,7 +102,7 @@ public class MetamorSandbox {
   public void testMetamorphicTest1e() {
     TestAssertions.assertThat(
         1.23,
-        new MetamorphicTestCaseFactory.Builder<Double, Double, Double, Double>().fut(Printables.function(() -> "Math::sin", x -> Math.sin(x + 0.0001)))
+        new MetamorphicTestCaseFactory.Builder<Double, Double, Double, Double>().fut(Printables.function(() -> "Math::sin", x -> Math.sin(x + ERROR)))
             .sourceVariableName("X")
             .inputVariableName("IN")
             .ioVariableName("IO")
@@ -124,7 +112,7 @@ public class MetamorSandbox {
                     .function((x) -> String.format("%s", x), x -> x)
                     .function((x) -> String.format("πー%s", x), x -> Math.PI - x)
                     .build())
-            .proposition("{0}.output()={1}.output()", (Dataset<IoPair<Double, Double>> ds) -> Objects.equals(ds.get(0).output(), ds.get(1).output()))
+            .proposition("{0}.output()={1}.output()", (Dataset<IoPair<Double, Double>> ds) -> areCloseToEachOther(ds.get(0).output(), ds.get(1).output(), acceptableError()))
             .toMetamorphicTestPredicate());
   }
 
@@ -132,7 +120,7 @@ public class MetamorSandbox {
   public void testMetamorphicTest1f() {
     TestAssertions.assertThat(
         1.23,
-        new MetamorphicTestCaseFactoryWithPreformer.Builder<Double, Double, Double, Double, Double>().fut(Printables.function(() -> "Math::sin", x -> Math.sin(x + 0.0001)))
+        new MetamorphicTestCaseFactoryWithPreformer.Builder<Double, Double, Double, Double, Double>().fut(Printables.function(() -> "Math::sin", x -> Math.sin(x + ERROR)))
             .sourceVariableName("X")
             .inputVariableName("IN")
             .ioVariableName("IO")
@@ -143,7 +131,7 @@ public class MetamorSandbox {
                     .function((x) -> String.format("πー%s", x), x -> Math.PI - x)
                     .build())
             .preformer("output", IoPair::output)
-            .proposition("{0}={1}", (Dataset<Double> ds) -> Objects.equals(ds.get(0), ds.get(1)))
+            .proposition("{0}={1}", (Dataset<Double> ds) -> areCloseToEachOther(ds.get(0), ds.get(1), acceptableError()))
             .toMetamorphicTestPredicate());
   }
 
@@ -154,14 +142,14 @@ public class MetamorSandbox {
     TestAssertions.assertThat(
         1.23,
         new MetamorphicTestCaseFactory.Builder<Double, Double, Double, Double>()
-            .fut(Printables.function(() -> "Math::sin", x -> Math.sin(x + 0.0001 /* error */)))
+            .fut(Printables.function(() -> "Math::sin", x -> Math.sin(x + ERROR /* error */)))
             .addInputResolvers(
                 b -> b
                     .function((x) -> String.format("%s", x), x -> x)
                     .function((x) -> String.format("πー%s", x), x -> Math.PI - x)
                     .build())
             .preformer("output", IoPair::output)
-            .proposition("{0}={1}", (Dataset<Double> ds) -> Objects.equals(ds.get(0), ds.get(1)))
+            .proposition("{0}={1}", (Dataset<Double> ds) -> areCloseToEachOther(ds.get(0), ds.get(1), acceptableError()))
             .toMetamorphicTestPredicate());
   }
 
@@ -170,26 +158,26 @@ public class MetamorSandbox {
     /* error */
     TestAssertions.assertThat(
         1.23,
-        MetamorphicTestCaseFactory.forFunctionUnderTest("Math::sin", (Double x) -> Math.sin(x + 0.0001 /* error */))
+        MetamorphicTestCaseFactory.forFunctionUnderTest("Math::sin", (Double x) -> Math.sin(x + ERROR /* error */))
             .sourceValueType(double.class)
             .addInputResolver((x) -> String.format("%s", x), x -> x)
             .addInputResolver((x) -> String.format("πー%s", x), x -> Math.PI - x)
             .outputOnly()
-            .proposition("{0}={1}", (Dataset<Double> ds) -> Objects.equals(ds.get(0), ds.get(1)))
+            .proposition("{0}={1}", (Dataset<Double> ds) -> areCloseToEachOther(ds.get(0), ds.get(1), acceptableError()))
             .toMetamorphicTestPredicate());
   }
 
   @Test
-  public void testMetamorphicTest1ha() {
+  public void testMetamorphicTest1h1() {
     /* error */
     TestAssertions.assertThat(
         1.23,
-        MetamorphicTestCaseFactory.forFunctionUnderTest("Math::sin", (Double x) -> Math.sin(x + 0.0001 /* error */))
+        MetamorphicTestCaseFactory.forFunctionUnderTest("Math::sin", (Double x) -> Math.sin(x + ERROR /* error */))
             .sourceValueType(double.class)
             .addInputResolver((x) -> String.format("%s", x), x -> x)
             .addInputResolver((x) -> String.format("πー%s", x), x -> Math.PI - x)
             .preformer(Functions.<IoPair<Double, Double>>identity().andThen(Printables.function("output", IoPair::output)))
-            .proposition("{0}={1}", (Dataset<Double> ds) -> Objects.equals(ds.get(0), ds.get(1)))
+            .proposition("{0}-{1}=0", (Dataset<Double> ds) -> areCloseToEachOther(ds.get(0) - ds.get(1), 0, acceptableError()))
             .toMetamorphicTestPredicate());
   }
 
@@ -198,12 +186,12 @@ public class MetamorSandbox {
     /* error */
     TestAssertions.assertThat(
         1.23,
-        MetamorphicTestCaseFactory.forFunctionUnderTest("Math::sin", (Double x) -> Math.sin(x + 0.0001 /* error */))
+        MetamorphicTestCaseFactory.forFunctionUnderTest("Math::sin", (Double x) -> Math.sin(x + ERROR /* error */))
             .outputVariableName("<OUT>")
             .makeInputResolversEndomorphic()
             .addInputResolver((x) -> String.format("πー%s", x), x -> Math.PI - x)
             .outputOnly()
-            .proposition("{0}={1}", (Dataset<Double> ds) -> Objects.equals(ds.get(0), ds.get(1)))
+            .proposition("{0}={1}", (Dataset<Double> ds) -> areCloseToEachOther(ds.get(0), ds.get(1), acceptableError()))
             .toMetamorphicTestPredicate());
   }
 
@@ -212,11 +200,11 @@ public class MetamorSandbox {
     /* error */
     TestAssertions.assertThat(
         1.23,
-        MetamorphicTestCaseFactory.forFunctionUnderTest("Math::sin", (Double x) -> Math.sin(x + 0.0001 /* error */))
+        MetamorphicTestCaseFactory.forFunctionUnderTest("Math::sin", (Double x) -> Math.sin(x + ERROR /* error */))
             .makeInputResolversEndomorphic()
             .addInputResolver((x) -> String.format("πー%s", x), x -> Math.PI - x)
             .outputOnly()
-            .proposition("{0}={1}", (Dataset<Double> ds) -> Objects.equals(ds.get(0), ds.get(1)))
+            .proposition("{0}={1}", (Dataset<Double> ds) -> areCloseToEachOther(ds.get(0), ds.get(1), acceptableError()))
             .toMetamorphicTestPredicate());
   }
 
@@ -225,29 +213,14 @@ public class MetamorSandbox {
     /* error */
     TestAssertions.assertThat(
         1.23,
-        MetamorphicTestCaseFactory.forFunctionUnderTest("Math::sin", (Double x) -> Math.sin(x + 0.0001 /* error */))
+        MetamorphicTestCaseFactory.forFunctionUnderTest("Math::sin", (Double x) -> Math.sin(x + ERROR /* error */))
             .makeInputResolversEndomorphic()
             .addInputResolver((x) -> String.format("π/2ー%s", x), x -> Math.PI / 2 - x)
             .outputOnly()
             .preform("^2", x -> x * x)
-            .preform("+1", x -> x + 1)
-            .reduce("sum", ds -> ds.stream().mapToDouble(x -> x))
-            .check(isEqualTo(1))
+            .reduce("sum", ds -> ds.stream().mapToDouble(x -> x).sum())
+            .check(makeAcceptObjectAsParameter(isCloseTo(1.0, acceptableError())))
             .toMetamorphicTestPredicate());
-  }
-
-  @Test
-  public void testString() {
-    TestAssertions.assertThat(
-        "helloWorld",
-        transform(
-            identity()
-                .andThen(Printables.function("HI", o -> Objects.toString(o).toUpperCase()))
-                .andThen(identity())
-                .andThen(identity())
-                .andThen(identity()))
-            .check(isEqualTo("hello"))
-    );
   }
 
   private static PrintableFunction<String, String> functionToUpperCase() {
@@ -265,15 +238,6 @@ public class MetamorSandbox {
       }
     }
     return Printables.function("substring[1]", new Ret());
-  }
-
-  @Test
-  public void testStream() {
-    TestAssertions.assertThat(
-        asList("Hello", "world"),
-        transform(Functions.<String>stream()
-            .andThen(stream -> stream.map(String::toLowerCase)))
-            .check(Predicates.anyMatch(Predicates.endsWith("X"))));
   }
 
   private static Predicate<String> createPredicate() {
@@ -301,5 +265,24 @@ public class MetamorSandbox {
   @AfterClass
   public static void afterAll() {
     Validator.resetToDefault();
+  }
+
+  public static final double ERROR = 0.0000;
+
+  public abstract double acceptableError();
+
+  public static Predicate<Double> isCloseTo(double expectedValue, double acceptableError) {
+    return Printables.predicate(
+        () -> "isCloseTo[" + expectedValue + ", " + acceptableError + "]",
+        v -> Math.abs(v - expectedValue) < acceptableError);
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T> Predicate<Object> makeAcceptObjectAsParameter(Predicate<T> p) {
+    return Printables.predicate(() -> Objects.toString(p), v -> p.test((T) v));
+  }
+
+  public static boolean areCloseToEachOther(double v, double w, double acceptableError) {
+    return Math.abs(v - w) < acceptableError;
   }
 }

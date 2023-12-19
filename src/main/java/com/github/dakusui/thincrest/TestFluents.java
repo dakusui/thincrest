@@ -1,6 +1,6 @@
 package com.github.dakusui.thincrest;
 
-import com.github.dakusui.thincrest_pcond.fluent.DummyList;
+import com.github.dakusui.thincrest_pcond.fluent.ListHolder;
 import com.github.dakusui.thincrest_pcond.fluent.Statement;
 
 import java.util.Arrays;
@@ -39,7 +39,7 @@ public enum TestFluents {
    */
   public static void assertAll(Statement<?>... statements) {
     List<?> values = Arrays.stream(statements).map(Statement::statementValue).collect(toList());
-    TestAssertions.assertThat(DummyList.fromList(values), Statement.createPredicateForAllOf(statements));
+    TestAssertions.assertThat(ListHolder.fromList(values), Statement.createPredicateForAllOf(statements));
   }
 
   /**
@@ -62,6 +62,6 @@ public enum TestFluents {
    */
   public static void assumeAll(Statement<?>... statements) {
     List<?> values = Arrays.stream(statements).map(Statement::statementValue).collect(toList());
-    TestAssertions.assumeThat(values, Statement.createPredicateForAllOf(statements));
+    TestAssertions.assumeThat(ListHolder.fromList(values), Statement.createPredicateForAllOf(statements));
   }
 }
