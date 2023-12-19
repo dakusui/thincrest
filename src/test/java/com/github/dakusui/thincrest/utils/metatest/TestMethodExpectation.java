@@ -45,7 +45,7 @@ public @interface TestMethodExpectation {
         else
           expectations = singletonList(PASSING);
         if (!expectations.contains(this.result))
-          return Optional.of(new Exception(format("Expected test result(s) are %s, but actually it was '%s', which is not contained in the expectation.", expectations, this.result)));
+          return Optional.of(new Exception(format("Expected test result(s) are %s, but actually it was '%s', which is not contained in the expectation.: (%s)", expectations, this.result, description)));
         return Optional.empty();
       } finally {
         this.state = State.NOT_STARTED;

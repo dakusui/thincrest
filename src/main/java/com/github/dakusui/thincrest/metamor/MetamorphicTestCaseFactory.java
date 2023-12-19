@@ -9,6 +9,14 @@ import java.util.function.*;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.transform;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * An interface of a factory for a metamorphic test case.
+ *
+ * @param <X> Type of "source value".
+ * @param <I> Input type of the function under test.
+ * @param <O> Output type of function under test.
+ * @param <R> Input type of metamorphic relation.
+ */
 public interface MetamorphicTestCaseFactory<X, I, O, R> {
   /**
    * Returns a function under test.
@@ -27,19 +35,37 @@ public interface MetamorphicTestCaseFactory<X, I, O, R> {
     return transform(metamorphicTransformer()).check(metamorphicChecker());
   }
 
+  /**
+   * Returns a function that executes the FUT for each element in `Dataset<InputResolver<I, O>>`.
+   *
+   * @return A function that executes the FUT for each element in `Dataset<InputResolver<I, O>>`.
+   */
   default Function<Dataset<InputResolver<I, O>>, Dataset<IoPair<I, O>>> metamorphicExecutor() {
     return InternalUtils.createObservableProcessingPipeline("fut", this.metamorphicMapper(), this.inputResolverSequenceFactory().count(), inputVariableNameFormatter(), ioVariableName());
   }
 
+  /**
+   * A name of input variable.
+   * This will be printed in the test report.
+   *
+   * @return A name of input variable.
+   */
   String inputVariableName();
 
+  /**
+   * In metamorphic testing context, the function under test is executed multiple times with different input values.
+   * The returned function renders input variable names so that they can be identified each other when an index is given.
+   * By default, it returns a function that appends the given index.
+   *
+   * @return A function to render an input variable name corresponding to a given index.
+   */
   default IntFunction<String> inputVariableNameFormatter() {
     return i -> this.inputVariableName() + "[" + i + "]";
   }
 
   default Function<IoContext<InputResolver<I, O>, IoPair<I, O>>, Function<InputResolver<I, O>, IoPair<I, O>>> metamorphicMapper() {
     return Printables.function(
-        () -> "fut:" + fut() + "",
+        () -> "  " + fut(),
         ioContext -> Printables.function(
             () -> "input:" + ioContext.output(),
             inputResolver -> {
@@ -48,6 +74,11 @@ public interface MetamorphicTestCaseFactory<X, I, O, R> {
             }));
   }
 
+  /**
+   * A builder method that returns a printable predicate that examines the function under test.
+   *
+   * @return A printable predicate that examines FUT with a given metamorphic relation.
+   */
   default Predicate<X> toMetamorphicTestPredicate() {
     return transform(this.inputResolverSequenceFactory().andThen(this.metamorphicExecutor())).check(this.metamorphicRelation());
   }
@@ -60,18 +91,17 @@ public interface MetamorphicTestCaseFactory<X, I, O, R> {
   }
 
   static <I, O> Builder<Object, I, O, Object> forFunctionUnderTest(Function<I, O> fut) {
-    return new Builder<Object, I, O, Object>()
-        .fut(fut);
+    return new Builder<Object, I, O, Object>().fut(fut);
   }
 
   class Impl<X, I, O, R> implements MetamorphicTestCaseFactory<X, I, O, R> {
 
-    private final Function<I, O>                          fut;
+    private final Function<I, O> fut;
     private final InputResolver.Sequence.Factory<X, I, O> inputResolverSequenceFactory;
-    private final Function<Dataset<IoPair<I, O>>, R>      metamorphicTransformer;
-    private final Predicate<R>                            metamorphicChecker;
-    private final String                                  inputVariableName;
-    private final String                                  ioVariableName;
+    private final Function<Dataset<IoPair<I, O>>, R> metamorphicTransformer;
+    private final Predicate<R> metamorphicChecker;
+    private final String inputVariableName;
+    private final String ioVariableName;
 
     public Impl(Function<I, O> fut, InputResolver.Sequence.Factory<X, I, O> inputResolverSequenceFactory, Function<Dataset<IoPair<I, O>>, R> metamorphicTransformer, Predicate<R> metamorphicChecker, String inputVariableName, String ioVariableName) {
       this.fut = fut;
@@ -127,13 +157,13 @@ public interface MetamorphicTestCaseFactory<X, I, O, R> {
       abstract int count();
     }
 
-    protected Function<I, O>                                fut;
+    protected Function<I, O> fut;
     protected InputResolverSequenceFactoryProvider<X, I, O> inputResolverSequenceFactoryProvider;
-    protected Predicate<R>                                  checker;
-    protected String                                        sourceVariableName;
-    protected String                                        inputVariableName;
-    protected String                                        ioVariableName;
-    protected String                                        outputVariableName;
+    protected Predicate<R> checker;
+    protected String sourceVariableName;
+    protected String inputVariableName;
+    protected String ioVariableName;
+    protected String outputVariableName;
 
     protected BuilderBase() {
       this.sourceVariableName("x")
@@ -255,11 +285,25 @@ public interface MetamorphicTestCaseFactory<X, I, O, R> {
 
     public abstract <BB extends BuilderBase<BB, XX, I, O, R>, XX> BB sourceValueType(XX sourceType);
 
+    /**
+     * Let this object know the source type.
+     *
+     * @param sourceType The type of the source value.x
+     * @param <BB>       The type of this object.
+     * @param <XX>       The type of the input value.
+     * @return This object
+     */
     @SuppressWarnings("unused")
     public <BB extends BuilderBase<BB, XX, I, O, R>, XX> BB sourceValueType(Class<XX> sourceType) {
       return this.sourceValueType((XX) null);
     }
 
+    /**
+     * Let this factory know that the source value and the input values are the same type.
+     *
+     * @param <BB> The type of this builder.
+     * @return This object
+     */
     @SuppressWarnings("unchecked")
     public <BB extends BuilderBase<BB, I, I, O, R>> BB makeInputResolversEndomorphic() {
       return (BB) this.sourceValueType((I) null)
@@ -267,6 +311,12 @@ public interface MetamorphicTestCaseFactory<X, I, O, R> {
     }
 
 
+    /**
+     * Specifies a function under test.
+     *
+     * @param fut A function under test
+     * @return This builder object
+     */
     @SuppressWarnings("unchecked")
     public B fut(Function<I, O> fut) {
       this.fut = requireNonNull(fut);
@@ -300,6 +350,7 @@ public interface MetamorphicTestCaseFactory<X, I, O, R> {
     public MetamorphicTestCaseFactory<X, I, O, R> check(String name, Predicate<R> checker) {
       return this.check(Printables.predicate(name, checker));
     }
+
     public MetamorphicTestCaseFactory<X, I, O, R> check(Predicate<R> checker) {
       return checker(checker).build();
     }
@@ -327,11 +378,11 @@ public interface MetamorphicTestCaseFactory<X, I, O, R> {
 
     public MetamorphicTestCaseFactory<X, I, O, Proposition> proposition(Function<Object[], String> formatter, Predicate<Dataset<IoPair<I, O>>> p) {
       return this.propositionFactory(
-          Proposition.Factory.create(
-              p,
-              formatter,
-              i -> ioVariableName + "[" + i + "]",
-              inputResolverSequenceFactoryProvider.count()))
+              Proposition.Factory.create(
+                  p,
+                  formatter,
+                  i -> ioVariableName + "[" + i + "]",
+                  inputResolverSequenceFactoryProvider.count()))
           .build();
     }
 

@@ -7,9 +7,9 @@ source "$(dirname "${0}")/lib/mvn-utils.rc"
 
 function mangle_package() {
   local _basedir="${1}"
-  mv "${_basedir}/com/github/dakusui/pcond" "${_basedir}/com/github/dakusui/thincrest_pcond"
+  mv "${_basedir}/com/github/dakusui/pcond" "${_basedir}/com/github/dakusui/$(project_name)_pcond"
   find "${_basedir}" -type f -name '*.java' \
-    -exec sed -i 's/com\.github\.dakusui\.pcond/com.github.dakusui.thincrest_pcond/g' {} \;
+    -exec sed -i 's/com\.github\.dakusui\.pcond/com.github.dakusui.'"$(project_name)"'_pcond/g' {} \;
 }
 
 function main() {
