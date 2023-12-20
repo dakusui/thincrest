@@ -101,7 +101,7 @@ In order to make `pcond` print such a message on a failure, you need to give a "
 ==== Building a "Printable" Predicate
 
 `pcond` offers a set of method to create a printable predicate in `Predicates` class.
-It also offers a way to construct a conjuntion, disjunction, and negation of given printable predicates.
+It also offers a way to construct a conjunction, disjunction, and negation of given printable predicates.
 
 Following is an example.
 

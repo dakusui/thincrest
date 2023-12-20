@@ -16,8 +16,8 @@ import static com.github.dakusui.thincrest.TestFluents.*;
 import static com.github.dakusui.thincrest.utils.metatest.TestMethodExpectation.Result.*;
 import static com.github.dakusui.thincrest_pcond.fluent.Statement.objectValue;
 import static com.github.dakusui.thincrest_pcond.forms.Functions.identity;
-import static com.github.dakusui.thincrest_pcond.forms.Predicates.isEqualTo;
-import static com.github.dakusui.thincrest_pcond.forms.Predicates.transform;
+import static com.github.dakusui.thincrest_pcond.forms.Predicates.*;
+import static com.github.dakusui.thincrest_pcond.forms.Printables.function;
 import static java.util.Arrays.asList;
 
 @TestClassExpectation(value = {
@@ -32,17 +32,12 @@ public class ThincrestExample {
   @Test
   public void testString() {
     assertThat(
-        "helloWorld",
-        transform(
-            identity()
-                .andThen(Printables.function("toUpperCase", o -> Objects.toString(o).toUpperCase()))
-                .andThen(identity())
-                .andThen(identity())
-                .andThen(identity()))
-            .check(isEqualTo("hello"))
+        "Howdy, World",
+        transform(function("toUpperCase", o -> Objects.toString(o).toUpperCase()))
+            .check(containsString("hello"))
     );
   }
-
+  
   @TestMethodExpectation(FAILURE)
   @Test
   public void testStream() {
@@ -52,7 +47,7 @@ public class ThincrestExample {
             .andThen(stream -> stream.map(String::toLowerCase)))
             .check(Predicates.anyMatch(Predicates.endsWith("X"))));
   }
-
+  
   @TestMethodExpectation(FAILURE)
   @Test
   public void assertAllSalutes() {
@@ -70,7 +65,28 @@ public class ThincrestExample {
             .then()
             .greaterThan(0));
   }
-
+  
+  @TestMethodExpectation(FAILURE)
+  @Test
+  public void assertAllSalutes_2() {
+    assertAll(
+        objectValue(new Salute())
+            .invoke("inJapanese")
+            .asString()
+            .length()
+            .then()
+            .greaterThan(0),
+        objectValue(new Salute())
+            .invoke("inEnglish")
+            .asString()
+            .transform(v -> allOf(
+                v.length()
+                    .then()
+                    .greaterThan(0).toPredicate(),
+                v.then().contains("Hello").toPredicate()
+                )));
+  }
+  
   @TestMethodExpectation(PASSING)
   @Test
   public void assertSaluteInJapanese() {
@@ -82,7 +98,7 @@ public class ThincrestExample {
             .then()
             .greaterThan(0));
   }
-
+  
   @TestMethodExpectation(FAILURE)
   @Test
   public void assertSaluteInEnglish() {
@@ -94,19 +110,19 @@ public class ThincrestExample {
             .then()
             .greaterThan(0));
   }
-
+  
   @TestMethodExpectation(ASSUMPTION_FAILURE)
   @Test
   public void assumeSalute() {
     assumeStatement(
-            objectValue(new Salute())
-                    .invoke("inJapanese")
-                    .asString()
-                    .length()
-                    .then()
-                    .greaterThan(100));
+        objectValue(new Salute())
+            .invoke("inJapanese")
+            .asString()
+            .length()
+            .then()
+            .greaterThan(100));
   }
-
+  
   @TestMethodExpectation(ASSUMPTION_FAILURE)
   @Test
   public void assumeAllSalutes() {
@@ -124,7 +140,7 @@ public class ThincrestExample {
             .then()
             .greaterThan(0));
   }
-
+  
   @TestMethodExpectation(PASSING)
   @Test
   public void assumeSaluteInJapanese() {
@@ -136,6 +152,7 @@ public class ThincrestExample {
             .then()
             .greaterThan(0));
   }
+  
   @TestMethodExpectation(ASSUMPTION_FAILURE)
   @Test
   public void assumeSaluteInEnglish() {
@@ -147,12 +164,12 @@ public class ThincrestExample {
             .then()
             .greaterThan(0));
   }
-
+  
   static class Salute {
     public String inJapanese() {
       return "こんにちは";
     }
-
+    
     public String inEnglish() {
       return "";
     }

@@ -19,7 +19,7 @@ Also, we can think of following:
 ≡(sin(x))^2 + (sin(Math.PI/2 - x))^2 = 1
 ----
 
-With these knowledge, we can verify the correctness of the implementation of a sine function even if we don't know a value the value _sin(x)_ should return for a given _x__.
+With this knowledge, we can verify the correctness of the implementation of a sine function even if we don't know the value _sin(x)_ should return for a given _x_.
 
 == Design
 
