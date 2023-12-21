@@ -8,9 +8,11 @@ import org.junit.runner.notification.RunListener;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 public class Metatest {
   private final Class<?> testClass;
@@ -90,7 +92,7 @@ public class Metatest {
     if (!errors.isEmpty()) {
       for (Throwable each : errors)
         each.printStackTrace();
-      throw new RuntimeException(String.format("%s mismatch(es) are detected.", errors.size()));
+      throw new RuntimeException(String.format("%s mismatch(es) are detected.: %s", errors.size(), errors.stream().map(Throwable::getMessage).collect(toList())));
     } else
       System.err.println("All verifications are green!");
   }

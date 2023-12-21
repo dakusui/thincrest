@@ -22,10 +22,10 @@ import static java.util.Arrays.asList;
 
 @TestClassExpectation(value = {
     @EnsureJUnitResult(type = WasNotSuccessful.class, args = {}),
-    @EnsureJUnitResult(type = RunCountIsEqualTo.class, args = "9"),
+    @EnsureJUnitResult(type = RunCountIsEqualTo.class, args = "10"),
     @EnsureJUnitResult(type = IgnoreCountIsEqualTo.class, args = "0"),
     @EnsureJUnitResult(type = AssumptionFailureCountIsEqualTo.class, args = "3"),
-    @EnsureJUnitResult(type = SizeOfFailuresIsEqualTo.class, args = "4")
+    @EnsureJUnitResult(type = SizeOfFailuresIsEqualTo.class, args = "5")
 })
 public class ThincrestExample {
   @TestMethodExpectation(FAILURE)
