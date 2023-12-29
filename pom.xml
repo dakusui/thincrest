@@ -3,7 +3,7 @@
     <groupId>com.github.dakusui</groupId>
     <artifactId>thincrest-pcond</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <description>Yet another assertion library powered by "pcond"</description>
     <name>thincrest</name>
     <url>https://github.com/dakusui/thincrest</url>
@@ -22,7 +22,7 @@
         <developerConnection>scm:git:git@github.com:dakusui/${project.name}.git
         </developerConnection>
         <url>http://dakusui.github.io/${project.name}</url>
-        <tag>${project.artifactId}-${project.version}</tag>
+        <tag>thincrest-pcond-1.0.1</tag>
     </scm>
 
     <developers>
