@@ -1,10 +1,16 @@
 package com.github.dakusui.thincrest;
 
+import com.github.dakusui.thincrest_pcond.fluent.ListHolder;
+import com.github.dakusui.thincrest_pcond.fluent.Statement;
 import com.github.dakusui.thincrest_pcond.validator.Validator;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * An entry-point class for test assertions.
@@ -31,6 +37,10 @@ import java.util.function.Supplier;
  * With this approach, you will not need to create your own matchers, but just create
  * a function that transform your class into easily verifiable types for your verification.
  *
+ * Each method, which ends with `Statement` or `all`, in this class accepts {@link Statement} objects.
+ * To create a {@link Statement} object, you can call static methods in {@link Statement} itself.
+ * class such as {@link Statement#booleanValue(Boolean)}, {@link Statement#stringValue(String)},
+ * etc.
  *
  * @see com.github.dakusui.thincrest_pcond.forms.Predicates
  * @see com.github.dakusui.thincrest_pcond.forms.Functions
@@ -67,5 +77,52 @@ public enum TestAssertions {
    */
   public static <T> void assumeThat(T value, Predicate<? super T> predicate) {
     Validator.instance().assumeThat(value, predicate);
+  }
+  
+  /**
+   * Fluent version of {@link TestAssertions#assertThat(Object, Predicate)}.
+   *
+   * @param statement A statement to be verified
+   * @param <T>       The type of the value to be verified which a given statement holds.
+   */
+  public static <T> void assertStatement(Statement<T> statement) {
+    TestAssertions.assertThat(statement.statementValue(), statement.statementPredicate());
+  }
+  
+  /**
+   * Fluent version of {@link TestAssertions#assertThat(Object, Predicate)}.
+   * Use this method when you need to verify multiple values.
+   *
+   * You can use {@link TestAssertions#assertStatement(Statement)}, if you have only one statement to be verified, for readability's sake.
+   *
+   * @param statements Statements to be verified
+   * @see TestAssertions#assertStatement(Statement)
+   */
+  public static void assertAll(Statement<?>... statements) {
+    List<?> values = Arrays.stream(statements).map(Statement::statementValue).collect(toList());
+    TestAssertions.assertThat(ListHolder.fromList(values), Statement.createPredicateForAllOf(statements));
+  }
+  
+  /**
+   * Fluent version of {@link TestAssertions#assumeThat(Object, Predicate)}.
+   *
+   * @param statement A statement to be verified
+   */
+  public static <T> void assumeStatement(Statement<T> statement) {
+    TestAssertions.assumeThat(statement.statementValue(), statement.statementPredicate());
+  }
+  
+  /**
+   * Fluent version of {@link TestAssertions#assumeThat(Object, Predicate)}.
+   * Use this method when you need to verify multiple values.
+   *
+   * You can use {@link TestAssertions#assumeStatement(Statement)}}, if you have only one statement to be verified, for readability's sake.
+   *
+   * @param statements Statements to be verified
+   * @see TestAssertions#assumeStatement(Statement)
+   */
+  public static void assumeAll(Statement<?>... statements) {
+    List<?> values = Arrays.stream(statements).map(Statement::statementValue).collect(toList());
+    TestAssertions.assumeThat(ListHolder.fromList(values), Statement.createPredicateForAllOf(statements));
   }
 }

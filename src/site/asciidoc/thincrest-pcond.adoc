@@ -233,10 +233,10 @@ In this situation, you can write `assumeThat(isRunningOnWindowsPlatorm())` and `
 Methods end with `Statement` accepts only one `Statement`, while ones end with `All` accepts multiple statements.
 Basically, they are doing the same thing and just defined as "syntax-sugara" for readability's sake.
 
-`assertStatement` (`TestFluents`):: Use this for normal test assertions.
-`assertAll` (`TestCluents`):: Use this for normal test assertions, where you need to check multiple values at once.
-`assumeStatement` (`TestFluents`):: Use this for checking an assumption to execute a test is satisfied or not.
-`assumeAll` (`TestFluents`):: Use this for checking an assumption to execute a test is satisfied or not in a situation, where you need to check multiple conditions at once.
+`assertStatement` (`TestAssertions`):: Use this for normal test assertions.
+`assertAll` (`TestAssertions`):: Use this for normal test assertions, where you need to check multiple values at once.
+`assumeStatement` (`TestAssertions`):: Use this for checking an assumption to execute a test is satisfied or not.
+`assumeAll` (`TestAssertions`):: Use this for checking an assumption to execute a test is satisfied or not in a situation, where you need to check multiple conditions at once.
 
 For the detail of how to create a statement object, check <<WritingYourCodeFluently>>.
 

@@ -6,16 +6,13 @@ import com.github.dakusui.thincrest.utils.metatest.TestClassExpectation.ResultPr
 import com.github.dakusui.thincrest.utils.metatest.TestMethodExpectation;
 import com.github.dakusui.thincrest_pcond.forms.Functions;
 import com.github.dakusui.thincrest_pcond.forms.Predicates;
-import com.github.dakusui.thincrest_pcond.forms.Printables;
 import org.junit.Test;
 
 import java.util.Objects;
 
-import static com.github.dakusui.thincrest.TestAssertions.assertThat;
-import static com.github.dakusui.thincrest.TestFluents.*;
+import static com.github.dakusui.thincrest.TestAssertions.*;
 import static com.github.dakusui.thincrest.utils.metatest.TestMethodExpectation.Result.*;
 import static com.github.dakusui.thincrest_pcond.fluent.Statement.objectValue;
-import static com.github.dakusui.thincrest_pcond.forms.Functions.identity;
 import static com.github.dakusui.thincrest_pcond.forms.Predicates.*;
 import static com.github.dakusui.thincrest_pcond.forms.Printables.function;
 import static java.util.Arrays.asList;
