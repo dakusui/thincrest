@@ -1,0 +1,37 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+thincrest,com.github.dakusui.thincrest,TestAssertions,12,42,0,0,4,11,1,6,1,6
+thincrest,com.github.dakusui.thincrest.metamor.internals,InternalUtils,0,19,0,0,0,5,0,2,0,2
+thincrest,com.github.dakusui.thincrest.metamor,MetamorphicReportComposer,4,105,2,12,1,31,2,13,0,8
+thincrest,com.github.dakusui.thincrest.metamor,Dataset.OnGoing.Impl,30,51,2,2,4,12,3,7,2,6
+thincrest,com.github.dakusui.thincrest.metamor,Proposition.Factory.Impl,0,36,0,0,0,6,0,4,0,4
+thincrest,com.github.dakusui.thincrest.metamor,IoContext.Ongoing,0,21,0,0,0,2,0,2,0,2
+thincrest,com.github.dakusui.thincrest.metamor,MetamorphicTestCaseFactoryWithPreformer,13,41,0,0,1,9,1,5,1,5
+thincrest,com.github.dakusui.thincrest.metamor,IoContext.Utils,6,142,3,7,0,20,3,14,0,12
+thincrest,com.github.dakusui.thincrest.metamor,MetamorphicTestCaseFactoryWithPreformer.Impl,3,101,0,0,1,17,1,12,1,12
+thincrest,com.github.dakusui.thincrest.metamor,MetamorphicTestCaseFactory.BuilderBase.InputResolverSequenceFactoryProvider,0,6,0,0,0,3,0,1,0,1
+thincrest,com.github.dakusui.thincrest.metamor,IoContext.Ongoing.Impl.new Object() {...},0,17,0,0,0,2,0,2,0,2
+thincrest,com.github.dakusui.thincrest.metamor,InputResolver.Impl,0,9,0,0,0,2,0,1,0,1
+thincrest,com.github.dakusui.thincrest.metamor,Utils,13,7,3,1,4,3,3,2,1,2
+thincrest,com.github.dakusui.thincrest.metamor,IoContext.Closed.Impl,0,33,0,0,0,9,0,5,0,5
+thincrest,com.github.dakusui.thincrest.metamor,InputResolver.Sequence.Factory.Builder,0,60,0,0,0,8,0,7,0,7
+thincrest,com.github.dakusui.thincrest.metamor,IoContext,0,20,0,0,0,1,0,1,0,1
+thincrest,com.github.dakusui.thincrest.metamor,MetamorphicTestCaseFactory.BuilderBase,12,188,1,3,2,47,3,23,2,22
+thincrest,com.github.dakusui.thincrest.metamor,IoPair.Impl,3,27,0,0,1,6,1,3,1,3
+thincrest,com.github.dakusui.thincrest.metamor,Dataset,0,12,0,0,0,2,0,2,0,2
+thincrest,com.github.dakusui.thincrest.metamor,MetamorphicTestCaseFactory.Impl,0,39,0,0,0,14,0,7,0,7
+thincrest,com.github.dakusui.thincrest.metamor,InputResolver.Sequence.Impl.new AbstractList() {...},15,0,0,0,3,0,3,0,3,0
+thincrest,com.github.dakusui.thincrest.metamor,InputResolver.Sequence.Impl,10,35,0,0,3,7,2,4,2,4
+thincrest,com.github.dakusui.thincrest.metamor,MetamorphicTestCaseFactoryWithPreformer.Builder,8,122,1,1,2,27,2,13,1,13
+thincrest,com.github.dakusui.thincrest.metamor,MetamorphicTestCaseFactory.BuilderBase.new MetamorphicTestCaseFactory.BuilderBase.InputResolverSequenceFactoryProvider() {...},4,17,0,0,1,3,1,3,1,3
+thincrest,com.github.dakusui.thincrest.metamor,InputResolver.Sequence.Factory.Impl,0,58,0,0,0,14,0,7,0,7
+thincrest,com.github.dakusui.thincrest.metamor,MetamorphicTestCaseFactory.BuilderBase.new MetamorphicTestCaseFactory.BuilderBase.InputResolverSequenceFactoryProvider() {...},0,55,0,0,0,11,0,6,0,6
+thincrest,com.github.dakusui.thincrest.metamor,IoContext.Ongoing.Impl,6,108,3,7,0,21,3,10,0,8
+thincrest,com.github.dakusui.thincrest.metamor,Proposition.Factory,0,8,0,0,0,1,0,1,0,1
+thincrest,com.github.dakusui.thincrest.metamor,PropositionPredicate,0,19,0,0,0,4,0,4,0,4
+thincrest,com.github.dakusui.thincrest.metamor,Dataset.Base,0,11,0,0,0,4,0,2,0,2
+thincrest,com.github.dakusui.thincrest.metamor,Dataset.Closed.Impl,0,34,0,0,0,7,0,5,0,5
+thincrest,com.github.dakusui.thincrest.metamor,MetamorphicTestCaseFactory,10,93,0,0,1,11,1,11,1,11
+thincrest,com.github.dakusui.thincrest.metamor,Proposition.Impl,0,43,0,0,0,10,0,4,0,4
+thincrest,com.github.dakusui.thincrest.metamor,IoPair,0,6,0,0,0,1,0,1,0,1
+thincrest,com.github.dakusui.thincrest.metamor,IoContext.Ongoing.Snapshot,15,15,0,0,1,6,1,3,1,3
+thincrest,com.github.dakusui.thincrest.metamor,MetamorphicTestCaseFactory.Builder,0,83,0,0,0,16,0,10,0,10

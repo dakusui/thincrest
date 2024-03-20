@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MetamorphicTestCaseFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">thincrest</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.thincrest.metamor</a> &gt; <span class="el_source">MetamorphicTestCaseFactory.java</span></div><h1>MetamorphicTestCaseFactory.java</h1><pre class="source lang-java linenums">package com.github.dakusui.thincrest.metamor;
+
+import com.github.dakusui.thincrest.metamor.internals.InternalUtils;
+import com.github.dakusui.thincrest_pcond.forms.Printables;
+
+import java.text.MessageFormat;
+import java.util.function.*;
+
+import static com.github.dakusui.thincrest_pcond.forms.Predicates.transform;
+import static java.util.Objects.requireNonNull;
+
+/**
+ * An interface of a factory for a metamorphic test case.
+ *
+ * @param &lt;X&gt; Type of &quot;source value&quot;.
+ * @param &lt;I&gt; Input type of the function under test.
+ * @param &lt;O&gt; Output type of function under test.
+ * @param &lt;R&gt; Input type of metamorphic relation.
+ */
+public interface MetamorphicTestCaseFactory&lt;X, I, O, R&gt; {
+  /**
+   * Returns a function under test.
+   *
+   * @return a function under test.
+   */
+  Function&lt;I, O&gt; fut();
+
+  InputResolver.Sequence.Factory&lt;X, I, O&gt; inputResolverSequenceFactory();
+
+  Function&lt;Dataset&lt;IoPair&lt;I, O&gt;&gt;, R&gt; metamorphicTransformer();
+
+  Predicate&lt;R&gt; metamorphicChecker();
+
+  default Predicate&lt;Dataset&lt;IoPair&lt;I, O&gt;&gt;&gt; metamorphicRelation() {
+<span class="fc" id="L35">    return transform(metamorphicTransformer()).check(metamorphicChecker());</span>
+  }
+
+  /**
+   * Returns a function that executes the FUT for each element in `Dataset&lt;InputResolver&lt;I, O&gt;&gt;`.
+   *
+   * @return A function that executes the FUT for each element in `Dataset&lt;InputResolver&lt;I, O&gt;&gt;`.
+   */
+  default Function&lt;Dataset&lt;InputResolver&lt;I, O&gt;&gt;, Dataset&lt;IoPair&lt;I, O&gt;&gt;&gt; metamorphicExecutor() {
+<span class="fc" id="L44">    return InternalUtils.createObservableProcessingPipeline(&quot;fut&quot;, this.metamorphicMapper(), this.inputResolverSequenceFactory().count(), inputVariableNameFormatter(), ioVariableName());</span>
+  }
+
+  /**
+   * A name of input variable.
+   * This will be printed in the test report.
+   *
+   * @return A name of input variable.
+   */
+  String inputVariableName();
+
+  /**
+   * In metamorphic testing context, the function under test is executed multiple times with different input values.
+   * The returned function renders input variable names so that they can be identified each other when an index is given.
+   * By default, it returns a function that appends the given index.
+   *
+   * @return A function to render an input variable name corresponding to a given index.
+   */
+  default IntFunction&lt;String&gt; inputVariableNameFormatter() {
+<span class="fc" id="L63">    return i -&gt; this.inputVariableName() + &quot;[&quot; + i + &quot;]&quot;;</span>
+  }
+
+  default Function&lt;IoContext&lt;InputResolver&lt;I, O&gt;, IoPair&lt;I, O&gt;&gt;, Function&lt;InputResolver&lt;I, O&gt;, IoPair&lt;I, O&gt;&gt;&gt; metamorphicMapper() {
+<span class="fc" id="L67">    return Printables.function(</span>
+<span class="fc" id="L68">        () -&gt; &quot;  &quot; + fut(),</span>
+<span class="fc" id="L69">        ioContext -&gt; Printables.function(</span>
+<span class="nc" id="L70">            () -&gt; &quot;input:&quot; + ioContext.output(),</span>
+            inputResolver -&gt; {
+<span class="fc" id="L72">              I in = inputResolver.apply(ioContext.output());</span>
+<span class="fc" id="L73">              return IoPair.create(in, fut().apply(in));</span>
+            }));
+  }
+
+  /**
+   * A builder method that returns a printable predicate that examines the function under test.
+   *
+   * @return A printable predicate that examines FUT with a given metamorphic relation.
+   */
+  default Predicate&lt;X&gt; toMetamorphicTestPredicate() {
+<span class="fc" id="L83">    return transform(this.inputResolverSequenceFactory().andThen(this.metamorphicExecutor())).check(this.metamorphicRelation());</span>
+  }
+
+  String ioVariableName();
+
+
+  static &lt;I, O&gt; Builder&lt;Object, I, O, Object&gt; forFunctionUnderTest(String name, Function&lt;I, O&gt; fut) {
+<span class="fc" id="L90">    return forFunctionUnderTest(Printables.function(name, fut));</span>
+  }
+
+  static &lt;I, O&gt; Builder&lt;Object, I, O, Object&gt; forFunctionUnderTest(Function&lt;I, O&gt; fut) {
+<span class="fc" id="L94">    return new Builder&lt;Object, I, O, Object&gt;().fut(fut);</span>
+  }
+
+  class Impl&lt;X, I, O, R&gt; implements MetamorphicTestCaseFactory&lt;X, I, O, R&gt; {
+
+    private final Function&lt;I, O&gt; fut;
+    private final InputResolver.Sequence.Factory&lt;X, I, O&gt; inputResolverSequenceFactory;
+    private final Function&lt;Dataset&lt;IoPair&lt;I, O&gt;&gt;, R&gt; metamorphicTransformer;
+    private final Predicate&lt;R&gt; metamorphicChecker;
+    private final String inputVariableName;
+    private final String ioVariableName;
+
+<span class="fc" id="L106">    public Impl(Function&lt;I, O&gt; fut, InputResolver.Sequence.Factory&lt;X, I, O&gt; inputResolverSequenceFactory, Function&lt;Dataset&lt;IoPair&lt;I, O&gt;&gt;, R&gt; metamorphicTransformer, Predicate&lt;R&gt; metamorphicChecker, String inputVariableName, String ioVariableName) {</span>
+<span class="fc" id="L107">      this.fut = fut;</span>
+<span class="fc" id="L108">      this.inputResolverSequenceFactory = inputResolverSequenceFactory;</span>
+<span class="fc" id="L109">      this.metamorphicTransformer = metamorphicTransformer;</span>
+<span class="fc" id="L110">      this.metamorphicChecker = metamorphicChecker;</span>
+<span class="fc" id="L111">      this.inputVariableName = inputVariableName;</span>
+<span class="fc" id="L112">      this.ioVariableName = ioVariableName;</span>
+<span class="fc" id="L113">    }</span>
+
+    @Override
+    public Function&lt;I, O&gt; fut() {
+<span class="fc" id="L117">      return this.fut;</span>
+    }
+
+    @Override
+    public InputResolver.Sequence.Factory&lt;X, I, O&gt; inputResolverSequenceFactory() {
+<span class="fc" id="L122">      return this.inputResolverSequenceFactory;</span>
+    }
+
+    @Override
+    public Function&lt;Dataset&lt;IoPair&lt;I, O&gt;&gt;, R&gt; metamorphicTransformer() {
+<span class="fc" id="L127">      return this.metamorphicTransformer;</span>
+    }
+
+    @Override
+    public Predicate&lt;R&gt; metamorphicChecker() {
+<span class="fc" id="L132">      return this.metamorphicChecker;</span>
+    }
+
+    @Override
+    public String inputVariableName() {
+<span class="fc" id="L137">      return this.inputVariableName;</span>
+    }
+
+    @Override
+    public String ioVariableName() {
+<span class="fc" id="L142">      return this.ioVariableName;</span>
+    }
+
+  }
+
+  abstract class BuilderBase&lt;B extends BuilderBase&lt;B, X, I, O, R&gt;, X, I, O, R&gt; {
+    abstract static class InputResolverSequenceFactoryProvider&lt;X, I, O&gt; implements Supplier&lt;InputResolver.Sequence.Factory&lt;X, I, O&gt;&gt; {
+      final BuilderBase&lt;?, X, I, O, ?&gt; parent;
+
+<span class="fc" id="L151">      protected InputResolverSequenceFactoryProvider(BuilderBase&lt;?, X, I, O, ?&gt; parent) {</span>
+<span class="fc" id="L152">        this.parent = parent;</span>
+<span class="fc" id="L153">      }</span>
+
+      abstract void add(Function&lt;Object, String&gt; formatter, Function&lt;X, I&gt; function);
+
+      abstract int count();
+    }
+
+    protected Function&lt;I, O&gt; fut;
+    protected InputResolverSequenceFactoryProvider&lt;X, I, O&gt; inputResolverSequenceFactoryProvider;
+    protected Predicate&lt;R&gt; checker;
+    protected String sourceVariableName;
+    protected String inputVariableName;
+    protected String ioVariableName;
+    protected String outputVariableName;
+
+<span class="fc" id="L168">    protected BuilderBase() {</span>
+<span class="fc" id="L169">      this.sourceVariableName(&quot;x&quot;)</span>
+<span class="fc" id="L170">          .inputVariableName(&quot;input&quot;)</span>
+<span class="fc" id="L171">          .ioVariableName(&quot;io&quot;)</span>
+<span class="fc" id="L172">          .outputVariableName(&quot;out&quot;);</span>
+<span class="fc" id="L173">    }</span>
+
+    protected &lt;BB extends BuilderBase&lt;BB, XX, I, O, RR&gt;, XX, RR&gt; BB newBuilder(Supplier&lt;BB&gt; constructor) {
+<span class="fc" id="L176">      return constructor.get()</span>
+<span class="fc" id="L177">          .fut(this.fut)</span>
+<span class="fc" id="L178">          .sourceVariableName(this.sourceVariableName)</span>
+<span class="fc" id="L179">          .inputVariableName(this.inputVariableName)</span>
+<span class="fc" id="L180">          .ioVariableName(this.ioVariableName)</span>
+<span class="fc" id="L181">          .outputVariableName(this.outputVariableName);</span>
+    }
+
+    protected &lt;BB extends BuilderBase&lt;BB, X, I, O, RR&gt;, RR&gt; BB newBuilderWithSpecifiedRelationType(Supplier&lt;BB&gt; constructor) {
+<span class="fc" id="L185">      return newBuilder(constructor)</span>
+<span class="fc" id="L186">          .inputResolverSequenceFactoryProvider(this.inputResolverSequenceFactoryProvider);</span>
+    }
+
+    protected &lt;BB extends BuilderBase&lt;BB, XX, I, O, R&gt;, XX&gt; BB newBuilderWithSpecifiedSourceType(Supplier&lt;BB&gt; constructor) {
+<span class="fc" id="L190">      return this.newBuilder(constructor);</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public B sourceVariableName(String sourceVariableName) {
+<span class="fc" id="L195">      this.sourceVariableName = sourceVariableName;</span>
+<span class="fc" id="L196">      return (B) this;</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public B inputVariableName(String inputVariableName) {
+<span class="fc" id="L201">      this.inputVariableName = inputVariableName;</span>
+<span class="fc" id="L202">      return (B) this;</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public B outputVariableName(String outputVariableName) {
+<span class="fc" id="L207">      this.outputVariableName = requireNonNull(outputVariableName);</span>
+<span class="fc" id="L208">      return (B) this;</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public B ioVariableName(String ioVariableName) {
+<span class="fc" id="L213">      this.ioVariableName = requireNonNull(ioVariableName);</span>
+<span class="fc" id="L214">      return (B) this;</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    B inputResolverSequenceFactoryProvider(InputResolverSequenceFactoryProvider&lt;X, I, O&gt; inputResolverSequenceFactory) {
+<span class="fc" id="L219">      this.inputResolverSequenceFactoryProvider = requireNonNull(inputResolverSequenceFactory);</span>
+<span class="fc" id="L220">      return (B) this;</span>
+    }
+
+    public B inputResolverSequenceFactory(InputResolver.Sequence.Factory&lt;X, I, O&gt; inputResolverSequenceFactory) {
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">      Utils.requireState(this.inputResolverSequenceFactoryProvider == null, &quot;Input Resolver Sequence Factory is already set.&quot;);</span>
+<span class="fc" id="L225">      return this.inputResolverSequenceFactoryProvider(new InputResolverSequenceFactoryProvider&lt;X, I, O&gt;(this) {</span>
+
+        @Override
+        public InputResolver.Sequence.Factory&lt;X, I, O&gt; get() {
+<span class="fc" id="L229">          return inputResolverSequenceFactory;</span>
+        }
+
+        @Override
+        void add(Function&lt;Object, String&gt; formatter, Function&lt;X, I&gt; function) {
+<span class="nc" id="L234">          throw new IllegalStateException();</span>
+        }
+
+        @Override
+        int count() {
+<span class="fc" id="L239">          return inputResolverSequenceFactory.count();</span>
+        }
+      });
+    }
+
+    public B addInputResolvers(Function&lt;InputResolver.Sequence.Factory.Builder&lt;X, I, O&gt;, InputResolver.Sequence.Factory&lt;X, I, O&gt;&gt; b) {
+<span class="fc" id="L245">      return this.addInputResolvers(this.sourceVariableName, b);</span>
+    }
+
+    public B addInputResolvers(String variableName, Function&lt;InputResolver.Sequence.Factory.Builder&lt;X, I, O&gt;, InputResolver.Sequence.Factory&lt;X, I, O&gt;&gt; b) {
+<span class="fc" id="L249">      InputResolver.Sequence.Factory.Builder&lt;X, I, O&gt; ib = new InputResolver.Sequence.Factory.Builder&lt;&gt;(this.inputVariableName, variableName);</span>
+<span class="fc" id="L250">      return this.inputResolverSequenceFactory(b.apply(ib));</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public B addInputResolver(Function&lt;Object, String&gt; formatter, Function&lt;X, I&gt; f) {
+<span class="fc" id="L255">      requireNonNull(formatter);</span>
+<span class="fc" id="L256">      requireNonNull(f);</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">      if (this.inputResolverSequenceFactoryProvider == null) {</span>
+<span class="fc" id="L258">        this.inputResolverSequenceFactoryProvider = new InputResolverSequenceFactoryProvider&lt;X, I, O&gt;(this) {</span>
+<span class="fc" id="L259">          int count = 0;</span>
+<span class="fc" id="L260">          Consumer&lt;InputResolver.Sequence.Factory.Builder&lt;X, I, O&gt;&gt; inputResolverAdder = b -&gt; {</span>
+<span class="fc" id="L261">          };</span>
+
+          @Override
+          void add(Function&lt;Object, String&gt; formatter, Function&lt;X, I&gt; f) {
+<span class="fc" id="L265">            inputResolverAdder = inputResolverAdder.andThen(b -&gt; b.function(formatter, f));</span>
+<span class="fc" id="L266">            count++;</span>
+<span class="fc" id="L267">          }</span>
+
+          @Override
+          int count() {
+<span class="fc" id="L271">            return count;</span>
+          }
+
+          @Override
+          public InputResolver.Sequence.Factory&lt;X, I, O&gt; get() {
+<span class="fc" id="L276">            InputResolver.Sequence.Factory.Builder&lt;X, I, O&gt; b = new InputResolver.Sequence.Factory.Builder&lt;&gt;(BuilderBase.this.inputVariableName, BuilderBase.this.sourceVariableName);</span>
+<span class="fc" id="L277">            this.inputResolverAdder.accept(b);</span>
+<span class="fc" id="L278">            return b.build();</span>
+          }
+        };
+      }
+<span class="fc" id="L282">      this.inputResolverSequenceFactoryProvider.add(formatter, f);</span>
+<span class="fc" id="L283">      return (B) this;</span>
+    }
+
+    public abstract &lt;BB extends BuilderBase&lt;BB, XX, I, O, R&gt;, XX&gt; BB sourceValueType(XX sourceType);
+
+    /**
+     * Let this object know the source type.
+     *
+     * @param sourceType The type of the source value.x
+     * @param &lt;BB&gt;       The type of this object.
+     * @param &lt;XX&gt;       The type of the input value.
+     * @return This object
+     */
+    @SuppressWarnings(&quot;unused&quot;)
+    public &lt;BB extends BuilderBase&lt;BB, XX, I, O, R&gt;, XX&gt; BB sourceValueType(Class&lt;XX&gt; sourceType) {
+<span class="fc" id="L298">      return this.sourceValueType((XX) null);</span>
+    }
+
+    /**
+     * Let this factory know that the source value and the input values are the same type.
+     *
+     * @param &lt;BB&gt; The type of this builder.
+     * @return This object
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public &lt;BB extends BuilderBase&lt;BB, I, I, O, R&gt;&gt; BB makeInputResolversEndomorphic() {
+<span class="fc" id="L309">      return (BB) this.sourceValueType((I) null)</span>
+<span class="fc" id="L310">          .addInputResolver(x -&gt; String.format(&quot;%s&quot;, x), Function.identity());</span>
+    }
+
+
+    /**
+     * Specifies a function under test.
+     *
+     * @param fut A function under test
+     * @return This builder object
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public B fut(Function&lt;I, O&gt; fut) {
+<span class="fc" id="L322">      this.fut = requireNonNull(fut);</span>
+<span class="fc" id="L323">      return (B) this;</span>
+    }
+
+    public &lt;P&gt; MetamorphicTestCaseFactoryWithPreformer.Builder&lt;X, I, O, P, R&gt; withPreformer() {
+<span class="fc" id="L327">      return this.newBuilderWithSpecifiedRelationType(MetamorphicTestCaseFactoryWithPreformer.Builder::new);</span>
+    }
+
+    public Builder&lt;X, I, O, R&gt; skipPreformer() {
+<span class="nc" id="L331">      return this.newBuilderWithSpecifiedRelationType(Builder::new);</span>
+    }
+
+    public abstract &lt;P&gt; MetamorphicTestCaseFactoryWithPreformer.Builder&lt;X, I, O, P, R&gt; preformer(Function&lt;IoPair&lt;I, O&gt;, P&gt; preformer);
+
+    public &lt;P&gt; MetamorphicTestCaseFactoryWithPreformer.Builder&lt;X, I, O, P, R&gt; preformer(String preformerName, Function&lt;IoPair&lt;I, O&gt;, P&gt; preformer) {
+<span class="fc" id="L337">      return this.preformer(Printables.function(preformerName, preformer));</span>
+    }
+
+    public MetamorphicTestCaseFactoryWithPreformer.Builder&lt;X, I, O, O, R&gt; outputOnly() {
+<span class="fc" id="L341">      return this.preformer(&quot;outputOnly&quot;, IoPair::output);</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public B checker(Predicate&lt;R&gt; checker) {
+<span class="fc" id="L346">      this.checker = requireNonNull(checker);</span>
+<span class="fc" id="L347">      return (B) this;</span>
+    }
+
+    public MetamorphicTestCaseFactory&lt;X, I, O, R&gt; check(String name, Predicate&lt;R&gt; checker) {
+<span class="nc" id="L351">      return this.check(Printables.predicate(name, checker));</span>
+    }
+
+    public MetamorphicTestCaseFactory&lt;X, I, O, R&gt; check(Predicate&lt;R&gt; checker) {
+<span class="fc" id="L355">      return checker(checker).build();</span>
+    }
+
+    public abstract MetamorphicTestCaseFactory&lt;X, I, O, R&gt; build();
+  }
+
+  class Builder&lt;X, I, O, R&gt; extends BuilderBase&lt;Builder&lt;X, I, O, R&gt;, X, I, O, R&gt; {
+    private Function&lt;Dataset&lt;IoPair&lt;I, O&gt;&gt;, R&gt; transformer;
+
+<span class="fc" id="L364">    public Builder() {</span>
+<span class="fc" id="L365">    }</span>
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    @Override
+    public &lt;BB extends BuilderBase&lt;BB, XX, I, O, R&gt;, XX&gt; BB sourceValueType(XX sourceType) {
+<span class="fc" id="L370">      return (BB) this.&lt;Builder&lt;XX, I, O, R&gt;, XX&gt;newBuilderWithSpecifiedSourceType(Builder::new);</span>
+    }
+
+    public Builder&lt;X, I, O, Proposition&gt; propositionFactory(Function&lt;Dataset&lt;IoPair&lt;I, O&gt;&gt;, Proposition&gt; pf) {
+<span class="fc" id="L374">      return this.&lt;Builder&lt;X, I, O, Proposition&gt;, Proposition&gt;newBuilderWithSpecifiedRelationType(Builder::new)</span>
+<span class="fc" id="L375">          .transformer(pf)</span>
+<span class="fc" id="L376">          .checker(PropositionPredicate.INSTANCE);</span>
+    }
+
+    public MetamorphicTestCaseFactory&lt;X, I, O, Proposition&gt; proposition(Function&lt;Object[], String&gt; formatter, Predicate&lt;Dataset&lt;IoPair&lt;I, O&gt;&gt;&gt; p) {
+<span class="fc" id="L380">      return this.propositionFactory(</span>
+<span class="fc" id="L381">              Proposition.Factory.create(</span>
+                  p,
+                  formatter,
+<span class="fc" id="L384">                  i -&gt; ioVariableName + &quot;[&quot; + i + &quot;]&quot;,</span>
+<span class="fc" id="L385">                  inputResolverSequenceFactoryProvider.count()))</span>
+<span class="fc" id="L386">          .build();</span>
+    }
+
+    public MetamorphicTestCaseFactory&lt;X, I, O, Proposition&gt; proposition(String propositionName, Predicate&lt;Dataset&lt;IoPair&lt;I, O&gt;&gt;&gt; p) {
+<span class="fc" id="L390">      return this.proposition(args -&gt; MessageFormat.format(propositionName, args), p);</span>
+    }
+
+    public &lt;P&gt; MetamorphicTestCaseFactoryWithPreformer.Builder&lt;X, I, O, P, R&gt; preformer(Function&lt;IoPair&lt;I, O&gt;, P&gt; preformer) {
+<span class="fc" id="L394">      return this.&lt;P&gt;withPreformer().preformer(preformer);</span>
+    }
+
+    public Builder&lt;X, I, O, R&gt; transformer(Function&lt;Dataset&lt;IoPair&lt;I, O&gt;&gt;, R&gt; transformer) {
+<span class="fc" id="L398">      this.transformer = requireNonNull(transformer);</span>
+<span class="fc" id="L399">      return this;</span>
+    }
+
+    @Override
+    public MetamorphicTestCaseFactory&lt;X, I, O, R&gt; build() {
+<span class="fc" id="L404">      return new Impl&lt;&gt;(this.fut, this.inputResolverSequenceFactoryProvider.get(), this.transformer, this.checker, this.inputVariableName, this.ioVariableName);</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

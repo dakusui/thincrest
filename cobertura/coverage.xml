@@ -1,0 +1,1221 @@
+<?xml version="1.0"?>
+<!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
+
+<coverage line-rate="0.9086294416243654" branch-rate="0.625" lines-covered="179" lines-valid="197" branches-covered="15" branches-valid="24" complexity="1.4" version="2.1.1" timestamp="1710913176950">
+	<sources>
+		<source>--source</source>
+		<source>/home/hiroshi/Documents/github/dakusui/thincrest/target/checkout/target/generated-sources/annotations</source>
+		<source>/home/hiroshi/Documents/github/dakusui/thincrest/target/checkout/target/generated-sources/local</source>
+		<source>/home/hiroshi/Documents/github/dakusui/thincrest/target/checkout/src/main/java</source>
+	</sources>
+	<packages>
+		<package name="com.github.dakusui.thincrest.metamor" line-rate="0.90625" branch-rate="0.625" complexity="1.4444444444444444">
+			<classes>
+				<class name="com.github.dakusui.thincrest.metamor.Dataset" filename="com/github/dakusui/thincrest/metamor/Dataset.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+					</methods>
+					<lines>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.Dataset$Base" filename="com/github/dakusui/thincrest/metamor/Dataset.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Ljava/lang/String;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="30" hits="184" branch="false"/>
+								<line number="31" hits="184" branch="false"/>
+								<line number="32" hits="184" branch="false"/>
+							</lines>
+						</method>
+						<method name="name" signature="()Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="35" hits="730" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="30" hits="184" branch="false"/>
+						<line number="31" hits="184" branch="false"/>
+						<line number="32" hits="184" branch="false"/>
+						<line number="35" hits="730" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.Dataset$Closed" filename="com/github/dakusui/thincrest/metamor/Dataset.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+					</methods>
+					<lines>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.Dataset$Closed$Impl" filename="com/github/dakusui/thincrest/metamor/Dataset.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/util/List;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="98" hits="46" branch="false"/>
+								<line number="99" hits="46" branch="false"/>
+								<line number="100" hits="46" branch="false"/>
+							</lines>
+						</method>
+						<method name="get" signature="(I)Ljava/lang/Object;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="104" hits="418" branch="false"/>
+							</lines>
+						</method>
+						<method name="iterator" signature="()Ljava/util/Iterator;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="114" hits="2" branch="false"/>
+							</lines>
+						</method>
+						<method name="size" signature="()I" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="109" hits="45" branch="false"/>
+							</lines>
+						</method>
+						<method name="toString" signature="()Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="119" hits="262" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="98" hits="46" branch="false"/>
+						<line number="99" hits="46" branch="false"/>
+						<line number="100" hits="46" branch="false"/>
+						<line number="104" hits="418" branch="false"/>
+						<line number="109" hits="45" branch="false"/>
+						<line number="114" hits="2" branch="false"/>
+						<line number="119" hits="262" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.Dataset$OnGoing" filename="com/github/dakusui/thincrest/metamor/Dataset.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+					</methods>
+					<lines>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.Dataset$OnGoing$Impl" filename="com/github/dakusui/thincrest/metamor/Dataset.java" line-rate="0.75" branch-rate="0.5" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Ljava/lang/String;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="48" hits="138" branch="false"/>
+								<line number="49" hits="138" branch="false"/>
+								<line number="50" hits="138" branch="false"/>
+							</lines>
+						</method>
+						<method name="&lt;init&gt;" signature="(Ljava/lang/String;Lcom/github/dakusui/thincrest/metamor/Dataset;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="53" hits="92" branch="false"/>
+								<line number="54" hits="230" branch="true" condition-coverage="100% (2/2)">
+									<conditions>
+										<condition number="0" type="jump" coverage="100%"/>
+									</conditions>
+								</line>
+								<line number="55" hits="138" branch="false"/>
+								<line number="56" hits="92" branch="false"/>
+							</lines>
+						</method>
+						<method name="add" signature="(Ljava/lang/Object;)Lcom/github/dakusui/thincrest/metamor/Dataset$OnGoing;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="70" hits="230" branch="false"/>
+								<line number="71" hits="230" branch="false"/>
+							</lines>
+						</method>
+						<method name="close" signature="()Lcom/github/dakusui/thincrest/metamor/Dataset;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="76" hits="46" branch="false"/>
+							</lines>
+						</method>
+						<method name="get" signature="(I)Ljava/lang/Object;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="60" hits="690" branch="false"/>
+							</lines>
+						</method>
+						<method name="iterator" signature="()Ljava/util/Iterator;" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="81" hits="0" branch="false"/>
+							</lines>
+						</method>
+						<method name="size" signature="()I" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="65" hits="2070" branch="false"/>
+							</lines>
+						</method>
+						<method name="toString" signature="()Ljava/lang/String;" line-rate="0.0" branch-rate="0.0" complexity="0">
+							<lines>
+								<line number="86" hits="0" branch="true" condition-coverage="0% (0/2)">
+									<conditions>
+										<condition number="0" type="jump" coverage="0%"/>
+									</conditions>
+								</line>
+								<line number="87" hits="0" branch="false"/>
+								<line number="88" hits="0" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="48" hits="138" branch="false"/>
+						<line number="49" hits="138" branch="false"/>
+						<line number="50" hits="138" branch="false"/>
+						<line number="53" hits="92" branch="false"/>
+						<line number="54" hits="230" branch="true" condition-coverage="100% (2/2)">
+							<conditions>
+								<condition number="0" type="jump" coverage="100%"/>
+							</conditions>
+						</line>
+						<line number="55" hits="138" branch="false"/>
+						<line number="56" hits="92" branch="false"/>
+						<line number="60" hits="690" branch="false"/>
+						<line number="65" hits="2070" branch="false"/>
+						<line number="70" hits="230" branch="false"/>
+						<line number="71" hits="230" branch="false"/>
+						<line number="76" hits="46" branch="false"/>
+						<line number="81" hits="0" branch="false"/>
+						<line number="86" hits="0" branch="true" condition-coverage="0% (0/2)">
+							<conditions>
+								<condition number="0" type="jump" coverage="0%"/>
+							</conditions>
+						</line>
+						<line number="87" hits="0" branch="false"/>
+						<line number="88" hits="0" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.InputResolver" filename="com/github/dakusui/thincrest/metamor/InputResolver.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+					</methods>
+					<lines>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.InputResolver$Impl" filename="com/github/dakusui/thincrest/metamor/InputResolver.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Ljava/util/function/Supplier;Ljava/util/function/Function;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="18" hits="52" branch="false"/>
+								<line number="19" hits="52" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="18" hits="52" branch="false"/>
+						<line number="19" hits="52" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.InputResolver$Sequence" filename="com/github/dakusui/thincrest/metamor/InputResolver.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+					</methods>
+					<lines>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.InputResolver$Sequence$Factory" filename="com/github/dakusui/thincrest/metamor/InputResolver.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+					</methods>
+					<lines>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.InputResolver$Sequence$Factory$Builder" filename="com/github/dakusui/thincrest/metamor/InputResolver.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/lang/String;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="107" hits="26" branch="false"/>
+								<line number="111" hits="26" branch="false"/>
+								<line number="112" hits="26" branch="false"/>
+								<line number="113" hits="26" branch="false"/>
+								<line number="114" hits="26" branch="false"/>
+							</lines>
+						</method>
+						<method name="build" signature="()Lcom/github/dakusui/thincrest/metamor/InputResolver$Sequence$Factory;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="122" hits="26" branch="false"/>
+							</lines>
+						</method>
+						<method name="function" signature="(Ljava/util/function/Function;Ljava/util/function/Function;)Lcom/github/dakusui/thincrest/metamor/InputResolver$Sequence$Factory$Builder;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="118" hits="52" branch="false"/>
+							</lines>
+						</method>
+						<method name="lambda$function$0" signature="(Ljava/util/function/Function;)Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="117" hits="1014" branch="false"/>
+							</lines>
+						</method>
+						<method name="lambda$function$3" signature="(Ljava/util/function/Function;Ljava/util/function/Function;Ljava/lang/Object;)Lcom/github/dakusui/thincrest/metamor/InputResolver$Impl;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="lambda$null$1" signature="(Ljava/util/function/Function;Ljava/lang/Object;)Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="lambda$null$2" signature="(Ljava/util/function/Function;Ljava/lang/Object;Lcom/github/dakusui/thincrest/metamor/Dataset;)Ljava/lang/Object;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="107" hits="26" branch="false"/>
+						<line number="111" hits="26" branch="false"/>
+						<line number="112" hits="26" branch="false"/>
+						<line number="113" hits="26" branch="false"/>
+						<line number="114" hits="26" branch="false"/>
+						<line number="117" hits="1014" branch="false"/>
+						<line number="118" hits="52" branch="false"/>
+						<line number="122" hits="26" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.InputResolver$Sequence$Factory$Impl" filename="com/github/dakusui/thincrest/metamor/InputResolver.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/util/List;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="85" hits="52" branch="false"/>
+								<line number="89" hits="26" branch="false"/>
+								<line number="90" hits="26" branch="false"/>
+							</lines>
+						</method>
+						<method name="&lt;init&gt;" signature="(Ljava/util/function/Supplier;Ljava/util/function/Function;I)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="80" hits="26" branch="false"/>
+								<line number="81" hits="26" branch="false"/>
+								<line number="82" hits="26" branch="false"/>
+							</lines>
+						</method>
+						<method name="count" signature="()I" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="94" hits="54" branch="false"/>
+							</lines>
+						</method>
+						<method name="lambda$new$0" signature="(Ljava/util/List;)Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="86" hits="221" branch="false"/>
+								<line number="87" hits="221" branch="false"/>
+								<line number="88" hits="442" branch="false"/>
+							</lines>
+						</method>
+						<method name="lambda$null$1" signature="(Ljava/lang/Object;Ljava/util/function/Function;)Lcom/github/dakusui/thincrest/metamor/InputResolver;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="101" hits="78" branch="false"/>
+							</lines>
+						</method>
+						<method name="lambda$toSequenceCreatorFunction$2" signature="(Ljava/lang/String;Ljava/util/List;Ljava/lang/Object;)Lcom/github/dakusui/thincrest/metamor/InputResolver$Sequence;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="98" hits="78" branch="false"/>
+								<line number="100" hits="26" branch="false"/>
+								<line number="102" hits="26" branch="false"/>
+							</lines>
+						</method>
+						<method name="toSequenceCreatorFunction" signature="(Ljava/lang/String;Ljava/util/List;)Ljava/util/function/Function;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="80" hits="26" branch="false"/>
+						<line number="81" hits="26" branch="false"/>
+						<line number="82" hits="26" branch="false"/>
+						<line number="85" hits="52" branch="false"/>
+						<line number="86" hits="221" branch="false"/>
+						<line number="87" hits="221" branch="false"/>
+						<line number="88" hits="442" branch="false"/>
+						<line number="89" hits="26" branch="false"/>
+						<line number="90" hits="26" branch="false"/>
+						<line number="94" hits="54" branch="false"/>
+						<line number="98" hits="78" branch="false"/>
+						<line number="100" hits="26" branch="false"/>
+						<line number="101" hits="78" branch="false"/>
+						<line number="102" hits="26" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.InputResolver$Sequence$Impl" filename="com/github/dakusui/thincrest/metamor/InputResolver.java" line-rate="0.7272727272727273" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Ljava/lang/String;Ljava/util/List;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="28" hits="26" branch="false"/>
+								<line number="29" hits="26" branch="false"/>
+								<line number="30" hits="26" branch="false"/>
+								<line number="31" hits="26" branch="false"/>
+							</lines>
+						</method>
+						<method name="get" signature="(I)Lcom/github/dakusui/thincrest/metamor/InputResolver;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="35" hits="364" branch="false"/>
+							</lines>
+						</method>
+						<method name="get" signature="(I)Ljava/lang/Object;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="23" hits="364" branch="false"/>
+							</lines>
+						</method>
+						<method name="iterator" signature="()Ljava/util/Iterator;" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="55" hits="0" branch="false"/>
+								<line number="66" hits="0" branch="false"/>
+							</lines>
+						</method>
+						<method name="name" signature="()Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="45" hits="130" branch="false"/>
+							</lines>
+						</method>
+						<method name="size" signature="()I" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="40" hits="0" branch="false"/>
+							</lines>
+						</method>
+						<method name="toString" signature="()Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="50" hits="104" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="23" hits="364" branch="false"/>
+						<line number="28" hits="26" branch="false"/>
+						<line number="29" hits="26" branch="false"/>
+						<line number="30" hits="26" branch="false"/>
+						<line number="31" hits="26" branch="false"/>
+						<line number="35" hits="364" branch="false"/>
+						<line number="40" hits="0" branch="false"/>
+						<line number="45" hits="130" branch="false"/>
+						<line number="50" hits="104" branch="false"/>
+						<line number="55" hits="0" branch="false"/>
+						<line number="66" hits="0" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.InputResolver$Sequence$Impl$1" filename="com/github/dakusui/thincrest/metamor/InputResolver.java" line-rate="0.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Lcom/github/dakusui/thincrest/metamor/InputResolver$Sequence$Impl;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="get" signature="(I)Lcom/github/dakusui/thincrest/metamor/InputResolver;" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="64" hits="0" branch="false"/>
+							</lines>
+						</method>
+						<method name="get" signature="(I)Ljava/lang/Object;" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="55" hits="0" branch="false"/>
+							</lines>
+						</method>
+						<method name="size" signature="()I" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="59" hits="0" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="55" hits="0" branch="false"/>
+						<line number="59" hits="0" branch="false"/>
+						<line number="64" hits="0" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.IoContext" filename="com/github/dakusui/thincrest/metamor/IoContext.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+					</methods>
+					<lines>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.IoContext$Closed" filename="com/github/dakusui/thincrest/metamor/IoContext.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+					</methods>
+					<lines>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.IoContext$Closed$Impl" filename="com/github/dakusui/thincrest/metamor/IoContext.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Ljava/lang/String;Lcom/github/dakusui/thincrest/metamor/Dataset;Lcom/github/dakusui/thincrest/metamor/Dataset;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="75" hits="46" branch="false"/>
+								<line number="76" hits="46" branch="false"/>
+								<line number="77" hits="46" branch="false"/>
+								<line number="78" hits="46" branch="false"/>
+								<line number="79" hits="46" branch="false"/>
+							</lines>
+						</method>
+						<method name="input" signature="()Lcom/github/dakusui/thincrest/metamor/Dataset;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="88" hits="184" branch="false"/>
+							</lines>
+						</method>
+						<method name="output" signature="()Lcom/github/dakusui/thincrest/metamor/Dataset;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="93" hits="230" branch="false"/>
+							</lines>
+						</method>
+						<method name="prefix" signature="()Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="83" hits="184" branch="false"/>
+							</lines>
+						</method>
+						<method name="toString" signature="()Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="99" hits="184" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="75" hits="46" branch="false"/>
+						<line number="76" hits="46" branch="false"/>
+						<line number="77" hits="46" branch="false"/>
+						<line number="78" hits="46" branch="false"/>
+						<line number="79" hits="46" branch="false"/>
+						<line number="83" hits="184" branch="false"/>
+						<line number="88" hits="184" branch="false"/>
+						<line number="93" hits="230" branch="false"/>
+						<line number="99" hits="184" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.IoContext$Ongoing" filename="com/github/dakusui/thincrest/metamor/IoContext.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+					</methods>
+					<lines>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.IoContext$Ongoing$Impl" filename="com/github/dakusui/thincrest/metamor/IoContext.java" line-rate="1.0" branch-rate="0.75" complexity="0.0">
+					<methods>
+						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="138" hits="99" branch="false"/>
+							</lines>
+						</method>
+						<method name="&lt;init&gt;" signature="(Ljava/lang/String;Lcom/github/dakusui/thincrest/metamor/Dataset;Lcom/github/dakusui/thincrest/metamor/Dataset;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="149" hits="92" branch="false"/>
+								<line number="150" hits="92" branch="false"/>
+								<line number="151" hits="92" branch="false"/>
+								<line number="152" hits="92" branch="false"/>
+								<line number="153" hits="92" branch="false"/>
+							</lines>
+						</method>
+						<method name="&lt;init&gt;" signature="(Ljava/lang/String;Lcom/github/dakusui/thincrest/metamor/Dataset;Ljava/lang/String;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="143" hits="46" branch="false"/>
+								<line number="144" hits="46" branch="false"/>
+								<line number="145" hits="46" branch="false"/>
+								<line number="146" hits="46" branch="false"/>
+								<line number="147" hits="46" branch="false"/>
+							</lines>
+						</method>
+						<method name="input" signature="()Lcom/github/dakusui/thincrest/metamor/Dataset;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="162" hits="276" branch="false"/>
+							</lines>
+						</method>
+						<method name="output" signature="()Lcom/github/dakusui/thincrest/metamor/Dataset$OnGoing;" line-rate="1.0" branch-rate="0.5" complexity="0">
+							<lines>
+								<line number="167" hits="328" branch="true" condition-coverage="50% (2/4)">
+									<conditions>
+										<condition number="0" type="jump" coverage="50%"/>
+										<condition number="1" type="jump" coverage="50%"/>
+									</conditions>
+								</line>
+								<line number="168" hits="328" branch="false"/>
+							</lines>
+						</method>
+						<method name="output" signature="()Lcom/github/dakusui/thincrest/metamor/Dataset;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="prefix" signature="()Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="157" hits="184" branch="false"/>
+							</lines>
+						</method>
+						<method name="snapshot" signature="()Ljava/lang/Object;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="173" hits="414" branch="true" condition-coverage="100% (2/2)">
+									<conditions>
+										<condition number="0" type="jump" coverage="100%"/>
+									</conditions>
+								</line>
+								<line number="174" hits="92" branch="false"/>
+								<line number="180" hits="322" branch="false"/>
+							</lines>
+						</method>
+						<method name="toString" signature="()Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="185" hits="322" branch="true" condition-coverage="100% (2/2)">
+									<conditions>
+										<condition number="0" type="jump" coverage="100%"/>
+									</conditions>
+								</line>
+								<line number="186" hits="92" branch="false"/>
+								<line number="187" hits="230" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="138" hits="99" branch="false"/>
+						<line number="143" hits="46" branch="false"/>
+						<line number="144" hits="46" branch="false"/>
+						<line number="145" hits="46" branch="false"/>
+						<line number="146" hits="46" branch="false"/>
+						<line number="147" hits="46" branch="false"/>
+						<line number="149" hits="92" branch="false"/>
+						<line number="150" hits="92" branch="false"/>
+						<line number="151" hits="92" branch="false"/>
+						<line number="152" hits="92" branch="false"/>
+						<line number="153" hits="92" branch="false"/>
+						<line number="157" hits="184" branch="false"/>
+						<line number="162" hits="276" branch="false"/>
+						<line number="167" hits="328" branch="true" condition-coverage="50% (2/4)">
+							<conditions>
+								<condition number="0" type="jump" coverage="50%"/>
+								<condition number="1" type="jump" coverage="50%"/>
+							</conditions>
+						</line>
+						<line number="168" hits="328" branch="false"/>
+						<line number="173" hits="414" branch="true" condition-coverage="100% (2/2)">
+							<conditions>
+								<condition number="0" type="jump" coverage="100%"/>
+							</conditions>
+						</line>
+						<line number="174" hits="92" branch="false"/>
+						<line number="180" hits="322" branch="false"/>
+						<line number="185" hits="322" branch="true" condition-coverage="100% (2/2)">
+							<conditions>
+								<condition number="0" type="jump" coverage="100%"/>
+							</conditions>
+						</line>
+						<line number="186" hits="92" branch="false"/>
+						<line number="187" hits="230" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.IoContext$Ongoing$Impl$1" filename="com/github/dakusui/thincrest/metamor/IoContext.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Lcom/github/dakusui/thincrest/metamor/IoContext$Ongoing$Impl;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="174" hits="92" branch="false"/>
+							</lines>
+						</method>
+						<method name="toString" signature="()Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="177" hits="46" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="174" hits="92" branch="false"/>
+						<line number="177" hits="46" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.IoContext$Ongoing$Snapshot" filename="com/github/dakusui/thincrest/metamor/IoContext.java" line-rate="0.8571428571428571" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Ljava/lang/Object;Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="120" hits="322" branch="false"/>
+								<line number="121" hits="322" branch="false"/>
+								<line number="122" hits="322" branch="false"/>
+								<line number="123" hits="322" branch="false"/>
+							</lines>
+						</method>
+						<method name="in" signature="()Ljava/lang/Object;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="126" hits="138" branch="false"/>
+							</lines>
+						</method>
+						<method name="out" signature="()Ljava/lang/Object;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="130" hits="92" branch="false"/>
+							</lines>
+						</method>
+						<method name="toString" signature="()Ljava/lang/String;" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="134" hits="0" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="120" hits="322" branch="false"/>
+						<line number="121" hits="322" branch="false"/>
+						<line number="122" hits="322" branch="false"/>
+						<line number="123" hits="322" branch="false"/>
+						<line number="126" hits="138" branch="false"/>
+						<line number="130" hits="92" branch="false"/>
+						<line number="134" hits="0" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.IoContext$Utils" filename="com/github/dakusui/thincrest/metamor/IoContext.java" line-rate="1.0" branch-rate="0.75" complexity="0.0">
+					<methods>
+						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="23" hits="1" branch="false"/>
+							</lines>
+						</method>
+						<method name="&lt;init&gt;" signature="(Ljava/lang/String;I)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="getOngoingOngoingFunction" signature="(Ljava/util/function/Function;ILjava/util/function/IntFunction;)Ljava/util/function/Function;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="49" hits="92" branch="false"/>
+							</lines>
+						</method>
+						<method name="lambda$getOngoingOngoingFunction$1" signature="(Ljava/util/function/Function;Ljava/util/function/IntFunction;I)Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="50" hits="782" branch="false"/>
+							</lines>
+						</method>
+						<method name="lambda$getOngoingOngoingFunction$2" signature="(ILjava/util/function/Function;Lcom/github/dakusui/thincrest/metamor/IoContext$Ongoing;)Lcom/github/dakusui/thincrest/metamor/IoContext$Ongoing;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="52" hits="92" branch="false"/>
+								<line number="53" hits="92" branch="false"/>
+								<line number="54" hits="92" branch="false"/>
+								<line number="55" hits="92" branch="false"/>
+							</lines>
+						</method>
+						<method name="lambda$toCloseFunction$3" signature="(Ljava/lang/String;)Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="61" hits="437" branch="false"/>
+							</lines>
+						</method>
+						<method name="lambda$toContextFunction$0" signature="(Ljava/lang/String;Ljava/lang/String;Lcom/github/dakusui/thincrest/metamor/Dataset;)Lcom/github/dakusui/thincrest/metamor/IoContext$Ongoing;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="27" hits="92" branch="false"/>
+							</lines>
+						</method>
+						<method name="lambda$toOutputExtractorFunction$4" signature="(Ljava/lang/String;)Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="65" hits="437" branch="false"/>
+							</lines>
+						</method>
+						<method name="mapperToEndomorphicProcessor" signature="(Ljava/util/function/Function;ILjava/util/function/IntFunction;)Ljava/util/function/Function;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="45" hits="92" branch="false"/>
+							</lines>
+						</method>
+						<method name="toCloseFunction" signature="(Ljava/lang/String;)Ljava/util/function/Function;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="toContextEndomorphicFunction" signature="(Ljava/util/function/Function;ILjava/util/function/IntFunction;)Ljava/util/function/Function;" line-rate="1.0" branch-rate="0.75" complexity="0">
+							<lines>
+								<line number="31" hits="46" branch="false"/>
+								<line number="32" hits="46" branch="false"/>
+								<line number="33" hits="138" branch="true" condition-coverage="100% (2/2)">
+									<conditions>
+										<condition number="0" type="jump" coverage="100%"/>
+									</conditions>
+								</line>
+								<line number="34" hits="92" branch="false"/>
+								<line number="35" hits="92" branch="true" condition-coverage="100% (2/2)">
+									<conditions>
+										<condition number="0" type="jump" coverage="100%"/>
+									</conditions>
+								</line>
+								<line number="36" hits="46" branch="false"/>
+								<line number="38" hits="46" branch="false"/>
+								<line number="40" hits="46" branch="true" condition-coverage="50% (2/4)">
+									<conditions>
+										<condition number="0" type="jump" coverage="50%"/>
+										<condition number="1" type="jump" coverage="50%"/>
+									</conditions>
+								</line>
+								<line number="41" hits="46" branch="false"/>
+							</lines>
+						</method>
+						<method name="toContextFunction" signature="(Ljava/lang/String;Ljava/lang/String;)Ljava/util/function/Function;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="toOutputExtractorFunction" signature="(Ljava/lang/String;)Ljava/util/function/Function;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="valueOf" signature="(Ljava/lang/String;)Lcom/github/dakusui/thincrest/metamor/IoContext$Utils;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="values" signature="()[Lcom/github/dakusui/thincrest/metamor/IoContext$Utils;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="23" hits="1" branch="false"/>
+						<line number="27" hits="92" branch="false"/>
+						<line number="31" hits="46" branch="false"/>
+						<line number="32" hits="46" branch="false"/>
+						<line number="33" hits="138" branch="true" condition-coverage="100% (2/2)">
+							<conditions>
+								<condition number="0" type="jump" coverage="100%"/>
+							</conditions>
+						</line>
+						<line number="34" hits="92" branch="false"/>
+						<line number="35" hits="92" branch="true" condition-coverage="100% (2/2)">
+							<conditions>
+								<condition number="0" type="jump" coverage="100%"/>
+							</conditions>
+						</line>
+						<line number="36" hits="46" branch="false"/>
+						<line number="38" hits="46" branch="false"/>
+						<line number="40" hits="46" branch="true" condition-coverage="50% (2/4)">
+							<conditions>
+								<condition number="0" type="jump" coverage="50%"/>
+								<condition number="1" type="jump" coverage="50%"/>
+							</conditions>
+						</line>
+						<line number="41" hits="46" branch="false"/>
+						<line number="45" hits="92" branch="false"/>
+						<line number="49" hits="92" branch="false"/>
+						<line number="50" hits="782" branch="false"/>
+						<line number="52" hits="92" branch="false"/>
+						<line number="53" hits="92" branch="false"/>
+						<line number="54" hits="92" branch="false"/>
+						<line number="55" hits="92" branch="false"/>
+						<line number="61" hits="437" branch="false"/>
+						<line number="65" hits="437" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.IoPair" filename="com/github/dakusui/thincrest/metamor/IoPair.java" line-rate="1.0" branch-rate="1.0" complexity="1.0">
+					<methods>
+					</methods>
+					<lines>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.IoPair$Impl" filename="com/github/dakusui/thincrest/metamor/IoPair.java" line-rate="0.8571428571428571" branch-rate="1.0" complexity="1.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Ljava/lang/Object;Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="13" hits="52" branch="false"/>
+								<line number="14" hits="52" branch="false"/>
+								<line number="15" hits="52" branch="false"/>
+								<line number="16" hits="52" branch="false"/>
+							</lines>
+						</method>
+						<method name="input" signature="()Ljava/lang/Object;" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="20" hits="0" branch="false"/>
+							</lines>
+						</method>
+						<method name="output" signature="()Ljava/lang/Object;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="25" hits="52" branch="false"/>
+							</lines>
+						</method>
+						<method name="toString" signature="()Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="29" hits="726" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="13" hits="52" branch="false"/>
+						<line number="14" hits="52" branch="false"/>
+						<line number="15" hits="52" branch="false"/>
+						<line number="16" hits="52" branch="false"/>
+						<line number="20" hits="0" branch="false"/>
+						<line number="25" hits="52" branch="false"/>
+						<line number="29" hits="726" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.MetamorphicTestCaseFactory$BuilderBase$1" filename="com/github/dakusui/thincrest/metamor/MetamorphicTestCaseFactory.java" line-rate="0.75" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Lcom/github/dakusui/thincrest/metamor/MetamorphicTestCaseFactory$BuilderBase;Lcom/github/dakusui/thincrest/metamor/MetamorphicTestCaseFactory$BuilderBase;Lcom/github/dakusui/thincrest/metamor/InputResolver$Sequence$Factory;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="add" signature="(Ljava/util/function/Function;Ljava/util/function/Function;)V" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="234" hits="0" branch="false"/>
+							</lines>
+						</method>
+						<method name="count" signature="()I" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="239" hits="8" branch="false"/>
+							</lines>
+						</method>
+						<method name="get" signature="()Lcom/github/dakusui/thincrest/metamor/InputResolver$Sequence$Factory;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="229" hits="16" branch="false"/>
+							</lines>
+						</method>
+						<method name="get" signature="()Ljava/lang/Object;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="225" hits="32" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="225" hits="32" branch="false"/>
+						<line number="229" hits="16" branch="false"/>
+						<line number="234" hits="0" branch="false"/>
+						<line number="239" hits="8" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.MetamorphicTestCaseFactory$BuilderBase$2" filename="com/github/dakusui/thincrest/metamor/MetamorphicTestCaseFactory.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Lcom/github/dakusui/thincrest/metamor/MetamorphicTestCaseFactory$BuilderBase;Lcom/github/dakusui/thincrest/metamor/MetamorphicTestCaseFactory$BuilderBase;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="259" hits="10" branch="false"/>
+								<line number="260" hits="10" branch="false"/>
+							</lines>
+						</method>
+						<method name="add" signature="(Ljava/util/function/Function;Ljava/util/function/Function;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="266" hits="20" branch="false"/>
+								<line number="267" hits="20" branch="false"/>
+							</lines>
+						</method>
+						<method name="count" signature="()I" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="271" hits="8" branch="false"/>
+							</lines>
+						</method>
+						<method name="get" signature="()Lcom/github/dakusui/thincrest/metamor/InputResolver$Sequence$Factory;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="276" hits="10" branch="false"/>
+								<line number="277" hits="10" branch="false"/>
+								<line number="278" hits="10" branch="false"/>
+							</lines>
+						</method>
+						<method name="get" signature="()Ljava/lang/Object;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="258" hits="20" branch="false"/>
+							</lines>
+						</method>
+						<method name="lambda$$0" signature="(Lcom/github/dakusui/thincrest/metamor/InputResolver$Sequence$Factory$Builder;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="261" hits="10" branch="false"/>
+							</lines>
+						</method>
+						<method name="lambda$add$1" signature="(Ljava/util/function/Function;Ljava/util/function/Function;Lcom/github/dakusui/thincrest/metamor/InputResolver$Sequence$Factory$Builder;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="265" hits="40" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="258" hits="20" branch="false"/>
+						<line number="259" hits="10" branch="false"/>
+						<line number="260" hits="10" branch="false"/>
+						<line number="261" hits="10" branch="false"/>
+						<line number="265" hits="40" branch="false"/>
+						<line number="266" hits="20" branch="false"/>
+						<line number="267" hits="20" branch="false"/>
+						<line number="271" hits="8" branch="false"/>
+						<line number="276" hits="10" branch="false"/>
+						<line number="277" hits="10" branch="false"/>
+						<line number="278" hits="10" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.MetamorphicTestCaseFactory$BuilderBase$InputResolverSequenceFactoryProvider" filename="com/github/dakusui/thincrest/metamor/MetamorphicTestCaseFactory.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Lcom/github/dakusui/thincrest/metamor/MetamorphicTestCaseFactory$BuilderBase;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="151" hits="26" branch="false"/>
+								<line number="152" hits="26" branch="false"/>
+								<line number="153" hits="26" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="151" hits="26" branch="false"/>
+						<line number="152" hits="26" branch="false"/>
+						<line number="153" hits="26" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.MetamorphicTestCaseFactory$Impl" filename="com/github/dakusui/thincrest/metamor/MetamorphicTestCaseFactory.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Ljava/util/function/Function;Lcom/github/dakusui/thincrest/metamor/InputResolver$Sequence$Factory;Ljava/util/function/Function;Ljava/util/function/Predicate;Ljava/lang/String;Ljava/lang/String;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="106" hits="6" branch="false"/>
+								<line number="107" hits="6" branch="false"/>
+								<line number="108" hits="6" branch="false"/>
+								<line number="109" hits="6" branch="false"/>
+								<line number="110" hits="6" branch="false"/>
+								<line number="111" hits="6" branch="false"/>
+								<line number="112" hits="6" branch="false"/>
+								<line number="113" hits="6" branch="false"/>
+							</lines>
+						</method>
+						<method name="fut" signature="()Ljava/util/function/Function;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="117" hits="114" branch="false"/>
+							</lines>
+						</method>
+						<method name="inputResolverSequenceFactory" signature="()Lcom/github/dakusui/thincrest/metamor/InputResolver$Sequence$Factory;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="122" hits="12" branch="false"/>
+							</lines>
+						</method>
+						<method name="inputVariableName" signature="()Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="137" hits="102" branch="false"/>
+							</lines>
+						</method>
+						<method name="ioVariableName" signature="()Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="142" hits="6" branch="false"/>
+							</lines>
+						</method>
+						<method name="metamorphicChecker" signature="()Ljava/util/function/Predicate;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="132" hits="6" branch="false"/>
+							</lines>
+						</method>
+						<method name="metamorphicTransformer" signature="()Ljava/util/function/Function;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="127" hits="6" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="106" hits="6" branch="false"/>
+						<line number="107" hits="6" branch="false"/>
+						<line number="108" hits="6" branch="false"/>
+						<line number="109" hits="6" branch="false"/>
+						<line number="110" hits="6" branch="false"/>
+						<line number="111" hits="6" branch="false"/>
+						<line number="112" hits="6" branch="false"/>
+						<line number="113" hits="6" branch="false"/>
+						<line number="117" hits="114" branch="false"/>
+						<line number="122" hits="12" branch="false"/>
+						<line number="127" hits="6" branch="false"/>
+						<line number="132" hits="6" branch="false"/>
+						<line number="137" hits="102" branch="false"/>
+						<line number="142" hits="6" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.MetamorphicTestCaseFactoryWithPreformer" filename="com/github/dakusui/thincrest/metamor/MetamorphicTestCaseFactoryWithPreformer.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+					</methods>
+					<lines>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.MetamorphicTestCaseFactoryWithPreformer$Impl" filename="com/github/dakusui/thincrest/metamor/MetamorphicTestCaseFactoryWithPreformer.java" line-rate="0.9444444444444444" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;init&gt;" signature="(Ljava/util/function/Function;Lcom/github/dakusui/thincrest/metamor/InputResolver$Sequence$Factory;Ljava/util/function/Function;Ljava/util/function/Function;Ljava/util/function/Predicate;Ljava/lang/String;Ljava/lang/String;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="55" hits="20" branch="false"/>
+								<line number="56" hits="20" branch="false"/>
+								<line number="57" hits="20" branch="false"/>
+								<line number="58" hits="20" branch="false"/>
+								<line number="59" hits="20" branch="false"/>
+								<line number="60" hits="20" branch="false"/>
+								<line number="61" hits="20" branch="false"/>
+								<line number="62" hits="20" branch="false"/>
+								<line number="63" hits="20" branch="false"/>
+							</lines>
+						</method>
+						<method name="fut" signature="()Ljava/util/function/Function;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="68" hits="380" branch="false"/>
+							</lines>
+						</method>
+						<method name="inputResolverSequenceFactory" signature="()Lcom/github/dakusui/thincrest/metamor/InputResolver$Sequence$Factory;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="73" hits="60" branch="false"/>
+							</lines>
+						</method>
+						<method name="inputVariableName" signature="()Ljava/lang/String;" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="93" hits="0" branch="false"/>
+							</lines>
+						</method>
+						<method name="inputVariableNameFormatter" signature="()Ljava/util/function/IntFunction;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="ioVariableName" signature="()Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="103" hits="40" branch="false"/>
+							</lines>
+						</method>
+						<method name="ioVariableNameFormatter" signature="()Ljava/util/function/IntFunction;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="lambda$inputVariableNameFormatter$1" signature="(I)Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="98" hits="360" branch="false"/>
+							</lines>
+						</method>
+						<method name="lambda$ioVariableNameFormatter$2" signature="(I)Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="108" hits="360" branch="false"/>
+							</lines>
+						</method>
+						<method name="lambda$metamorphicReducer$0" signature="()Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="83" hits="190" branch="false"/>
+							</lines>
+						</method>
+						<method name="metamorphicChecker" signature="()Ljava/util/function/Predicate;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="88" hits="20" branch="false"/>
+							</lines>
+						</method>
+						<method name="metamorphicPreformer" signature="()Ljava/util/function/Function;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="78" hits="20" branch="false"/>
+							</lines>
+						</method>
+						<method name="metamorphicReducer" signature="()Ljava/util/function/Function;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="55" hits="20" branch="false"/>
+						<line number="56" hits="20" branch="false"/>
+						<line number="57" hits="20" branch="false"/>
+						<line number="58" hits="20" branch="false"/>
+						<line number="59" hits="20" branch="false"/>
+						<line number="60" hits="20" branch="false"/>
+						<line number="61" hits="20" branch="false"/>
+						<line number="62" hits="20" branch="false"/>
+						<line number="63" hits="20" branch="false"/>
+						<line number="68" hits="380" branch="false"/>
+						<line number="73" hits="60" branch="false"/>
+						<line number="78" hits="20" branch="false"/>
+						<line number="83" hits="190" branch="false"/>
+						<line number="88" hits="20" branch="false"/>
+						<line number="93" hits="0" branch="false"/>
+						<line number="98" hits="360" branch="false"/>
+						<line number="103" hits="40" branch="false"/>
+						<line number="108" hits="360" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.Proposition" filename="com/github/dakusui/thincrest/metamor/Proposition.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+					</methods>
+					<lines>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.Proposition$Factory" filename="com/github/dakusui/thincrest/metamor/Proposition.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+					</methods>
+					<lines>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.PropositionPredicate" filename="com/github/dakusui/thincrest/metamor/PropositionPredicate.java" line-rate="1.0" branch-rate="1.0" complexity="0.0">
+					<methods>
+						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="11" hits="1" branch="false"/>
+							</lines>
+						</method>
+						<method name="&lt;init&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="15" hits="1" branch="false"/>
+							</lines>
+						</method>
+						<method name="lambda$new$0" signature="()Ljava/lang/String;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="14" hits="118" branch="false"/>
+							</lines>
+						</method>
+						<method name="predicate" signature="()Ljava/util/function/Predicate;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="19" hits="18" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="11" hits="1" branch="false"/>
+						<line number="14" hits="118" branch="false"/>
+						<line number="15" hits="1" branch="false"/>
+						<line number="19" hits="18" branch="false"/>
+					</lines>
+				</class>
+				<class name="com.github.dakusui.thincrest.metamor.Utils" filename="com/github/dakusui/thincrest/metamor/Utils.java" line-rate="0.42857142857142855" branch-rate="0.25" complexity="3.0">
+					<methods>
+						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="3" hits="1" branch="false"/>
+							</lines>
+						</method>
+						<method name="&lt;init&gt;" signature="(Ljava/lang/String;I)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="requireArgument" signature="(ZLjava/lang/String;)V" line-rate="0.0" branch-rate="0.0" complexity="0">
+							<lines>
+								<line number="11" hits="0" branch="true" condition-coverage="0% (0/2)">
+									<conditions>
+										<condition number="0" type="jump" coverage="0%"/>
+									</conditions>
+								</line>
+								<line number="12" hits="0" branch="false"/>
+								<line number="13" hits="0" branch="false"/>
+							</lines>
+						</method>
+						<method name="requireState" signature="(ZLjava/lang/String;)V" line-rate="0.6666666666666666" branch-rate="0.5" complexity="0">
+							<lines>
+								<line number="7" hits="16" branch="true" condition-coverage="50% (1/2)">
+									<conditions>
+										<condition number="0" type="jump" coverage="50%"/>
+									</conditions>
+								</line>
+								<line number="8" hits="0" branch="false"/>
+								<line number="9" hits="16" branch="false"/>
+							</lines>
+						</method>
+						<method name="valueOf" signature="(Ljava/lang/String;)Lcom/github/dakusui/thincrest/metamor/Utils;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="values" signature="()[Lcom/github/dakusui/thincrest/metamor/Utils;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="3" hits="1" branch="false"/>
+						<line number="7" hits="16" branch="true" condition-coverage="50% (1/2)">
+							<conditions>
+								<condition number="0" type="jump" coverage="50%"/>
+							</conditions>
+						</line>
+						<line number="8" hits="0" branch="false"/>
+						<line number="9" hits="16" branch="false"/>
+						<line number="11" hits="0" branch="true" condition-coverage="0% (0/2)">
+							<conditions>
+								<condition number="0" type="jump" coverage="0%"/>
+							</conditions>
+						</line>
+						<line number="12" hits="0" branch="false"/>
+						<line number="13" hits="0" branch="false"/>
+					</lines>
+				</class>
+			</classes>
+		</package>
+		<package name="com.github.dakusui.thincrest.metamor.internals" line-rate="1.0" branch-rate="1.0" complexity="1.0">
+			<classes>
+				<class name="com.github.dakusui.thincrest.metamor.internals.InternalUtils" filename="com/github/dakusui/thincrest/metamor/internals/InternalUtils.java" line-rate="1.0" branch-rate="1.0" complexity="1.0">
+					<methods>
+						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="11" hits="1" branch="false"/>
+							</lines>
+						</method>
+						<method name="&lt;init&gt;" signature="(Ljava/lang/String;I)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="createObservableProcessingPipeline" signature="(Ljava/lang/String;Ljava/util/function/Function;ILjava/util/function/IntFunction;Ljava/lang/String;)Ljava/util/function/Function;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="15" hits="92" branch="false"/>
+								<line number="16" hits="46" branch="false"/>
+								<line number="17" hits="46" branch="false"/>
+								<line number="18" hits="46" branch="false"/>
+							</lines>
+						</method>
+						<method name="valueOf" signature="(Ljava/lang/String;)Lcom/github/dakusui/thincrest/metamor/internals/InternalUtils;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="values" signature="()[Lcom/github/dakusui/thincrest/metamor/internals/InternalUtils;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="11" hits="1" branch="false"/>
+						<line number="15" hits="92" branch="false"/>
+						<line number="16" hits="46" branch="false"/>
+						<line number="17" hits="46" branch="false"/>
+						<line number="18" hits="46" branch="false"/>
+					</lines>
+				</class>
+			</classes>
+		</package>
+	</packages>
+</coverage>

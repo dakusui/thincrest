@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Proposition.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">thincrest</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.thincrest.metamor</a> &gt; <span class="el_source">Proposition.java</span></div><h1>Proposition.java</h1><pre class="source lang-java linenums">package com.github.dakusui.thincrest.metamor;
+
+import com.github.dakusui.thincrest_pcond.core.printable.PrintableFunction;
+
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
+
+import static java.util.Collections.emptyList;
+import static java.util.Objects.requireNonNull;
+
+public interface Proposition {
+  boolean evaluate();
+  
+  int arity();
+  
+  class Impl&lt;X&gt; implements Proposition {
+    final         Function&lt;Object[], String&gt; formatter;
+    private final Predicate&lt;Dataset&lt;X&gt;&gt;      predicate;
+    private final Dataset&lt;X&gt;                 dataset;
+    
+<span class="fc" id="L23">    public Impl(Predicate&lt;Dataset&lt;X&gt;&gt; predicate, Function&lt;Object[], String&gt; formatter, Dataset&lt;X&gt; dataset) {</span>
+<span class="fc" id="L24">      this.predicate = predicate;</span>
+<span class="fc" id="L25">      this.formatter = requireNonNull(formatter);</span>
+<span class="fc" id="L26">      this.dataset = requireNonNull(dataset);</span>
+<span class="fc" id="L27">    }</span>
+    
+    @Override
+    public boolean evaluate() {
+<span class="fc" id="L31">      return this.predicate.test(this.dataset);</span>
+    }
+    
+    @Override
+    public int arity() {
+<span class="fc" id="L36">      return this.dataset.size();</span>
+    }
+    
+    @Override
+    public String toString() {
+<span class="fc" id="L41">      return this.formatter.apply(IntStream.range(0, this.arity())</span>
+<span class="fc" id="L42">          .mapToObj(dataset::get)</span>
+<span class="fc" id="L43">          .toArray());</span>
+    }
+  }
+  
+  interface Factory&lt;X&gt; extends Function&lt;Dataset&lt;X&gt;, Proposition&gt; {
+
+    static &lt;X&gt; Factory&lt;X&gt; create(Predicate&lt;Dataset&lt;X&gt;&gt; predicate, Function&lt;Object[], String&gt; formatter, IntFunction&lt;String&gt; placeHolderFormatter, int arity) {
+<span class="fc" id="L50">      return new Impl&lt;&gt;(predicate, formatter, placeHolderFormatter, arity);</span>
+    }
+    
+    class Impl&lt;X&gt; extends PrintableFunction&lt;Dataset&lt;X&gt;, Proposition&gt; implements Factory&lt;X&gt; {
+      
+      protected Impl(Predicate&lt;Dataset&lt;X&gt;&gt; predicate, Function&lt;Object[], String&gt; formatter, IntFunction&lt;String&gt; placeHolderFormatter, int arity) {
+<span class="fc" id="L56">        super(</span>
+            new Object(),
+<span class="fc" id="L58">            emptyList(),</span>
+<span class="fc" id="L59">            () -&gt; formatter.apply(IntStream.range(0, arity).mapToObj(placeHolderFormatter).toArray()),</span>
+<span class="fc" id="L60">            ds -&gt; new Proposition.Impl&lt;&gt;(predicate, formatter, ds));</span>
+<span class="fc" id="L61">      }</span>
+      
+      @Override
+      public Proposition apply(Dataset&lt;X&gt; ds) {
+<span class="fc" id="L65">        return super.apply(ds);</span>
+      }
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

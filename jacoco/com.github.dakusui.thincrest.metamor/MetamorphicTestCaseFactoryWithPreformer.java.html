@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MetamorphicTestCaseFactoryWithPreformer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">thincrest</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.thincrest.metamor</a> &gt; <span class="el_source">MetamorphicTestCaseFactoryWithPreformer.java</span></div><h1>MetamorphicTestCaseFactoryWithPreformer.java</h1><pre class="source lang-java linenums">package com.github.dakusui.thincrest.metamor;
+
+
+import com.github.dakusui.thincrest.metamor.internals.InternalUtils;
+import com.github.dakusui.thincrest_pcond.forms.Printables;
+
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.Predicate;
+
+import static java.util.Objects.requireNonNull;
+
+public interface MetamorphicTestCaseFactoryWithPreformer&lt;X, I, O, P, R&gt; extends MetamorphicTestCaseFactory&lt;X, I, O, R&gt; {
+  Function&lt;IoPair&lt;I, O&gt;, P&gt; metamorphicPreformer();
+
+  Function&lt;Dataset&lt;P&gt;, R&gt; metamorphicReducer();
+
+  @Override
+  default Function&lt;Dataset&lt;IoPair&lt;I, O&gt;&gt;, R&gt; metamorphicTransformer() {
+<span class="fc" id="L23">    return metamorphicPreformerStage().andThen(metamorphicReducer());</span>
+  }
+
+  default Function&lt;Dataset&lt;IoPair&lt;I, O&gt;&gt;, Dataset&lt;P&gt;&gt; metamorphicPreformerStage() {
+<span class="fc" id="L27">    return InternalUtils.createObservableProcessingPipeline(</span>
+        &quot;preform&quot;,
+<span class="fc" id="L29">        metamorphicPreformerToIoContextCallback(metamorphicPreformer()),</span>
+<span class="fc" id="L30">        inputResolverSequenceFactory().count(),</span>
+<span class="fc" id="L31">        ioVariableNameFormatter(),</span>
+<span class="fc" id="L32">        ioVariableName());</span>
+  }
+
+  default Function&lt;IoContext&lt;IoPair&lt;I, O&gt;, P&gt;, Function&lt;IoPair&lt;I, O&gt;, P&gt;&gt; metamorphicPreformerToIoContextCallback(Function&lt;IoPair&lt;I, O&gt;, P&gt; preformer) {
+<span class="fc" id="L36">    return Printables.function(</span>
+<span class="fc" id="L37">        () -&gt; &quot;  &quot; + preformer,</span>
+<span class="fc" id="L38">        c -&gt; Printables.function(</span>
+<span class="nc" id="L39">            () -&gt; String.format(&quot;preform[%s]:%s&quot;, c, preformer),</span>
+            preformer));
+  }
+
+  IntFunction&lt;String&gt; ioVariableNameFormatter();
+
+  class Impl&lt;X, I, O, P, R&gt; implements MetamorphicTestCaseFactoryWithPreformer&lt;X, I, O, P, R&gt; {
+
+    private final Function&lt;I, O&gt;                          fut;
+    private final InputResolver.Sequence.Factory&lt;X, I, O&gt; inputResolverSequenceFactory;
+    private final Function&lt;IoPair&lt;I, O&gt;, P&gt;               preformer;
+    private final Function&lt;Dataset&lt;P&gt;, R&gt;                 reducer;
+    private final Predicate&lt;R&gt;                            checker;
+    private final String                                  ioVariableName;
+    private final String                                  inputVariableName;
+
+<span class="fc" id="L55">    public Impl(Function&lt;I, O&gt; fut, InputResolver.Sequence.Factory&lt;X, I, O&gt; inputResolverSequenceFactory, Function&lt;IoPair&lt;I, O&gt;, P&gt; preformer, Function&lt;Dataset&lt;P&gt;, R&gt; reducer, Predicate&lt;R&gt; checker, String inputVariableName, String ioVariableName) {</span>
+<span class="fc" id="L56">      this.fut = requireNonNull(fut);</span>
+<span class="fc" id="L57">      this.inputResolverSequenceFactory = inputResolverSequenceFactory;</span>
+<span class="fc" id="L58">      this.preformer = requireNonNull(preformer);</span>
+<span class="fc" id="L59">      this.reducer = requireNonNull(reducer);</span>
+<span class="fc" id="L60">      this.checker = requireNonNull(checker);</span>
+<span class="fc" id="L61">      this.inputVariableName = requireNonNull(inputVariableName);</span>
+<span class="fc" id="L62">      this.ioVariableName = requireNonNull(ioVariableName);</span>
+<span class="fc" id="L63">    }</span>
+
+
+    @Override
+    public Function&lt;I, O&gt; fut() {
+<span class="fc" id="L68">      return this.fut;</span>
+    }
+
+    @Override
+    public InputResolver.Sequence.Factory&lt;X, I, O&gt; inputResolverSequenceFactory() {
+<span class="fc" id="L73">      return this.inputResolverSequenceFactory;</span>
+    }
+
+    @Override
+    public Function&lt;IoPair&lt;I, O&gt;, P&gt; metamorphicPreformer() {
+<span class="fc" id="L78">      return this.preformer;</span>
+    }
+
+    @Override
+    public Function&lt;Dataset&lt;P&gt;, R&gt; metamorphicReducer() {
+<span class="fc" id="L83">      return Printables.function(() -&gt; &quot;reduce:&quot; + reducer, this.reducer);</span>
+    }
+
+    @Override
+    public Predicate&lt;R&gt; metamorphicChecker() {
+<span class="fc" id="L88">      return this.checker;</span>
+    }
+
+    @Override
+    public String inputVariableName() {
+<span class="nc" id="L93">      return this.inputVariableName;</span>
+    }
+
+    @Override
+    public IntFunction&lt;String&gt; inputVariableNameFormatter() {
+<span class="fc" id="L98">      return i -&gt; this.inputVariableName + &quot;[&quot; + i + &quot;]&quot;;</span>
+    }
+
+    @Override
+    public String ioVariableName() {
+<span class="fc" id="L103">      return this.ioVariableName;</span>
+    }
+
+    @Override
+    public IntFunction&lt;String&gt; ioVariableNameFormatter() {
+<span class="fc" id="L108">      return i -&gt; this.ioVariableName + &quot;[&quot; + i + &quot;]&quot;;</span>
+    }
+  }
+
+  class Builder&lt;X, I, O, P, R&gt; extends BuilderBase&lt;Builder&lt;X, I, O, P, R&gt;, X, I, O, R&gt; {
+    private Function&lt;Dataset&lt;P&gt;, R&gt;   reducer;
+    private Function&lt;IoPair&lt;I, O&gt;, P&gt; preformer;
+
+<span class="fc" id="L116">    public Builder() {</span>
+<span class="fc" id="L117">    }</span>
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    @Override
+    public &lt;BB extends BuilderBase&lt;BB, XX, I, O, R&gt;, XX&gt; BB sourceValueType(XX sourceType) {
+<span class="nc" id="L122">      return (BB) this.&lt;Builder&lt;XX, I, O, P, R&gt;, XX&gt;newBuilderWithSpecifiedSourceType(Builder::new);</span>
+    }
+
+    @Override
+    public &lt;PP&gt; Builder&lt;X, I, O, PP, R&gt; preformer(Function&lt;IoPair&lt;I, O&gt;, PP&gt; preformer) {
+<span class="fc" id="L127">      Builder&lt;X, I, O, PP, R&gt; ret = this.withPreformer();</span>
+<span class="fc" id="L128">      ret.preformer = preformer;</span>
+<span class="fc" id="L129">      return ret;</span>
+    }
+
+    public &lt;QQ&gt; Builder&lt;X, I, O, QQ, R&gt; preform(Function&lt;P, QQ&gt; preformer) {
+<span class="fc" id="L133">      Function&lt;IoPair&lt;I, O&gt;, P&gt; currentPreformer = this.preformer;</span>
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">      if (currentPreformer == null)</span>
+<span class="nc" id="L135">        throw new IllegalStateException();</span>
+<span class="fc" id="L136">      Builder&lt;X, I, O, QQ, R&gt; ret = this.withPreformer();</span>
+<span class="fc" id="L137">      ret.preformer = currentPreformer.andThen(preformer);</span>
+<span class="fc" id="L138">      return ret;</span>
+    }
+
+    public &lt;QQ&gt; Builder&lt;X, I, O, QQ, R&gt; preform(String name, Function&lt;P, QQ&gt; preformer) {
+<span class="fc" id="L142">      return this.preform(Printables.function(name, preformer));</span>
+    }
+
+    public Builder&lt;X, I, O, P, R&gt; reducer(Function&lt;Dataset&lt;P&gt;, R&gt; reducer) {
+<span class="fc" id="L146">      this.reducer = requireNonNull(reducer);</span>
+<span class="fc" id="L147">      return this;</span>
+    }
+
+    public Builder&lt;X, I, O, P, R&gt; reduce(Function&lt;Dataset&lt;P&gt;, R&gt; reducer) {
+<span class="fc" id="L151">      return this.reducer(reducer);</span>
+    }
+
+    public Builder&lt;X, I, O, P, R&gt; reduce(String reducerName, Function&lt;Dataset&lt;P&gt;, R&gt; reducer) {
+<span class="fc" id="L155">      return this.reduce(Printables.function(reducerName, reducer));</span>
+    }
+
+    public Builder&lt;X, I, O, P, Proposition&gt; propositionFactory(Function&lt;Dataset&lt;P&gt;, Proposition&gt; pf) {
+<span class="fc" id="L159">      return this</span>
+<span class="fc" id="L160">          .&lt;Builder&lt;X, I, O, P, Proposition&gt;, Proposition&gt;newBuilderWithSpecifiedRelationType(Builder::new)</span>
+<span class="fc" id="L161">          .preformer(this.preformer)</span>
+<span class="fc" id="L162">          .reducer(pf)</span>
+<span class="fc" id="L163">          .checker(PropositionPredicate.INSTANCE);</span>
+    }
+
+    public MetamorphicTestCaseFactory&lt;X, I, O, Proposition&gt; proposition(Function&lt;Object[], String&gt; propositionFormatter, Predicate&lt;Dataset&lt;P&gt;&gt; p) {
+<span class="fc" id="L167">      return this.propositionFactory(</span>
+<span class="fc" id="L168">          Proposition.Factory.create(</span>
+              p,
+              propositionFormatter,
+<span class="fc" id="L171">              i -&gt; this.outputVariableName + &quot;[&quot; + i + &quot;]&quot;,</span>
+<span class="fc" id="L172">              this.inputResolverSequenceFactoryProvider.count()))</span>
+<span class="fc" id="L173">          .build();</span>
+    }
+
+    public MetamorphicTestCaseFactory&lt;X, I, O, Proposition&gt; proposition(String propositionName, Predicate&lt;Dataset&lt;P&gt;&gt; p) {
+<span class="fc" id="L177">      return this.proposition(args -&gt; MessageFormat.format(propositionName, Arrays.stream(args).map(Objects::toString).toArray()), p);</span>
+    }
+
+    public MetamorphicTestCaseFactoryWithPreformer&lt;X, I, O, P, R&gt; build() {
+<span class="fc" id="L181">      return new Impl&lt;&gt;(fut, inputResolverSequenceFactoryProvider.get(), preformer, reducer, checker, inputVariableName, ioVariableName);</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

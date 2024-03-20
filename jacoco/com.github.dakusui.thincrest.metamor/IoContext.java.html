@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IoContext.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">thincrest</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.thincrest.metamor</a> &gt; <span class="el_source">IoContext.java</span></div><h1>IoContext.java</h1><pre class="source lang-java linenums">package com.github.dakusui.thincrest.metamor;
+
+import com.github.dakusui.thincrest_pcond.core.Evaluator;
+import com.github.dakusui.thincrest_pcond.core.printable.PrintableFunction;
+import com.github.dakusui.thincrest_pcond.forms.Printables;
+
+import java.util.function.Function;
+import java.util.function.IntFunction;
+
+import static java.util.Objects.requireNonNull;
+
+public interface IoContext&lt;I, O&gt; {
+  String prefix();
+  
+  default String name() {
+<span class="fc" id="L16">    return this.prefix() + &quot;:&quot; + this.input().name() + &quot;=&gt;&quot; + this.output().name();</span>
+  }
+  
+  Dataset&lt;I&gt; input();
+  
+  Dataset&lt;O&gt; output();
+  
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">  enum Utils {</span>
+    ;
+    
+    public static &lt;I, O&gt; Function&lt;Dataset&lt;I&gt;, Ongoing&lt;I, O&gt;&gt; toContextFunction(String contextName, String outputContextName) {
+<span class="fc" id="L27">      return Printables.function(&quot;begin:&quot; + contextName, input -&gt; new Ongoing.Impl&lt;&gt;(contextName, input, outputContextName));</span>
+    }
+    
+    public static &lt;I, O&gt; Function&lt;Ongoing&lt;I, O&gt;, Ongoing&lt;I, O&gt;&gt; toContextEndomorphicFunction(Function&lt;IoContext&lt;I, O&gt;, Function&lt;I, O&gt;&gt; mapper, int numItems, IntFunction&lt;String&gt; variableNameFormatter) {
+<span class="fc" id="L31">      requireNonNull(mapper);</span>
+<span class="fc" id="L32">      Function&lt;Ongoing&lt;I, O&gt;, Ongoing&lt;I, O&gt;&gt; ret = null;</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">      for (int i = 0; i &lt; numItems; i++) {</span>
+<span class="fc" id="L34">        Function&lt;Ongoing&lt;I, O&gt;, Ongoing&lt;I, O&gt;&gt; cur = mapperToEndomorphicProcessor(mapper, i, variableNameFormatter);</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if (ret == null) {</span>
+<span class="fc" id="L36">          ret = cur;</span>
+        } else
+<span class="fc" id="L38">          ret = ret.andThen(cur);</span>
+      }
+<span class="pc bpc" id="L40" title="2 of 4 branches missed.">      assert ret != null;</span>
+<span class="fc" id="L41">      return ret;</span>
+    }
+    
+    public static &lt;I, O&gt; Function&lt;Ongoing&lt;I, O&gt;, Ongoing&lt;I, O&gt;&gt; mapperToEndomorphicProcessor(Function&lt;IoContext&lt;I, O&gt;, Function&lt;I, O&gt;&gt; mapper, int i, IntFunction&lt;String&gt; variableNameFormatter) {
+<span class="fc" id="L45">      return getOngoingOngoingFunction(mapper, i, variableNameFormatter);</span>
+    }
+    
+    private static &lt;I, O&gt; Function&lt;Ongoing&lt;I, O&gt;, Ongoing&lt;I, O&gt;&gt; getOngoingOngoingFunction(Function&lt;IoContext&lt;I, O&gt;, Function&lt;I, O&gt;&gt; mapper, int i, IntFunction&lt;String&gt; variableNameFormatter) {
+<span class="fc" id="L49">      return Printables.function(</span>
+<span class="fc" id="L50">          () -&gt; String.format(&quot;%s(%s)&quot;, mapper, variableNameFormatter.apply(i)),</span>
+          c -&gt; {
+<span class="fc" id="L52">            I in = c.input().get(i);</span>
+<span class="fc" id="L53">            O out = mapper.apply(c).apply(in);</span>
+<span class="fc" id="L54">            c.output().add(out);</span>
+<span class="fc" id="L55">            return c.cloneObject();</span>
+          });
+    }
+    
+    public static &lt;I, O&gt; Function&lt;Ongoing&lt;I, O&gt;, IoContext&lt;I, O&gt;&gt; toCloseFunction(String contextName) {
+      // close
+<span class="fc" id="L61">      return ((PrintableFunction&lt;Ongoing&lt;I, O&gt;, IoContext&lt;I, O&gt;&gt;) Printables.&lt;Ongoing&lt;I, O&gt;, IoContext&lt;I, O&gt;&gt;function(() -&gt; &quot;end:&quot; + contextName, Ongoing::close)).makeTrivial();</span>
+    }
+    
+    public static &lt;I, O&gt; Function&lt;IoContext&lt;I, O&gt;, Dataset&lt;O&gt;&gt; toOutputExtractorFunction(String contextName) {
+<span class="fc" id="L65">      return Printables.function(() -&gt; &quot;output(&quot; + contextName + &quot;)&quot;, IoContext::output);</span>
+    }
+  }
+  
+  interface Closed&lt;I, O&gt; extends IoContext&lt;I, O&gt; {
+    class Impl&lt;I, O&gt; implements Closed&lt;I, O&gt; {
+      private final Dataset&lt;I&gt; input;
+      private final Dataset&lt;O&gt; output;
+      private final String     prefix;
+      
+<span class="fc" id="L75">      public Impl(String prefix, Dataset&lt;I&gt; input, Dataset&lt;O&gt; output) {</span>
+<span class="fc" id="L76">        this.prefix = prefix;</span>
+<span class="fc" id="L77">        this.input = input;</span>
+<span class="fc" id="L78">        this.output = output;</span>
+<span class="fc" id="L79">      }</span>
+  
+      @Override
+      public String prefix() {
+<span class="fc" id="L83">        return this.prefix;</span>
+      }
+      
+      @Override
+      public Dataset&lt;I&gt; input() {
+<span class="fc" id="L88">        return input;</span>
+      }
+      
+      @Override
+      public Dataset&lt;O&gt; output() {
+<span class="fc" id="L93">        return output;</span>
+      }
+      
+      
+      @Override
+      public String toString() {
+<span class="fc" id="L99">        return &quot;(context:&quot; + name() + &quot;)&quot;;</span>
+      }
+    }
+  }
+  
+  interface Ongoing&lt;I, O&gt; extends IoContext&lt;I, O&gt;, Evaluator.Snapshottable {
+    @Override
+    Dataset.OnGoing&lt;O&gt; output();
+    
+    default Ongoing&lt;I, O&gt; cloneObject() {
+<span class="fc" id="L109">      return new Impl&lt;&gt;(this.prefix(), input(), output());</span>
+    }
+    
+    default IoContext&lt;I, O&gt; close() {
+<span class="fc" id="L113">      return new Closed.Impl&lt;&gt;(this.prefix(), this.input(), this.output().close());</span>
+    }
+    
+    class Snapshot {
+      final private Object in;
+      final private Object out;
+      
+<span class="fc" id="L120">      public Snapshot(Object in, Object out) {</span>
+<span class="fc" id="L121">        this.in = in;</span>
+<span class="fc" id="L122">        this.out = out;</span>
+<span class="fc" id="L123">      }</span>
+      
+      public Object in() {
+<span class="fc" id="L126">        return this.in;</span>
+      }
+      
+      public Object out() {
+<span class="fc" id="L130">        return this.out;</span>
+      }
+      
+      public String toString() {
+<span class="nc" id="L134">        return String.format(&quot;%s=&gt;%s&quot;, this.in, this.out);</span>
+      }
+    }
+    
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">    class Impl&lt;I, O&gt; implements Ongoing&lt;I, O&gt; {</span>
+      private final String prefix;
+      private final Dataset&lt;I&gt;         input;
+      private final Dataset.OnGoing&lt;O&gt; output;
+      
+<span class="fc" id="L143">      public Impl(String prefix, Dataset&lt;I&gt; input, String outputDatasetName) {</span>
+<span class="fc" id="L144">        this.prefix = prefix;</span>
+<span class="fc" id="L145">        this.input = requireNonNull(input);</span>
+<span class="fc" id="L146">        this.output = new Dataset.OnGoing.Impl&lt;&gt;(outputDatasetName);</span>
+<span class="fc" id="L147">      }</span>
+      
+<span class="fc" id="L149">      public Impl(String prefix, Dataset&lt;I&gt; input, Dataset&lt;O&gt; output) {</span>
+<span class="fc" id="L150">        this.prefix = prefix;</span>
+<span class="fc" id="L151">        this.input = requireNonNull(input);</span>
+<span class="fc" id="L152">        this.output = new Dataset.OnGoing.Impl&lt;&gt;(output.name(), output);</span>
+<span class="fc" id="L153">      }</span>
+  
+      @Override
+      public String prefix() {
+<span class="fc" id="L157">        return this.prefix;</span>
+      }
+  
+      @Override
+      public Dataset&lt;I&gt; input() {
+<span class="fc" id="L162">        return this.input;</span>
+      }
+      
+      @Override
+      public Dataset.OnGoing&lt;O&gt; output() {
+<span class="pc bpc" id="L167" title="2 of 4 branches missed.">        assert this.output != null;</span>
+<span class="fc" id="L168">        return this.output;</span>
+      }
+      
+      @Override
+      public Object snapshot() {
+<span class="fc bfc" id="L173" title="All 2 branches covered.">        if (this.output.size() == 0)</span>
+<span class="fc" id="L174">          return new Object() {</span>
+            @Override
+            public String toString() {
+<span class="fc" id="L177">              return String.format(&quot;(context:%s)&quot;, Impl.this.name());</span>
+            }
+          };
+<span class="fc" id="L180">        return new Snapshot(this.input.get(this.output.size() - 1), this.output.last());</span>
+      }
+      
+      @Override
+      public String toString() {
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        if (this.output.size() == 0)</span>
+<span class="fc" id="L186">          return &quot;(empty)&quot;;</span>
+<span class="fc" id="L187">        return String.format(&quot;in: &lt;%s&gt;%nout:&lt;%s&gt;&quot;, this.input.get(this.output.size() - 1), this.output.last());</span>
+      }
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

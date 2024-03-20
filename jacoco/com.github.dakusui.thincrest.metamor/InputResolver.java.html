@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InputResolver.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">thincrest</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.thincrest.metamor</a> &gt; <span class="el_source">InputResolver.java</span></div><h1>InputResolver.java</h1><pre class="source lang-java linenums">package com.github.dakusui.thincrest.metamor;
+
+import com.github.dakusui.thincrest_pcond.core.printable.PrintableFunction;
+import com.github.dakusui.thincrest_pcond.forms.Printables;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import static java.util.Collections.emptyList;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+
+public interface InputResolver&lt;I, O&gt; extends Function&lt;Dataset&lt;IoPair&lt;I, O&gt;&gt;, I&gt; {
+  class Impl&lt;I, O&gt; extends PrintableFunction&lt;Dataset&lt;IoPair&lt;I, O&gt;&gt;, I&gt; implements InputResolver&lt;I, O&gt; {
+    public Impl(Supplier&lt;String&gt; s, Function&lt;? super Dataset&lt;IoPair&lt;I, O&gt;&gt;, ? extends I&gt; function) {
+<span class="fc" id="L18">      super(new Object(), emptyList(), s, function);</span>
+<span class="fc" id="L19">    }</span>
+  }
+  
+  interface Sequence&lt;I, O&gt; extends Dataset&lt;InputResolver&lt;I, O&gt;&gt; {
+    class Impl&lt;I, O&gt; implements Sequence&lt;I, O&gt; {
+  
+      private final String inputVariableName;
+      private final List&lt;InputResolver&lt;I, O&gt;&gt; inputResolvers;
+      
+<span class="fc" id="L28">      public Impl(String inputVariableName, List&lt;InputResolver&lt;I, O&gt;&gt; inputResolvers) {</span>
+<span class="fc" id="L29">        this.inputVariableName = requireNonNull(inputVariableName);</span>
+<span class="fc" id="L30">        this.inputResolvers = requireNonNull(inputResolvers);</span>
+<span class="fc" id="L31">      }</span>
+      
+      @Override
+      public InputResolver&lt;I, O&gt; get(int i) {
+<span class="fc" id="L35">        return inputResolvers.get(i);</span>
+      }
+      
+      @Override
+      public int size() {
+<span class="nc" id="L40">        return inputResolvers.size();</span>
+      }
+  
+      @Override
+      public String name() {
+<span class="fc" id="L45">        return this.inputVariableName;</span>
+      }
+  
+      @Override
+      public String toString() {
+<span class="fc" id="L50">        return inputVariableName + &quot;:&quot; + inputResolvers;</span>
+      }
+
+      @Override
+      public Iterator&lt;InputResolver&lt;I, O&gt;&gt; iterator() {
+<span class="nc" id="L55">        return new AbstractList&lt;InputResolver&lt;I, O&gt;&gt;() {</span>
+
+          @Override
+          public int size() {
+<span class="nc" id="L59">            return Impl.this.size();</span>
+          }
+
+          @Override
+          public InputResolver&lt;I, O&gt; get(int index) {
+<span class="nc" id="L64">            return Impl.this.get(index);</span>
+          }
+<span class="nc" id="L66">        }.iterator();</span>
+      }
+    }
+    
+    interface Factory&lt;X, I, O&gt; extends Function&lt;X, Sequence&lt;I, O&gt;&gt; {
+      int count();
+      
+      class Impl&lt;X, I, O&gt;
+          extends PrintableFunction&lt;X, Sequence&lt;I, O&gt;&gt;
+          implements Factory&lt;X, I, O&gt; {
+        
+        private final int count;
+        
+        public Impl(Supplier&lt;String&gt; s, Function&lt;? super X, ? extends Sequence&lt;I, O&gt;&gt; function, int count) {
+<span class="fc" id="L80">          super(new Object(), emptyList(), s, function);</span>
+<span class="fc" id="L81">          this.count = count;</span>
+<span class="fc" id="L82">        }</span>
+        
+        public Impl(String inputVariableName, List&lt;Function&lt;? super X, ? extends InputResolver&lt;I, O&gt;&gt;&gt; functions) {
+<span class="fc" id="L85">          this(</span>
+<span class="fc" id="L86">              () -&gt; functions.stream()</span>
+<span class="fc" id="L87">                  .map(Objects::toString)</span>
+<span class="fc" id="L88">                  .collect(joining(&quot;,&quot;, &quot;[&quot;, &quot;]&quot;)),</span>
+<span class="fc" id="L89">              Factory.Impl.toSequenceCreatorFunction(inputVariableName, functions), functions.size());</span>
+<span class="fc" id="L90">        }</span>
+        
+        @Override
+        public int count() {
+<span class="fc" id="L94">          return this.count;</span>
+        }
+        
+        private static &lt;X, I, O&gt; Function&lt;? super X, ? extends Sequence&lt;I, O&gt;&gt; toSequenceCreatorFunction(String inputVariableName, List&lt;Function&lt;? super X, ? extends InputResolver&lt;I, O&gt;&gt;&gt; functions) {
+<span class="fc" id="L98">          return (X value) -&gt; new Sequence.Impl&lt;&gt;(</span>
+              inputVariableName,
+<span class="fc" id="L100">              functions.stream()</span>
+<span class="fc" id="L101">                  .map(f -&gt; f.apply(value))</span>
+<span class="fc" id="L102">                  .collect(toList()));</span>
+        }
+      }
+      
+      class Builder&lt;X, I, O&gt; {
+<span class="fc" id="L107">        private final List&lt;Function&lt;? super X, ? extends InputResolver&lt;I, O&gt;&gt;&gt; functions = new LinkedList&lt;&gt;();</span>
+        private final String                                                   placeHolderVariableName;
+        private final String inputVariableName;
+  
+<span class="fc" id="L111">        public Builder(String inputVariableName, String placeHolderVariableName) {</span>
+<span class="fc" id="L112">          this.placeHolderVariableName = placeHolderVariableName;</span>
+<span class="fc" id="L113">          this.inputVariableName = inputVariableName;</span>
+<span class="fc" id="L114">        }</span>
+        
+        public Builder&lt;X, I, O&gt; function(Function&lt;Object, String&gt; formatter, Function&lt;X, I&gt; f) {
+<span class="fc" id="L117">          this.functions.add(Printables.function(() -&gt; formatter.apply(this.placeHolderVariableName), x -&gt; new InputResolver.Impl&lt;&gt;(() -&gt; formatter.apply(x), ds -&gt; f.apply(x))));</span>
+<span class="fc" id="L118">          return this;</span>
+        }
+        
+        public Factory&lt;X, I, O&gt; build() {
+<span class="fc" id="L122">          return new Impl&lt;&gt;(this.inputVariableName, this.functions);</span>
+        }
+      }
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

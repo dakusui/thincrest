@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TestAssertions.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">thincrest</a> &gt; <a href="index.source.html" class="el_package">com.github.dakusui.thincrest</a> &gt; <span class="el_source">TestAssertions.java</span></div><h1>TestAssertions.java</h1><pre class="source lang-java linenums">package com.github.dakusui.thincrest;
+
+import com.github.dakusui.thincrest_pcond.fluent.ListHolder;
+import com.github.dakusui.thincrest_pcond.fluent.Statement;
+import com.github.dakusui.thincrest_pcond.validator.Validator;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
+import static java.util.stream.Collectors.toList;
+
+/**
+ * An entry-point class for test assertions.
+ * You can use the methods to replace the usages of the methods the same names of the `Hamcrest`.
+ *
+ * Instead of the `Matcher` s of `Hamcrest`, you can use just simple functions and predicates.
+ *
+ * There are pre-defined printable functions and predicates in the {@link com.github.dakusui.thincrest_pcond.forms.Functions}
+ * class and {@link com.github.dakusui.thincrest_pcond.forms.Predicates} class.
+ *
+ * You can build your matchers by composing them using methods in the Java's
+ * {@link Function} and {@link Predicate} such as {@link Function#andThen(Function)},
+ * {@link Function#compose(Function)}, {@link Predicate#and(Predicate)}, {@link Predicate#or(Predicate)},
+ * and {@link Predicate#negate()}.
+ *
+ * To create your own function or predicate that renders a human-readable message,
+ * you can use the `function` and `predicate` methods defined in the `Printables`
+ * class.
+ *
+ * {@link com.github.dakusui.thincrest_pcond.forms.Predicates#transform(Function)} is a method
+ * to build a predicate, which first transforms a value into a type that the `pcond` offers
+ * a rich support, such as {@link String}, {@link java.util.List}, {@link Comparable}, etc.,
+ * and the applies predicates to the transformed value.
+ * With this approach, you will not need to create your own matchers, but just create
+ * a function that transform your class into easily verifiable types for your verification.
+ *
+ * Each method, which ends with `Statement` or `all`, in this class accepts {@link Statement} objects.
+ * To create a {@link Statement} object, you can call static methods in {@link Statement} itself.
+ * class such as {@link Statement#booleanValue(Boolean)}, {@link Statement#stringValue(String)},
+ * etc.
+ *
+ * @see com.github.dakusui.thincrest_pcond.forms.Predicates
+ * @see com.github.dakusui.thincrest_pcond.forms.Functions
+ * @see com.github.dakusui.thincrest_pcond.forms.Predicates#transform(Function)
+ * @see com.github.dakusui.thincrest_pcond.forms.Printables#predicate(String, Predicate)
+ * @see com.github.dakusui.thincrest_pcond.forms.Printables#function(String, Function)
+ * @see com.github.dakusui.thincrest_pcond.forms.Printables#predicate(Supplier, Predicate)
+ * @see com.github.dakusui.thincrest_pcond.forms.Printables#function(Supplier, Function)
+ */
+<span class="fc" id="L53">public enum TestAssertions {</span>
+
+  ;
+
+  /**
+   * A method to check a given `value` satisfies a condition `predicate`, to be verified by the test.
+   * If it is not satisfied, the test should fail.
+   *
+   * @param value     The value to be checked.
+   * @param predicate A condition to check the `value`.
+   * @param &lt;T&gt;       The type of the `value`.
+   */
+  public static &lt;T&gt; void assertThat(T value, Predicate&lt;? super T&gt; predicate) {
+<span class="fc" id="L66">    Validator.instance().assertThat(value, predicate);</span>
+<span class="fc" id="L67">  }</span>
+
+  /**
+   * A method to check a given `value` satisfies a condition `predicate`, which is required by the *test's design* to execute it.
+   * If it is not satisfied, that means, the value violates an assumption of the test, therefore the test should be ignored, not fail.
+   * If you are using *JUnit4*, an `AssumptionViolatedException` should be thrown.
+   *
+   * @param value     The value to be checked.
+   * @param predicate A condition to check the `value`.
+   * @param &lt;T&gt;       The type of the `value`.
+   */
+  public static &lt;T&gt; void assumeThat(T value, Predicate&lt;? super T&gt; predicate) {
+<span class="fc" id="L79">    Validator.instance().assumeThat(value, predicate);</span>
+<span class="fc" id="L80">  }</span>
+  
+  /**
+   * Fluent version of {@link TestAssertions#assertThat(Object, Predicate)}.
+   *
+   * @param statement A statement to be verified
+   * @param &lt;T&gt;       The type of the value to be verified which a given statement holds.
+   */
+  public static &lt;T&gt; void assertStatement(Statement&lt;T&gt; statement) {
+<span class="fc" id="L89">    TestAssertions.assertThat(statement.statementValue(), statement.statementPredicate());</span>
+<span class="fc" id="L90">  }</span>
+  
+  /**
+   * Fluent version of {@link TestAssertions#assertThat(Object, Predicate)}.
+   * Use this method when you need to verify multiple values.
+   *
+   * You can use {@link TestAssertions#assertStatement(Statement)}, if you have only one statement to be verified, for readability's sake.
+   *
+   * @param statements Statements to be verified
+   * @see TestAssertions#assertStatement(Statement)
+   */
+  public static void assertAll(Statement&lt;?&gt;... statements) {
+<span class="fc" id="L102">    List&lt;?&gt; values = Arrays.stream(statements).map(Statement::statementValue).collect(toList());</span>
+<span class="nc" id="L103">    TestAssertions.assertThat(ListHolder.fromList(values), Statement.createPredicateForAllOf(statements));</span>
+<span class="nc" id="L104">  }</span>
+  
+  /**
+   * Fluent version of {@link TestAssertions#assumeThat(Object, Predicate)}.
+   *
+   * @param statement A statement to be verified
+   */
+  public static &lt;T&gt; void assumeStatement(Statement&lt;T&gt; statement) {
+<span class="nc" id="L112">    TestAssertions.assumeThat(statement.statementValue(), statement.statementPredicate());</span>
+<span class="nc" id="L113">  }</span>
+  
+  /**
+   * Fluent version of {@link TestAssertions#assumeThat(Object, Predicate)}.
+   * Use this method when you need to verify multiple values.
+   *
+   * You can use {@link TestAssertions#assumeStatement(Statement)}}, if you have only one statement to be verified, for readability's sake.
+   *
+   * @param statements Statements to be verified
+   * @see TestAssertions#assumeStatement(Statement)
+   */
+  public static void assumeAll(Statement&lt;?&gt;... statements) {
+<span class="fc" id="L125">    List&lt;?&gt; values = Arrays.stream(statements).map(Statement::statementValue).collect(toList());</span>
+<span class="fc" id="L126">    TestAssertions.assumeThat(ListHolder.fromList(values), Statement.createPredicateForAllOf(statements));</span>
+<span class="fc" id="L127">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
